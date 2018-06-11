@@ -1,0 +1,55 @@
+@import "variables";
+@import "mixins";
+
+.edit-user-form, .new-artifact-form {
+  .dropdown {
+    width: 100%;
+    .dropdown-btn {
+      width: 100%;
+      text-align: start;
+      color: $at-text-headline;
+      background-color: $at-artifact-card;
+      @include light-font-md;
+      outline: none;
+      border: 1px solid $at-pale-grey-two;
+      border-radius: 0;
+      padding-left: 8px;
+      &:focus, &:active {
+        outline: none;
+        box-shadow: none;
+        border: $selected-border;
+      }
+    }
+    .dropdown-item {
+      width: 100%;
+      text-align: left;
+      @include light-font-md;
+      padding-left: 16px;
+      background-color: $at-ultra-light-grey;
+      border: $light-border;
+      color: $at-text-headline;
+      &:hover {
+        background-color: $at-pale-grey !important;
+      }
+      &:active {
+        background-color: $at-ocean-light !important;
+        font-weight: $ct-font-weight-regular !important;
+      }
+    }
+    .dropdown-menu.show {
+      width: 100%;
+      border-radius: 0;
+      margin-top: 4px;
+      padding: 0;
+    }
+    button.dropdown-toggle {
+      display: inline-flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .dropdown-toggle::after {
+      color: $at-text-enable;
+      margin-top: 0.5em;
+    }
+  }
+}

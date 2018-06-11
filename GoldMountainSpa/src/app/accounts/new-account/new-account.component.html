@@ -1,0 +1,79 @@
+<div class="artifacts-slider container">
+  <form class="side-form-container">
+    <div class="slider-header">
+        <div class="icon-ct-close d-inline-block link" (click)="cancel()"></div>
+        <div class="title d-inline-block vertical-top">Add New Account</div>
+      </div>
+    <div class="slider-form" *ngIf="!isSaving">
+      <form #newArtifactInfoForm="ngForm" class="new-artifact-form">
+        <div class="form-group">
+          <label for="institution" class="slider-body light-font">Financial Institution Name</label>
+          <div>
+            <div ngbDropdown id="institution" class="dropdown">
+              <button class="btn dropdown-btn" ngbDropdownToggle>{{selectedInstitution?.Name}}</button>
+              <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                <button *ngFor="let institution of institutions" class="dropdown-item"
+                        (click)="onSwitchItem(institution)" [disabled] = !institution?.IsSupported>
+                  {{institution?.Name}}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" *ngIf="selectedInstitution && !accounts && !isLoading">
+          <label class="slider-body light-font">Access Credentials</label>
+          <form [formGroup]="credentialsForm" (ngSubmit)="load(credentialsForm.value)">
+            <div *ngFor="let credentials of selectedInstitution.Credentials" class="form-group">
+              <label class="slider-body light-font">{{credentials}}</label>
+              <input class="form-control outline-none" formControlName="{{credentials}}">
+            </div>
+            <button type="button" class="btn large-btn inverse-btn outline-none link"
+                    (click)="load()"
+                    [disabled]="!credentialsForm.valid">
+              Load Accounts
+            </button>
+          </form>
+        </div>
+        <div class="form-group" *ngIf="isLoading">
+          Please wait...
+          We are loading your information
+        </div>
+        <div class="form-group" *ngIf="errorMessage">
+          {{errorMessage}}
+        </div>
+        <div class="form-group" *ngIf="accounts">
+          <label class="slider-body light-font">Accounts</label>
+          <div *ngFor="let account of accounts">
+            <div class="group-items" *ngIf="isBankAccount(account)">
+              <label >
+                <input type="checkbox" [name]="account.AccountNumber"  [(ngModel)]=account.IsActive>
+                {{account.Label}}-{{account.BranchNumber}}-{{account.AccountNumber}}
+              </label>
+            </div>
+
+            <div class="group-items" *ngIf="isCreditAccount(account)">
+              <label >
+                <input type="checkbox" [name]="account.CardNumber"  [(ngModel)]=account.IsActive>
+                {{account.CardNumber}}-{{account.Name}}
+              </label>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="navigation" *ngIf="accounts && !isSaving">
+      <button type="button" class="btn large-btn navigation-btn inverse-btn outline-none link"
+              (click)="save()">
+        Add Accounts
+      </button>
+    </div>
+    <div *ngIf="isSaving" class="ui-g ui-g-nopad main-container">
+      <p-progressSpinner class="ui-g-2 ui-g-offset-5"
+                         [style]="{width: '100px', height: '100px',top: '50%'}"
+                         strokeWidth="2"
+                         animationDuration="1.0s"
+                         fill="white">
+      </p-progressSpinner>
+    </div>
+  </form>
+</div>

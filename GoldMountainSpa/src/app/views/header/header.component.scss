@@ -1,0 +1,139 @@
+@import "../../../sass/styles";
+
+.brand-name {
+  @include regular-font-xxl;
+  color: $at-azure;
+  padding: 17px 138px 15px 20px;
+  display: inline-block;
+  vertical-align: top;
+  line-height: 1;
+}
+
+#brand-icon {
+  display: inline-block;
+  padding: 13px 0 9.1px 32.5px;
+}
+
+.icon-ct-menu {
+  padding: 13px 13px 12px 13px;
+  color: $at-text-light;
+}
+
+.icon-ct-notification {
+  padding: 13px 13px 12px 13px;
+  color: $at-text-light;
+}
+
+#notification-link {
+  border-right: $navbar-separator;
+  border-left: $navbar-separator;
+}
+
+#username {
+  @include light-font-lg;
+  color: $at-text-light;
+  padding: 16px 0 14px 24px;
+  border-left: $navbar-separator;
+}
+
+#login {
+  @include light-font-lg;
+  color: $at-text-light;
+}
+
+#logout {
+  @include light-font-lg;
+  color: $at-text-light;
+}
+
+#username-photo {
+  padding: 17px 24px 12px 8px;
+  color: $at-text-light;
+}
+
+#application {
+  @include light-font-lg;
+  color: $at-text-light;
+  padding: 16px 0 15px 24px;
+  line-height: normal;
+  vertical-align: top;
+}
+
+.icon-ct-shevron {
+  padding: 14px 24px 10px 7px;
+  line-height: normal;
+  color: $at-text-light;
+  vertical-align: top;
+}
+
+nav {
+  width: $navbar-width;
+  height: $navbar-height;
+  background-color: $at-dark-app-bar;
+  padding: 0;
+}
+
+.nav-outline {
+  background-color: $at-ocean;
+  height: 4px;
+  width: 100%;
+}
+
+.navbar-brand {
+  margin: 0;
+  padding: 0;
+}
+
+.nav-tabs {
+  border-bottom: none;
+  .nav-link.active {
+    background-color: $at-ocean;
+  }
+}
+
+.navbar-expand-lg {
+  .navbar-nav {
+    .nav-link {
+      padding: 0;
+      &.tab {
+        @include regular-font-lg;
+        text: {
+          transform: uppercase;
+          align: center;
+        }
+        line-height: $at-line-height-18;
+        color: $at-text-light;
+        width: $tab-width;
+        padding: 16px 28px;
+        border: 0;
+        border-radius: 0;
+        margin: 0;
+      }
+    }
+
+    select{
+      background: transparent;
+      border: none;
+      color: $at-text-light;
+      height:100%;
+      option{
+        color: $at-twilight-blue
+      }
+    }
+  }
+}
+
+.nav-log{
+  padding: 10px 15px;
+  border: 1px solid $at-greyish-brown;
+  border-radius: 5px;
+  margin: 0;
+}
+
+.nav-item {
+  margin: 4px 0 4px 0;
+}
+
+.nav-item:hover {
+  background: $at-peacock-greyish-blue;
+}

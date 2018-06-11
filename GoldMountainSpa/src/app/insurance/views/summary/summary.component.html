@@ -1,0 +1,40 @@
+<div class="ui-g ui-fluid">
+  <div class="ui-g-6">
+    <p-card>
+      <h4>Total Savings</h4>
+      <p-chart type="pie" [data]="data"></p-chart>
+    </p-card>
+  </div>
+
+  <div class="ui-g-6">
+    <p-card>
+      <h4>Total Savings</h4>
+      <p-chart type="doughnut"  [data]="data"></p-chart>
+    </p-card>
+  </div>
+
+  <div class="ui-g-8">
+    <p-card>
+      <h4>Retirement Projection</h4>
+      <p-chart type="bar" [data]="data"></p-chart>
+    </p-card>
+  </div>
+
+  <div class="ui-g-4">
+    <p-card class="ui-g  ui-g-nopad">
+      <h4>Retirement Plan</h4>
+      <div class="ui-g-12">
+        <span class="ui-g-6">One time payment</span>
+        <span class="ui-g-6">{{45000 | currency:'ILS':'symbol':'1.0-0'}}</span>
+      </div>
+      <div class="ui-g-12">
+        <span class="ui-g-6">Monthly payment</span>
+        <span class="ui-g-6">{{12000 | currency:'ILS':'symbol':'1.0-0'}}</span>
+      </div>
+      <div class="ui-g-12">
+        <span class="ui-g-6">Study Funds</span>
+        <span class="ui-g-6">{{540000 | currency:'ILS':'symbol':'1.0-0'}}</span>
+      </div>
+    </p-card>
+  </div>
+</div>

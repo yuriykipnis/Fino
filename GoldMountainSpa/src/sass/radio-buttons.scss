@@ -1,0 +1,24 @@
+@import "variables";
+@import "mixins";
+
+.radio-btns {
+  display: inline-flex;
+  .radio-btn-wrapper {
+    padding-right: 20px;
+  }
+  .radio-btn-label {
+    @include light-font-md;
+    color: $at-dark-app-bar;
+    display: flex;
+    align-items: center;
+  }
+  .radio-btn-label:before{
+    margin-right:10px;
+    font-family: 'icomoon' !important;
+    font-size: 24px;
+    line-height: 1;
+  }
+  .icon-ct-radio {
+    opacity: 0;
+    position: absolute;}
+}

@@ -1,0 +1,55 @@
+@import "variables";
+@import "../../node_modules/ng2-tag-input/dist/modules/core/styles/core/_core.scss";
+
+.portal-tag-component {
+  border: solid 1px $at-border-light-grey;
+  padding: 8px 8px;
+  tag-input {
+    input {
+      border: none;
+    }
+  }
+
+  // this is the container's theme
+  $ct-theme: (
+    container-border-bottom: none !important
+  );
+
+  // this is the tag's theme
+  $ct-tag-theme: (
+    background: $at-text-sub-headline,
+    background-focused: $at-text-sub-headline,
+    background-active: $at-text-sub-headline,
+    background-hover: $at-text-sub-headline,
+    color: $at-text-light,
+    font-size: $at-font-size-sm,
+    font-family: Interstate,
+    font-weight: $ct-font-weight-light,
+    color-hover: $at-hover-light,
+    border-radius: 2px,
+  );
+
+  // this is the delete icon's theme
+  $ct-icon-theme: (
+    fill: $at-hover-light,
+    font-weight: $ct-font-weight-light,
+    font-family: Interstate,
+    font-size: $at-font-size-sm,
+  );
+
+  // apply theme to the container
+  .ng2-tag-input.ct-theme {
+    @include tag-input-theme($ct-theme);
+  }
+
+  // apply theme to the tags
+  .ng2-tag-input.ct-theme tag {
+    @include tag-theme($ct-tag-theme);
+  }
+
+  // apply theme to the delete icon
+  .ng2-tag-input.ct-theme tag delete-icon {
+    @include icon-theme($ct-icon-theme);
+  }
+
+}

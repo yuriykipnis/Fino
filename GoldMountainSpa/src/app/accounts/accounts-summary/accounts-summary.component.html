@@ -1,0 +1,36 @@
+<div class="ui-g ui-g-nopad scrollable-container">
+  <div class="ui-g-8">
+    <p-card>
+      <h4>Incomes vs Expenses</h4>
+      <p-chart type="bar" [data]="incomeOutcomeData"></p-chart>
+    </p-card>
+  </div>
+
+  <div class="ui-g-4">
+    <p-card>
+      <h4>Credit Obligations</h4>
+      <p>This is a comprehensive view of your finance profile
+        based on the information retrieved from the financial
+        institutions registered on your account. We recommend
+        to keep your registration information updated always.
+        For more information about the capabilities and services
+        provided by BeWise - please refer to the About section.
+      </p>
+      <p-chart type="doughnut" [data]="incomeData"></p-chart>
+    </p-card>
+  </div>
+
+  <div class="ui-g-6">
+    <p-card>
+      <h4>Income Source</h4>
+      <p-chart type="pie"  [data]="incomeData"></p-chart>
+    </p-card>
+  </div>
+  <div class="ui-g-6">
+    <p-card>
+      <h4>Expenses Source</h4>
+      <p-chart type="pie"  [data]="expenseData"></p-chart>
+    </p-card>
+  </div>
+
+</div>

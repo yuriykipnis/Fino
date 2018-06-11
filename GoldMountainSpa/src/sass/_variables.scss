@@ -1,0 +1,98 @@
+// sizes
+$navbar-width: 100%;
+$navbar-height: 50px;
+$tab-width: 136px;
+$tab-height: 50px;
+$search-input-width: 400px;
+$panel-width: 560px;
+$panel-heigth: 1015px;
+
+// background colors
+//$at-dark-app-bar: #343432;
+$at-artifact-panel: #f0f0f0;
+$at-artifact-card: #ffffff;
+$at-ocean: #00bdf2;
+$at-ocean-light: #d9f3fd;
+
+// text colors
+$at-text-action: #00bdf2;
+$at-text-link-delete: #ed1e23;
+$at-text-headline: #343432;
+$at-text-sub-headline: #888a8c;
+$at-text-enable: #bfbfc1;
+$at-text-light: #ffffff;
+
+// border colors
+$at-border-ocean: #00bdf2;
+$at-border-light-grey: #dadbdc;
+$at-border-dark-grey: #888a8c;
+$at-border-light: #ffffff;
+
+// other colors
+$at-deep-turquoise: #007273;
+$at-turquoise: #00c2b6;
+$at-greeny-blue: #49ac84;
+$at-success-green: #a4d142;
+$at-sick-green: #95cb33;
+$at-azure: #00aeef;
+$at-ligth-blue: #3273a7;
+$at-peacock-blue: #005aa1;
+$at-peacock-greyish-blue: #165688;
+$at-twilight-blue: #084590;
+$at-dark-app-bar: #243a51;
+$at-bright-sky-blue: rgba(0, 189, 242, 0.05);
+$at-charcoal-grey: #4e4f4f;
+$at-greyish-brown: #4c4c4c;
+$at-ultra-bright-sky-blue: rgba(202, 202, 202, 0.3);
+$at-purplish-grey: #717073;
+$at-light-grey: #c2c2c1;
+$at-ultra-light-grey: #fafafa;
+$at-pale-grey: #f8f7f8;
+$at-pale-grey-two: #e9e8e9;
+$at-exec-files-bg-light-gray: #f1f1f1;
+$at-tags-fill-focus: #eee;
+$at-hover-light: #fff;
+
+// gradients
+$navbar-hover-gradient: linear-gradient(to top, $at-peacock-greyish-blue, $at-dark-app-bar);
+
+// box-shadows
+$search-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+$panel-box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.18);
+
+// borders
+$navbar-separator: 1px solid $at-greyish-brown;
+$panel-border-top: 3px solid $at-azure;
+$table-border: 1px solid $at-border-light-grey;
+$table-bold-border: 2px solid $at-border-light-grey;
+$selected-border: 1px solid $at-border-ocean;
+$validation-error-border: 1px solid $at-text-link-delete;
+$light-border: 1px solid $at-border-light;
+
+// fonts
+$ct-font-family: "Interstate", Arial, sans-serif;
+$ct-font-source-code: 'Source Code Pro', monospace;
+$ct-font-weight-regular: 400;
+$ct-font-weight-light: 300;
+
+// font sizes
+$at-font-size-sm: 12px;
+$at-font-size-md: 13px;
+$at-font-size-lg: 15px;
+$at-font-size-xl: 18px;
+$at-font-size-xxl: 22px;
+
+// Line Heights
+$at-line-height-12: 12px;
+$at-line-height-14: 14px;
+$at-line-height-18: 18px;
+
+// paddings
+$vn-spacing-xx-small: 4px;
+$vn-spacing-x-small: 8px;
+$vn-spacing-small: 12px;
+$vn-spacing-normal: 16px;
+$vn-spacing-lg: 20px;
+$vn-spacing-x-lg: 24px;
+$table-cell-padding: 8px 0 12px 16px;
+$small-grid-cell-padding: 8px 10px;

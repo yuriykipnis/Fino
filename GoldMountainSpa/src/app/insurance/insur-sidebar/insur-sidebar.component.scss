@@ -1,0 +1,54 @@
+@import "../../../sass/styles";
+@import "../../../sass/sidebar";
+
+p{
+  margin-bottom: 0;
+}
+
+.insur-sidebar {
+  height:100%;
+  background-color: $at-dark-app-bar;
+  padding:10px;
+  overflow-y: auto;
+  min-width: 300px;
+}
+
+.sidebar-net{
+  @include regular-font-lg;
+  background-color: $at-peacock-greyish-blue;
+  padding: 10px 10px 10px 10px;
+  text: {
+    transform: uppercase;
+    align: left;
+  }
+  line-height: $at-line-height-18;
+  color: $at-text-light;
+  width: 100%;
+  border: 0;
+  border-radius: 3px;
+  margin-bottom: 5px;
+}
+
+.sidebar-header{
+  cursor: pointer;
+  &.left {
+    text: {
+      align: left;
+    }
+  }
+  &.right {
+    text: {
+      align: right;
+    }
+  }
+  &.main {
+    @include regular-font-xxl;
+    padding: 10px;
+    text: {
+      align: center;
+    }
+  }
+}
+
+
+

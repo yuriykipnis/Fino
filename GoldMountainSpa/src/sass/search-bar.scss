@@ -1,0 +1,47 @@
+@import "mixins";
+
+.search-input {
+  @include light-font-lg;
+  color: $at-text-sub-headline;
+  width: $search-input-width;
+  padding: 22px 0 18px 0;
+  border: 0;
+  line-height: $at-line-height-18;
+  &:focus {
+    outline: none;
+    color: $at-dark-app-bar;
+    caret-color: $at-ocean;
+  }
+}
+
+.ui-widget-header.search-bar {
+  width: $navbar-width;
+  height: 58px;
+  background: #ffffff none;
+  border: 0;
+  box-shadow: $search-box-shadow;
+  &:hover .icon-ct-search{
+    color: $at-ocean;
+  }
+  &.ui-datatable-scrollable-header {
+    height: 47px;
+  }
+}
+
+.icon-ct-search {
+  color: $at-purplish-grey;
+  padding: 18px 8px 15px 40px;
+}
+
+.dark-blue {
+  color: $at-twilight-blue;
+}
+
+.add-new-btn {
+  padding: 23px 40px 23px 0px;
+}
+
+.icon-ct-add {
+  padding: 19px 7px 15px 24px;
+  line-height: 1;
+}

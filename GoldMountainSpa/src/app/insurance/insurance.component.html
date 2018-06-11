@@ -1,0 +1,22 @@
+<div class="ui-g ui-g-nopad main-container"
+     *ngIf="!isLoading()">
+  <div class="ui-g-3 ui-g-nopad">
+    <app-insur-sidebar class="ui-g-10 ui-g-nopad main-container"
+                       (onProfileSelected)="selectedProfile=$event"></app-insur-sidebar>
+  </div>
+
+  <div class="ui-g-9 main-scrollable">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+<div *ngIf="isLoading()"
+     class="ui-g ui-g-nopad main-container">
+  <p-progressSpinner class="ui-g-2 ui-g-offset-5"
+                     [style]="{width: '200px', height: '200px',top: '30%'}"
+                     strokeWidth="2"
+                     animationDuration="1.0s"
+                     fill="white">
+  </p-progressSpinner>
+</div>
+

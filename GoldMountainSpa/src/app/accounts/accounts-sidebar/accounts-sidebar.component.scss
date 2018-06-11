@@ -1,0 +1,68 @@
+@import "../../../sass/styles";
+@import "../../../sass/sidebar";
+
+p{
+  margin-bottom: 0;
+}
+
+.add-account-btn{
+  @include regular-font-lg;
+  padding: 6px;
+  margin-bottom: 5px;
+  background: $at-azure;
+  text: {
+    transform: uppercase;
+    align: center;
+  }
+  line-height: $at-line-height-18;
+  color: $at-text-light;
+  width: 100%;
+  border: 1px solid $at-peacock-greyish-blue;
+}
+
+.accounts-sidebar {
+  height:100%;
+  background-color: $at-dark-app-bar;
+  padding:10px;
+  overflow-y: auto;
+  min-width: 300px;
+}
+
+.sidebar-net{
+  @include regular-font-lg;
+  background-color: $at-peacock-greyish-blue;
+  padding: 10px 10px 10px 10px;
+  text: {
+    transform: uppercase;
+    align: left;
+  }
+  line-height: $at-line-height-18;
+  color: $at-text-light;
+  width: 100%;
+  border: 0;
+  border-radius: 2px;
+  margin-bottom: 5px;
+}
+
+.sidebar-header{
+  cursor: pointer;
+  &.left {
+    text: {
+      align: left;
+    }
+  }
+  &.right {
+    text: {
+      align: right;
+    }
+  }
+  &.main {
+    @include regular-font-xxl;
+    padding: 10px;
+    text: {
+      align: center;
+    }
+  }
+}
+
+

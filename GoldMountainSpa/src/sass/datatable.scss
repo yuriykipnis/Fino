@@ -1,0 +1,321 @@
+@import "variables";
+@import "mixins";
+
+.large-grid, .slider-grid, .history-grid, .drag-area-files-grid {
+  .ui-datatable-data> tr> td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  th {
+    &.ui-state-default.ui-unselectable-text, &.ui-resizable-column {
+      @include regular-font-md;
+      padding: $table-cell-padding;
+      border: $table-border;
+      border-bottom: $table-bold-border;
+      background-color: $at-ultra-light-grey;
+      color: $at-dark-app-bar;
+      text-align: left;
+      height: 48px;
+      line-height: $at-line-height-14;
+
+      &:hover {
+        cursor: default;
+      }
+    }
+    &.new-version, &.remove-file {
+      border-left-width: 0;
+    }
+    &.last-updated-by {
+      width: 154px;
+      border-right-width: 0;
+    }
+    &.last-updated-on {
+      width: 162px;
+    }
+    &.repository {
+      width: 138px;
+    }
+    &.description {
+      width: 262px;
+    }
+    &.name {
+      width: 237px;
+    }
+  }
+
+  span.ui-sortable-column-icon.fa.fa-fw.fa-sort {
+    display: none;
+  }
+
+  // table
+  tr.ui-widget-content {
+    height: 36px;
+  }
+
+  .ui-datatable {
+    th.ui-sortable-column:not(.ui-state-active):hover {
+      background-color: $at-ultra-light-grey;
+    }
+    .ui-datatable-data {
+      tr {
+        .col-box-small {
+          @include regular-font-md;
+          color: $at-dark-app-bar;
+          line-height: $at-line-height-14;
+          padding: 8px 0 12px 8px;
+        }
+
+        &.ui-state-highlight {
+          td {
+            background-color: $at-ocean-light;
+            border-top: $selected-border;
+            border-bottom: $selected-border;
+            &.new-version {
+              color: $at-twilight-blue;
+              span {
+                padding: 8px 0 12px 400px;
+              }
+            }
+            &:first-child {
+              border-left: $selected-border;
+            }
+            &:last-child {
+              border-right: $selected-border;
+            }
+          }
+        }
+        td {
+          @include regular-font-md;
+          color: $at-dark-app-bar;
+          line-height: $at-line-height-14;
+          padding: $table-cell-padding;
+          border: {
+            color: $at-border-light-grey;
+            width: 1px 0 0 0;
+          }
+          position: relative;
+
+          &.remove-file {
+            color: $at-text-light;
+            text-align: right;
+            &:hover {
+              color: $at-twilight-blue;
+              cursor: pointer;
+            }
+          }
+
+          &.new-version {
+            @include regular-font-md;
+            color: $at-text-light;
+            text-align: right;
+            padding: 8px 32px 12px 0;
+          }
+
+          &.ui-datatable-emptymessage {
+            @include regular-font-md;
+            padding: $table-cell-padding;
+
+            &:hover {
+              background-color: white;
+              cursor: default;
+            }
+          }
+
+          .prod, .uat, .dev, .new-version-inner {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            right: 0;
+            span {
+              width: 98%;
+              display: flex;
+              justify-content: flex-end;
+            }
+          }
+          .prod, .uat, .dev {
+            color: $at-text-light;
+            span {
+              padding: $table-cell-padding;
+              justify-content: center;
+            }
+          }
+          .prod {
+            background-color: $at-deep-turquoise;
+          }
+          .uat {
+            background-color: $at-greeny-blue;
+          }
+          .dev {
+            background-color: $at-turquoise;
+          }
+        }
+      }
+    }
+
+    tbody {
+      tr.ui-widget-content.ui-datatable-odd {
+        background-color: $at-text-light;
+      }
+
+      &.ui-datatable-hoverable-rows > tr.ui-widget-content:hover {
+        background-color: $at-pale-grey;
+        td.new-version, td.view-version {
+          color: $at-twilight-blue;
+          span {
+            padding: 8px 0 12px 400px;
+          }
+        }
+      }
+      & > tr.ui-widget-content {
+        border: 0;
+      }
+    }
+    &.ui-widget.ui-datatable-scrollable {
+      @include light-font-sm;
+    }
+  }
+
+  .ui-column-footer {
+    width: 100%;
+  }
+}
+
+.slider-grid, .history-grid, .drag-area-files-grid {
+  th.ui-state-default.ui-unselectable-text {
+    border-right: 0;
+    border-left: 0;
+
+    &:first-child {
+      border-left: $table-border;
+    }
+    &:last-child {
+      border-right: $table-border;
+    }
+
+    &.name {
+      width: 200px;
+    }
+    &.size {
+      width: 105px;
+    }
+    &.last-modified {
+      width: 225px;
+    }
+    &.last-modified-sm {
+      width: 100px;
+    }
+    &.artifact-name {
+      width: 174px;
+    }
+    &.version-attribute {
+      width: 112px;
+    }
+    &.label {
+      width: 230px;
+    }
+    &.date {
+      width: 230px;
+    }
+
+    padding: $small-grid-cell-padding;
+    line-height: $at-line-height-14;
+    height: 36px;
+  }
+
+  .ui-datatable .ui-datatable-data tr td {
+    padding: $small-grid-cell-padding;
+    &.view-version {
+      color: $at-text-light;
+    }
+  }
+
+  tr.ui-widget-content {
+    height: 32px;
+  }
+
+  tr.ui-state-default {
+    border-top: 0;
+  }
+
+  td {
+    &.name {
+      width: 200px;
+    }
+    &.size {
+      width: 105px;
+    }
+    &.last-modified {
+      width: 225px;
+    }
+    &.last-modified-sm {
+      width: 100px;
+    }
+    &.artifact-name {
+      width: 174px;
+    }
+    &.version-attribute {
+      width: 112px;
+    }
+    &.label {
+      width: 230px;
+    }
+    &.date {
+      width: 230px;
+    }
+
+    &.ui-state-default {
+      &.upload-progress {
+        border: 0;
+        padding: $small-grid-cell-padding;
+        width: 37%;
+        text-align: left;
+      }
+      &.progress-bar {
+        padding: $small-grid-cell-padding;
+        border: 0;
+      }
+    }
+  }
+
+  .ui-datatable tfoot td.ui-state-default {
+    background: $at-pale-grey-two;
+  }
+}
+
+.large-grid {
+  width: 95.8%;
+  margin: 40px;
+}
+
+.slider-grid {
+  width: 512px;
+  margin: 24px;
+}
+
+.grid-upper-border {
+  padding-top: 24px;
+  border-top: $table-border;
+}
+
+.drag-area-files-grid{
+  .ui-datatable {
+    .ui-datatable-scrollable-body{
+      margin-bottom:32px;
+    }
+    .ui-datatable-scrollable-view{
+      min-height: 320px;
+      background-color: $at-ultra-light-grey ;
+      .ui-datatable-scrollable-footer{
+        position: absolute;
+        bottom:0;
+      }
+    }
+  }
+}
+
+

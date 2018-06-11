@@ -1,0 +1,19 @@
+@import "variables";
+
+.animate-moving-rec {
+  position: relative;
+  height: 0.2rem;
+  margin: 0.3px 0.2rem;
+  animation: move-in-steps 8s infinite;
+}
+
+@keyframes move-in-steps {
+  from {
+    left: 0;
+    background: $at-dark-app-bar;
+  }
+  to {
+    left: 100%;
+    background: $at-dark-app-bar;
+  }
+}

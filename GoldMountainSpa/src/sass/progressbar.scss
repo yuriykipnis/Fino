@@ -1,0 +1,35 @@
+@import "variables";
+
+.progressDiv {
+  display: flex;
+  .pBar {
+    margin-right: 10px;
+  }
+  &.total .pBar {
+    margin: 3px 10px 3px 0;
+  }
+}
+
+.pBar .progress{
+  border: 1px solid $at-text-sub-headline;
+  border-radius: 1px;
+  width: 64px;
+  height: 12px;
+}
+
+.progress-bar {
+  &.bg-success {
+    padding: 1px;
+    background-color: $at-success-green !important;
+  }
+  &.bg-danger {
+    padding: 1px;
+    width: 100% !important;
+    background-color: $at-text-link-delete !important;
+  }
+}
+
+.progress {
+  padding: 1px;
+}
+

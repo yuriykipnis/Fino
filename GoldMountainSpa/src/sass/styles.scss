@@ -1,0 +1,80 @@
+@import "variables";
+@import "mixins";
+@import "fonts";
+@import "settings";
+@import "form-validations";
+@import "../../node_modules/ng2-tag-input/dist/modules/core/styles/core/_core.scss";
+
+html, body{
+  height: 100%;
+}
+
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  padding: 0 1px 0 1px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #d0e3eb;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #3273a7;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #165688;
+}
+
+.vertical-top {
+  vertical-align: top;
+}
+
+.vertical-sub {
+  vertical-align: sub;
+}
+
+.vertical-middle {
+  vertical-align: middle;
+}
+
+.right-align {
+  text-align: right;
+}
+
+.link {
+  cursor: pointer;
+}
+
+.btn-font {
+  @include light-font-sm;
+}
+
+.outline-none:focus, .btn.outline-none:focus, input.outline-none:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.ng-trigger-slideInOutAnimation {
+  background-color: rgba(0, 0, 0, 0) !important;
+}
+
+.waiting-icon{
+  width: 29px;
+  height: 29px;
+}
+
+body {
+  overflow: hidden;
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

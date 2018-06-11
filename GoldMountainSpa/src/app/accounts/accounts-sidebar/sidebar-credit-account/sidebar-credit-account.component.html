@@ -1,0 +1,12 @@
+<p-card class="bw-sidebar-item">
+  <div>
+    <span>{{account.Name}}</span>
+    <span class="balance">{{-1*getTotalCharge(account) | currency:'ILS':'symbol':'1.0-0'}}</span>
+  </div>
+  <div>
+    <span>{{account.CardNumber}}</span>
+    <span class="date-of-update">{{account.LastUpdate | utcToLocalTime | date:'short'}}</span>
+  </div>
+</p-card>
+
+

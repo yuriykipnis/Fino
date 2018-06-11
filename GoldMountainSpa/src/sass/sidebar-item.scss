@@ -1,0 +1,40 @@
+
+.bw-sidebar-item .ui-card{
+  @include regular-font-lg;
+  border-radius: 0;
+  border: 0;
+  color: $at-text-light;
+  margin-bottom:1px;
+}
+
+.bw-sidebar-item .ui-card-header img {
+  width: 100%;
+}
+
+.bw-sidebar-item .ui-card-body {
+  padding: 15px;
+  background: $at-ligth-blue;
+}
+
+.bw-sidebar-item .ui-card-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: .5em;
+}
+
+.bw-sidebar-item .ui-card-subtitle {
+  opacity: .7;
+  margin-bottom: .5em;
+  margin-top: -.25em;
+  font-weight: bold;
+}
+
+.bw-sidebar-item .ui-card-footer {
+  padding-top: 1em;
+}
+
+.bw-sidebar-item .ui-card-shadow {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+  -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+  -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+}

@@ -1,0 +1,84 @@
+@import "mixins";
+
+.accounts {
+  padding: 12.5px 40px 0 40px;
+  overflow: auto;
+  position: absolute;
+  bottom: 0;
+  top: 110px;
+  left: 0;
+  right: 0;
+
+  .panel {
+    margin-top: 25.5px;
+    border-radius: 2px;
+    border: $table-border;
+    border-top: $panel-border-top;
+    background: $at-ultra-light-grey;
+    height: 242.5px;
+
+    .panel-header {
+      @include light-font-xl;
+      line-height: 1;
+      height: 48px;
+      padding: 15px 24px 15px 24px;
+      border-bottom: 2px solid $at-border-light-grey;
+
+      .panel-padding-btn {
+        padding: 1px 0 19px 12px;
+      }
+    }
+
+    .container {
+      margin: 0;
+    }
+
+    .panel-item {
+      width: 246px;
+      height: 146px;
+      background: $at-artifact-card;
+      box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+      margin: 24px 0 24px 24px;
+
+      &:hover {
+        outline: 1px solid $at-border-ocean;
+      }
+
+      .panel-item-header {
+        @include regular-font-xl;
+        background-color: $at-turquoise;
+        height: 36px;
+        text-transform: uppercase;
+        text-align: center;
+        color: $at-text-light;
+        width: 100%;
+        padding-top: 0.3rem;
+
+        &.uat-env {
+          background-color: $at-greeny-blue;
+        }
+        &.prod-env {
+          background-color: $at-deep-turquoise;
+        }
+      }
+      .panel-item-content {
+        padding: 24px;
+        &:active {
+          //background-color: $at-ocean-light;
+          //box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+        }
+
+        .panel-item-content-main {
+          @include regular-font-xxl;
+          line-height: $at-line-height-18;
+          padding-bottom: 8px;
+        }
+        .panel-item-content-sub {
+          @include light-font-md;
+          line-height: $at-line-height-18;
+        }
+      }
+    }
+  }
+}
+

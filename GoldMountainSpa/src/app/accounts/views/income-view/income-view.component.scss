@@ -1,0 +1,20 @@
+@import "../../../../sass/mixins";
+
+.period{
+  @include regular-font-xl;
+  padding: 10px 15px 0px 15px;
+  text: {
+    align: center;
+  }
+}
+
+.main-container{
+  height:100%;
+  padding:0;
+  padding-right: 5%;
+}
+
+.table-scrollable{
+  height: 94%;
+  overflow-y: auto;
+}

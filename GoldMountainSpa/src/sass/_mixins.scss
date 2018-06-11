@@ -1,0 +1,65 @@
+@import 'variables';
+
+@mixin light-font-sm {
+  font: {
+    family: $ct-font-family;
+    weight: $ct-font-weight-light;
+    size: $at-font-size-sm;
+  }
+}
+
+@mixin light-font-md {
+  font: {
+    family: $ct-font-family;
+    weight: $ct-font-weight-light;
+    size: $at-font-size-md;
+  }
+}
+
+@mixin light-font-lg {
+  font: {
+    family: $ct-font-family;
+    weight: $ct-font-weight-light;
+    size: $at-font-size-lg;
+  }
+}
+
+@mixin light-font-xl {
+  font: {
+    family: $ct-font-family;
+    weight: $ct-font-weight-light;
+    size: $at-font-size-xl;
+  }
+}
+
+@mixin regular-font-md {
+  font: {
+    family: $ct-font-family;
+    weight: $ct-font-weight-regular;
+    size: $at-font-size-md;
+  }
+}
+
+@mixin regular-font-lg {
+  font: {
+    family: $ct-font-family;
+    weight: $ct-font-weight-regular;
+    size: $at-font-size-lg;
+  }
+}
+
+@mixin regular-font-xl {
+  font: {
+    family: $ct-font-family;
+    weight: $ct-font-weight-regular;
+    size: $at-font-size-xl;
+  }
+}
+
+@mixin regular-font-xxl {
+  font: {
+    family: $ct-font-family;
+    weight: $ct-font-weight-regular;
+    size: $at-font-size-xxl;
+  }
+}

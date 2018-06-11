@@ -1,0 +1,74 @@
+<div class="insur-sidebar">
+  <div class="ui-g ui-g-nopad sidebar-net" (click)="showSummary()">
+    <div class="ui-g-6 ui-g-nopad sidebar-header left">Total Savings</div>
+    <div class="ui-g-12 ui-g-nopad sidebar-header main">{{studyFundSavings + seInsurSavings + pensionFundSavings | currency:'ILS':'symbol':'1.0-0'}}</div>
+  </div>
+
+  <p-accordion class="bw-accordion" [multiple]="true" [expandIcon]="fa" [collapseIcon]="fa"
+               activeIndex="[0,1,2,3,4]">
+
+    <p-accordionTab>
+      <p-header>
+        <div>
+          <span>Study Funds ({{(studyFundProfiles$|async)?.length}})</span>
+          <span style="float: right">{{studyFundSavings | currency:'ILS':'symbol':'1.0-0'}}</span>
+        </div>
+      </p-header>
+      <div *ngFor="let profile of studyFundProfiles$ | async" class=""
+           (click)="showEfundProfile(profile)">
+        <app-sidebar-insur-profile [profile]="profile"></app-sidebar-insur-profile>
+      </div>
+    </p-accordionTab>
+
+    <p-accordionTab>
+      <p-header>
+        <div>
+          <span>Insurance ({{(seInsurProfiles$|async)?.length}})</span>
+          <span style="float: right">{{seInsurSavings | currency:'ILS':'symbol':'1.0-0'}}</span>
+        </div>
+      </p-header>
+      <div *ngFor="let profile of seInsurProfiles$ | async" class=""
+           (click)="showSeInsurProfile(profile)">
+        <app-sidebar-insur-profile [profile]="profile"></app-sidebar-insur-profile>
+      </div>
+    </p-accordionTab>
+
+    <p-accordionTab>
+      <p-header>
+        <div>
+          <span>Provident Fund ({{(providentFundProfiles$|async)?.length}})</span>
+        </div>
+      </p-header>
+      <div *ngFor="let profile of providentFundProfiles$ | async" class=""
+           (click)="showPrevidentFundProfile(profile)">
+        <app-sidebar-insur-profile [profile]="profile"></app-sidebar-insur-profile>
+      </div>
+    </p-accordionTab>
+
+    <p-accordionTab>
+      <p-header>
+        <div>
+          <span>Mortgage Insurance ({{(mortgageInsurProfiles$|async)?.length}})</span>
+        </div>
+      </p-header>
+      <div *ngFor="let profile of mortgageInsurProfiles$ | async" class=""
+           (click)="showMortgageInsurProfile(profile)">
+        <app-sidebar-insur-profile [profile]="profile"></app-sidebar-insur-profile>
+      </div>
+    </p-accordionTab>
+
+    <p-accordionTab>
+      <p-header>
+        <div>
+          <span>Pension Funds ({{(pensionFundProfiles$|async)?.length}})</span>
+          <span style="float: right">{{pensionFundSavings | currency:'ILS':'symbol':'1.0-0'}}</span>
+        </div>
+      </p-header>
+      <div *ngFor="let profile of pensionFundProfiles$ | async" class=""
+           (click)="showPensionFundProfile(profile)">
+        <app-sidebar-insur-profile [profile]="profile"></app-sidebar-insur-profile>
+      </div>
+    </p-accordionTab>
+
+  </p-accordion>
+</div>

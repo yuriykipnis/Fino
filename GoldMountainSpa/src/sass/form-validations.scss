@@ -1,0 +1,17 @@
+@import "mixins";
+
+.form-group {
+  input.form-control.ng-invalid{
+    &.ng-dirty , &.ng-touched {
+      border: $validation-error-border;
+      box-shadow: none;
+      margin-bottom: 5px;
+    }
+  }
+  .validation-alert {
+    @include light-font-sm;
+    color: $at-text-link-delete;
+    margin-bottom: 20px;
+    line-height: 0.83;
+  }
+}

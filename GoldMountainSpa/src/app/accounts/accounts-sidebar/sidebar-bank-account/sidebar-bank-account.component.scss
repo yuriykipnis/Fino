@@ -1,0 +1,12 @@
+@import "../../../../sass/styles";
+@import "../../../../sass/sidebar-item";
+
+.date-of-update {
+  @include light-font-sm;
+  float: right;
+  padding: 5px 0 5px 5px;
+}
+
+.balance{
+  float: right;
+}

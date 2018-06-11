@@ -1,0 +1,17 @@
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import {BankAccount} from "../../models/bank-account";
+
+@Component({
+  selector: 'app-sidebar-bank-account',
+  templateUrl: './sidebar-bank-account.component.html',
+  styleUrls: ['./sidebar-bank-account.component.scss'],
+  encapsulation: ViewEncapsulation.None
+})
+export class SidebarBankAccountComponent implements OnInit {
+  @Input() account: BankAccount;
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+}

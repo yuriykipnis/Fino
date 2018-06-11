@@ -1,0 +1,54 @@
+
+.bw-accordion .ui-accordion {
+  width: 100%;
+}
+
+.bw-accordion .ui-accordion .ui-accordion-header {
+  @include regular-font-lg;
+  cursor: pointer;
+  position: relative;
+  margin-top: 1px;
+  zoom: 1;
+  background-color: $at-peacock-greyish-blue;
+  width: 100%;
+  border: 0;
+  border-radius: 3px;
+  margin-bottom: 0;
+}
+
+.bw-accordion .ui-accordion .ui-accordion-header:not(.ui-state-active):not(.ui-state-disabled):hover {
+  background: $at-peacock-greyish-blue;
+}
+
+.bw-accordion .ui-accordion .ui-accordion-header:not(.ui-state-active):not(.ui-state-disabled):hover a {
+  color: $at-text-light;
+}
+
+.bw-accordion .ui-accordion .ui-accordion-header a {
+  display: block;
+  padding: 20px 10px 20px 10px;
+  text: {
+    transform: uppercase;
+    align: left;
+  }
+  line-height: $at-line-height-18;
+  color: $at-text-light;
+}
+
+.bw-accordion .ui-accordion .ui-accordion-content {
+  cursor: pointer;
+  padding: 0;
+  border-top: 0;
+  overflow: visible;
+  zoom: 1;
+  background: $at-dark-app-bar;
+}
+
+.bw-accordion .ui-accordion .ui-accordion-header.ui-state-disabled,
+.bw-accordion .ui-accordion .ui-accordion-header.ui-state-disabled a {
+  cursor: default;
+}
+
+.bw-accordion .ui-accordion-content-wrapper-overflown {
+  overflow: hidden;
+}

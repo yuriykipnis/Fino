@@ -1,0 +1,42 @@
+<p-card>
+  <div>
+    <label class="light-font">Company Name</label>
+    <label class="light-font">{{(profile$|async)?.ProviderName}}</label>
+  </div>
+
+  <div>
+    <label class="light-font">Employer Name</label>
+    <label class="light-font">{{(profile$|async)?.EmployerName}}</label>
+  </div>
+
+  <div>
+    <label class="light-font">Total Savings</label>
+    <label class="light-font">{{(profile$|async)?.TotalSavings}}</label>
+  </div>
+
+  <div>
+    <label class="light-font">Savings Fee</label>
+    <label class="light-font">{{(profile$|async)?.SavingFee}}</label>
+  </div>
+
+  <div>
+    <label class="light-font">Plan</label>
+    <label class="light-font">{{(profile$|async)?.PlanName}}</label>
+  </div>
+
+  <div>
+    <label class="light-font">The last year revenue</label>
+    <label class="light-font">{{(profile$|async)?.YearRevenue}}</label>
+  </div>
+
+  <div>
+    <label class="light-font">Creation Date</label>
+    <label class="light-font">{{(profile$|async)?.PolicyOpeningDate | utcToLocalTime |  date:'shortDate'}}</label>
+  </div>
+
+  <div>
+    <label class="light-font">Validation Date</label>
+    <label class="light-font">{{(profile$|async)?.ValidationDate | utcToLocalTime |  date:'shortDate'}}</label>
+  </div>
+</p-card>
+

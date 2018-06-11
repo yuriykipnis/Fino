@@ -1,0 +1,51 @@
+@import "mixins";
+
+.slider-form {
+  input, input:required, .ui-widget textarea, .ui-widget input {
+    border: $table-border;
+    border-radius: 1px;
+    &:hover:not(:focus) {
+      outline: $table-border !important;
+    }
+    &:focus {
+      border: $selected-border !important;
+    }
+  }
+
+  label {
+    padding: 0;
+    margin-bottom: 12px;
+  }
+
+  .col-lg-12 {
+    padding: 0;
+  }
+
+  .form-control {
+    @include light-font-md;
+    line-height: $at-line-height-18;
+    color: $at-dark-app-bar;
+    border-radius: 0;
+    margin-bottom: 20px;
+    padding: 6px 8px 12px 8px;
+
+    &:hover:not(:focus) {
+      outline: $table-border !important;
+    }
+
+    &:focus {
+      color: $at-dark-app-bar;
+      box-shadow: none;
+      border: $selected-border !important;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 0;
+  }
+
+  .ui-widget textarea {
+    color: $at-text-enable;
+    padding: 10px 12px 14px 12px;
+  }
+}

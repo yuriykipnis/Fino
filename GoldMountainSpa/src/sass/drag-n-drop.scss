@@ -1,0 +1,48 @@
+@import "mixins";
+
+.empty-area-text {
+  @include regular-font-lg;
+  padding-top: 12px;
+  text-transform: uppercase;
+  color: $at-dark-app-bar;
+}
+
+.dropArea {
+  margin: 0 24px 24px 24px;
+  width: 512px;
+}
+
+.emptyArea {
+  outline: 1px solid $at-border-light-grey !important;
+  border: 2px solid $at-border-light !important;
+  text-align: center;
+  position: relative;
+  background-color: $at-artifact-panel;
+  height: 320px;
+
+  .empty-drop-area-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+  }
+  &.highlighted {
+    background-color: $at-bright-sky-blue;
+    outline: 1px solid $at-ocean !important;
+    .icon-ct-doc {
+      color: $at-ocean;
+    }
+    .drop-here {
+      @include regular-font-lg;
+      color: $at-ocean;
+      text-transform: uppercase;
+      padding-top: 12px;
+    }
+  }
+}
+
+.icon-ct-doc {
+  color: $at-purplish-grey;
+}
+

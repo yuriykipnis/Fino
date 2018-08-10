@@ -4,6 +4,5 @@
     {
         public string ConnectionString;
         public string Database;
-
     }
 }

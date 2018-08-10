@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using GoldMountainShared.Storage.Converters;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
 namespace GoldMountainShared.Storage.Documents
 {
     public class CreditAccount
     {
         [BsonId]
+        [JsonConverter(typeof(ObjectIdConverter))]
         public ObjectId InternalId { get; set; }
 
         public Guid Id { get; set; } = Guid.NewGuid();

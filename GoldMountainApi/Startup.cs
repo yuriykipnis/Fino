@@ -69,6 +69,13 @@ namespace GoldMountainApi
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             }));
+            services.AddCors(o => o.AddPolicy("ProdPolicy", builder =>
+            {
+                builder.SetIsOriginAllowed(origin => origin.Equals(
+                        Configuration.GetSection("Host:Name").Value))
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
 
             //services.AddAuthorization(options =>
             //{
@@ -97,6 +104,7 @@ namespace GoldMountainApi
             {
                 app.UseDeveloperExceptionPage();
                 app.UseCors("DevPolicy");
+                app.UseAuthentication();
             }
             else
             {
@@ -108,10 +116,10 @@ namespace GoldMountainApi
                         await context.Response.WriteAsync("Ooops... something wrong happened");
                     });
                 });
-            }
 
-            app.UseAuthentication();
-            
+                app.UseCors("ProdPolicy");
+                app.UseAuthentication();
+            }
 
             AutoMapper.Mapper.Initialize(cfg =>
             {

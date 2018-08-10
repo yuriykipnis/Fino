@@ -3,16 +3,15 @@ import { Observable } from 'rxjs/Observable';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { SeInsurProfile } from "../models/se-insur.profile";
 import {PolicyStatus} from "../models/basic-insur.profile";
+import {environment} from "../../../environments/environment";
 
 @Injectable()
 export class SeInsurService {
 
-  clientApiUrl: String = 'http://localhost:5001/api';
-
   constructor(private http: HttpClient) { }
 
   getAccounts$(userId : string, passportId: string): Observable<SeInsurProfile[]> {
-    let url = this.clientApiUrl + '/user/' + passportId + '/SeInsurAccounts';
+    let url = environment.api.clientApiUrl + '/user/' + passportId + '/SeInsurAccounts';
     let headers = new HttpHeaders()
       .set('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
 
@@ -47,7 +46,7 @@ export class SeInsurService {
   }
 
   getProfile$(profileId: string): Observable<SeInsurProfile> {
-    let url = this.clientApiUrl + '/SeInsurAccounts/' + profileId;
+    let url = environment.api.clientApiUrl + '/SeInsurAccounts/' + profileId;
     let headers = new HttpHeaders()
       .set('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
 

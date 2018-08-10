@@ -124,10 +124,10 @@ namespace DataProvider.Controllers
             IEnumerable<RawBankAccount> newAccounts;
             var p = AutoMapper.Mapper.Map<Provider>(providerDto);
             var provider = _providerRepository.Find(p);
-            if (provider != null)
+            if (provider?.Result != null)
             {
                 newAccounts = (from account in accounts
-                    where !IsAccountExists(account)
+                    where !IsAccountExists(account, provider.Result.UserId)
                     select account).ToList();
             }
             else
@@ -137,11 +137,14 @@ namespace DataProvider.Controllers
             return newAccounts;
         }
 
-        private bool IsAccountExists(RawBankAccount account)
+        private bool IsAccountExists(RawBankAccount account, string userId)
         {
-            var result = _accountRepository.FindAccountByCriteria(a => a.AccountNumber.Equals(account.AccountNumber) &&
-                                                                     a.BankNumber.Equals(account.BankNumber) &&
-                                                                     a.BranchNumber.Equals(account.BranchNumber));
+            var result = _accountRepository.FindAccountByCriteria(a => 
+                a.AccountNumber.Equals(account.AccountNumber) &&
+                a.BankNumber.Equals(account.BankNumber) &&
+                a.BranchNumber.Equals(account.BranchNumber) &&
+                a.UserId.Equals(userId));
+
             return result.Result != null;
         }
 

@@ -48,6 +48,9 @@ import { AccountsSummaryComponent } from './accounts/accounts-summary/accounts-s
 import {AccountsSummaryService} from "./accounts/services/accounts-summary.service";
 import { IncomeViewComponent } from './accounts/views/income-view/income-view.component';
 import { ExpenseViewComponent } from './accounts/views/expense-view/expense-view.component';
+import { LoansSidebarComponent } from './loans/loans-sidebar/loans-sidebar.component';
+import { LoansOverviewComponent } from './loans/loans-overview/loans-overview.component';
+import { LoansComponent } from './loans/loans.component';
 
 @NgModule({
   declarations: [
@@ -75,7 +78,10 @@ import { ExpenseViewComponent } from './accounts/views/expense-view/expense-view
     SummaryComponent,
     AccountsSummaryComponent,
     IncomeViewComponent,
-    ExpenseViewComponent
+    ExpenseViewComponent,
+    LoansSidebarComponent,
+    LoansOverviewComponent,
+    LoansComponent
   ],
   imports: [
     BrowserModule,

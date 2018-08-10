@@ -27,7 +27,14 @@
            routerLinkActive="active"
            (click)="switchTab('insurance')">
           Insurance
-
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link tab link"
+           [routerLink]="['loans/summary']"
+           routerLinkActive="active"
+           (click)="switchTab('loans')">
+          Loans
         </a>
       </li>
       <li class="nav-item">
@@ -59,7 +66,7 @@
           <div class="icon-ct-menu"></div>
         </a>
       </li>
-      <li class="nav-item link" >
+      <li class="nav-button link">
         <a class="nav-link tab" *ngIf="!authService.isLoggedIn"
            (click)="authService.login()">
           <span id="login" class="nav-log">Login</span>

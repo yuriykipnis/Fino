@@ -108,7 +108,7 @@ nav {
         border: 0;
         border-radius: 0;
         margin: 0;
-      }
+      };
     }
 
     select{
@@ -130,7 +130,15 @@ nav {
   margin: 0;
 }
 
+.nav-log:hover {
+  background: $at-peacock-greyish-blue;
+}
+
 .nav-item {
+  margin: 4px 0 4px 0;
+}
+
+.nav-button {
   margin: 4px 0 4px 0;
 }
 

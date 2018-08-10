@@ -11,5 +11,10 @@ export const environment = {
     domain: 'gold-mountain.eu.auth0.com', // e.g., you.auth0.com
     audience: 'http://localhost:5001', // e.g., http://localhost:3001
     redirectUri: 'http://localhost:4200/login-callback',
+  },
+
+  api: {
+    clientApiUrl: 'http://localhost:5001/api',
+    dataProviderUrl: 'http://localhost:5002/api',
   }
 };

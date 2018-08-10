@@ -80,13 +80,21 @@ namespace GoldMountainApi.Controllers
             var bankAccount = await _bankAccountRepository.GetAccount(id);
             if (bankAccount != null)
             {
-                return bankAccount.Transactions.Where(t => t.PaymentDate.Year.Equals(year) && t.PaymentDate.Month.Equals(month));
+                return bankAccount.Transactions.Where(t =>
+                {
+                    var paymentDate = t.PaymentDate.ToLocalTime();
+                    return paymentDate.Year.Equals(year) && paymentDate.Month.Equals(month);
+                });
             }
 
             var creditAccount = await _creditAccountRepository.GetAccount(id);
             if (creditAccount != null)
             {
-                return creditAccount.Transactions.Where(t => t.PaymentDate.Year.Equals(year) && t.PaymentDate.Month.Equals(month));
+                return creditAccount.Transactions.Where(t =>
+                {
+                    var paymentDate = t.PaymentDate.ToLocalTime();
+                    return paymentDate.Year.Equals(year) && paymentDate.Month.Equals(month);
+                });
             }
 
             return new List<Transaction>();

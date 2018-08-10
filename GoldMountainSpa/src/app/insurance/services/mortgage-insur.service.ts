@@ -3,17 +3,15 @@ import { Observable } from 'rxjs/Observable';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {MortgageCoverage, MortgageInsurProfile} from "../models/mortgage-insur.profile";
 import {PolicyStatus} from "../models/basic-insur.profile";
-
+import {environment} from "../../../environments/environment";
 
 @Injectable()
 export class MortgageInsurService {
 
-  clientApiUrl: String = 'http://localhost:5001/api';
-
   constructor(private http: HttpClient) { }
 
   getAccounts$(userId : string, passportId: string): Observable<MortgageInsurProfile[]> {
-    let url = this.clientApiUrl + '/user/' + passportId + '/MortgageInsurAccounts';
+    let url = environment.api.clientApiUrl + '/user/' + passportId + '/MortgageInsurAccounts';
     let headers = new HttpHeaders()
       .set('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
 
@@ -51,7 +49,7 @@ export class MortgageInsurService {
   }
 
   getProfile$(profileId: string): Observable<MortgageInsurProfile> {
-    let url = this.clientApiUrl + '/MortgageInsurAccounts/' + profileId;
+    let url = environment.api.clientApiUrl + '/MortgageInsurAccounts/' + profileId;
     let headers = new HttpHeaders()
       .set('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
 

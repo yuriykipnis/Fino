@@ -6,10 +6,10 @@ import {CreditAccount} from "../accounts/models/credit-account";
 import {CreatingAccount} from "../accounts/models/creating-account";
 import {InstitutionType} from "../models/institution";
 import {Transaction} from "../models/transaction";
+import {environment} from "../../environments/environment";
 
 @Injectable()
 export class ProviderService {
-  dataProviderUrl: String = 'http://localhost:5002/api';
 
   constructor(private http: HttpClient) {
   }
@@ -27,7 +27,7 @@ export class ProviderService {
       CreditAccounts: creditAccounts  as CreditAccount[],
     }
 
-    var response = this.http.post(this.dataProviderUrl + '/provider', body).map((res: any) => {
+    var response = this.http.post(environment.api.dataProviderUrl + '/provider', body).map((res: any) => {
       if (institutionType == InstitutionType.Bank) {
         return this.parseBankAccountsResponse(res);
       }

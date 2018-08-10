@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using GoldMountainShared.Models;
+using GoldMountainShared.Storage.Converters;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
 namespace GoldMountainShared.Storage.Documents
 {
     public class Institution
     {
         [BsonId]
+        [JsonConverter(typeof(ObjectIdConverter))]
         public ObjectId InternalId { get; set; }
 
         public Guid Id { get; set; } = Guid.NewGuid();

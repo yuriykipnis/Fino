@@ -58,6 +58,13 @@ namespace DataProvider
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             }));
+            services.AddCors(o => o.AddPolicy("ProdPolicy", builder =>
+            {
+                builder.SetIsOriginAllowed(origin => origin.Equals(
+                        Configuration.GetSection("Host:Name").Value))
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
 
             services.AddSingleton<IInstitutionRepository, InstitutionRepository>();
             services.AddTransient<IProviderRepository, ProviderRepository>();
@@ -78,7 +85,7 @@ namespace DataProvider
             else
             {
                 app.UseErrorWrapping();
-                
+
                 app.UseExceptionHandler(options =>
                 {
                     options.Run(async context =>
@@ -87,6 +94,7 @@ namespace DataProvider
                         await context.Response.WriteAsync("Ooops... something went wrong");
                     });
                 });
+                app.UseCors("ProdPolicy");
             }
 
             AutoMapper.Mapper.Initialize(cfg =>

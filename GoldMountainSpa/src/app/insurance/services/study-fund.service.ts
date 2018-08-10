@@ -3,16 +3,15 @@ import { Observable } from 'rxjs/Observable';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {PolicyStatus} from "../models/basic-insur.profile";
 import {StudyFundProfile} from "../models/study-fund.profile";
+import {environment} from "../../../environments/environment";
 
 @Injectable()
 export class StudyFundService {
 
-  clientApiUrl: String = 'http://localhost:5001/api';
-
   constructor(private http: HttpClient) { }
 
   getAccounts$(userId : string, passportId: string): Observable<StudyFundProfile[]> {
-    let url = this.clientApiUrl + '/user/' + passportId + '/StudyFundAccounts';
+    let url = environment.api.clientApiUrl + '/user/' + passportId + '/StudyFundAccounts';
     let headers = new HttpHeaders()
       .set('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
 
@@ -43,7 +42,7 @@ export class StudyFundService {
   }
 
   getProfile$(profileId : string): Observable<StudyFundProfile> {
-    let url = this.clientApiUrl + '/StudyFundAccounts/' + profileId;
+    let url = environment.api.clientApiUrl + '/StudyFundAccounts/' + profileId;
     let headers = new HttpHeaders()
       .set('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
 

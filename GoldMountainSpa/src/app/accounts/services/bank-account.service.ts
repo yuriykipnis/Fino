@@ -3,12 +3,10 @@ import { Observable } from 'rxjs/Observable';
 import { HttpClient } from '@angular/common/http';
 import { BankAccount } from '../models/bank-account';
 import { AccountService } from "./account.service";
+import {environment} from "../../../environments/environment";
 
 @Injectable()
 export class BankAccountService implements AccountService {
-
-  clientApiUrl: String = 'http://localhost:5001/api';
-  dataProviderUrl: String = 'http://localhost:5002/api';
 
   constructor(private http: HttpClient) { }
 
@@ -21,7 +19,7 @@ export class BankAccountService implements AccountService {
       Credentials: credentials
     };
 
-    var response = this.http.post<BankAccount[]>(this.dataProviderUrl + '/BankAccounts', body).map((res: any[]) => {
+    var response = this.http.post<BankAccount[]>(environment.api.dataProviderUrl + '/BankAccounts', body).map((res: any[]) => {
       let result = new Array<BankAccount>();
       res.forEach(r => result.push(
         new BankAccount({
@@ -33,7 +31,8 @@ export class BankAccountService implements AccountService {
           AccountNumber: r.accountNumber,
           Balance: r.balance,
           IsActive: true,
-          LastUpdate: r.updatedOn
+          LastUpdate: r.updatedOn,
+          Transactions: []
         })));
       return result;
     });

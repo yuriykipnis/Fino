@@ -3,17 +3,15 @@ import { Observable } from 'rxjs/Observable';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {ProvidentFundProfile} from "../models/provident-fund.profile";
 import {PolicyStatus} from "../models/basic-insur.profile";
-
+import {environment} from "../../../environments/environment";
 
 @Injectable()
 export class ProvidentFundService {
 
-  clientApiUrl: String = 'http://localhost:5001/api';
-
   constructor(private http: HttpClient) { }
 
   getAccounts$(userId : string, passportId: string): Observable<ProvidentFundProfile[]> {
-    let url = this.clientApiUrl + '/user/' + passportId + '/ProvidentFundAccounts';
+    let url = environment.api.clientApiUrl + '/user/' + passportId + '/ProvidentFundAccounts';
     let headers = new HttpHeaders()
       .set('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
 
@@ -25,7 +23,6 @@ export class ProvidentFundService {
           ProviderName: la.providerName,
           PolicyId: la.policyId,
           PolicyStatus: la.policyStatus as PolicyStatus,
-
           PolicyOpeningDate: la.policyOpeningDate,
           ValidationDate: la.validationDate
         })));
@@ -36,7 +33,7 @@ export class ProvidentFundService {
   }
 
   getProfile$(profileId: string): Observable<ProvidentFundProfile> {
-    let url = this.clientApiUrl + '/ProvidentFundAccounts/' + profileId;
+    let url = environment.api.clientApiUrl + '/ProvidentFundAccounts/' + profileId;
     let headers = new HttpHeaders()
       .set('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
 

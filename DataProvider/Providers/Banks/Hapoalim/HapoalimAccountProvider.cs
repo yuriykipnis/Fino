@@ -63,8 +63,9 @@ namespace DataProvider.Providers.Banks.Hapoalim
         private HapoalimAccountResponse GenerateAccountByAccountId(BankAccountDescriptor accountDescriptor)
         {
             var accounts = _api.GetAccountsData();
-            var account = accounts.FirstOrDefault(a => a.AccountNumber
-                .Equals(accountDescriptor?.AccountNumber, StringComparison.CurrentCultureIgnoreCase));
+            var account = accounts.FirstOrDefault(a => 
+                a.AccountNumber.Equals(accountDescriptor?.AccountNumber, StringComparison.CurrentCultureIgnoreCase)
+                && a.BranchNumber == accountDescriptor?.BranchNumber);
 
             return account;
         }
@@ -75,8 +76,8 @@ namespace DataProvider.Providers.Banks.Hapoalim
             var result = new List<Transaction>();
             foreach (var transaction in transactions.Transactions)
             {
-                var eventDate = new DateTime((int) transaction.EventDate / 10000, (int) transaction.EventDate / 100 % 100,
-                    (int) transaction.EventDate % 100).AddMinutes((int) transaction.ExpandedEventDate % 100);
+                var eventDate = new DateTime((int) (transaction.EventDate / 10000), (int) (transaction.EventDate / 100 % 100),
+                    (int) (transaction.EventDate % 100)).AddMinutes((int) (transaction.ExpandedEventDate % 100));
                 result.Add(new Transaction
                 {
                     Id = (long)(transaction.ReferenceNumber + Math.Round(transaction.EventAmount) + Math.Round(transaction.CurrentBalance)),

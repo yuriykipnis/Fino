@@ -5,17 +5,15 @@ import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 import {CreditAccount} from "../accounts/models/credit-account";
 import {Transaction} from "../models/transaction";
+import {environment} from "../../environments/environment";
 
 @Injectable()
 export class CreditService {
 
-  clientApiUrl: String = 'http://localhost:5001/api';
-  dataProviderUrl: String = 'http://localhost:5002/api';
-
   constructor(private http: HttpClient) {  }
 
   getAccounts$(userId : string): Observable<CreditAccount[]> {
-    let url = this.clientApiUrl + '/user/' + userId + '/CreditAccounts';
+    let url = environment.api.clientApiUrl + '/user/' + userId + '/CreditAccounts';
     let headers = new HttpHeaders()
       .set('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
 
@@ -67,7 +65,7 @@ export class CreditService {
     let headers = new HttpHeaders()
       .set('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
 
-    let url = this.clientApiUrl + '/accounts/' + accountId + '/transactions';
+    let url = environment.api.clientApiUrl + '/accounts/' + accountId + '/transactions';
     var response = this.http.get<Transaction[]>(url, {params: params, headers: headers}).map((res: any) => {
       let result = new Array<Transaction>();
       res.forEach(t => result.push(

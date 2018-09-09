@@ -6,30 +6,23 @@ import {NewAccountComponent} from "./accounts/new-account/new-account.component"
 import {AuthGuard} from "./auth/auth.guard";
 import {LoginCallbackComponent} from "./auth/login-callback/login-callback.component";
 import {OverviewComponent} from "./overview/overview.component";
-import {TransactionsViewComponent} from "./accounts/views/transactions-view/transactions-view.component";
+import {TransactionsViewComponent} from "./accounts/transactions-view/transactions-view.component";
 import {StudyFundViewComponent} from "./insurance/views/study-fund-view/study-fund-view.component";
 import {SeInsurViewComponent} from "./insurance/views/se-insur-view/se-insur-view.component";
 import {PensionFundViewComponent} from "./insurance/views/pension-fund-view/pension-fund-view.component";
 import {ProvidentFundViewComponent} from "./insurance/views/provident-fund-view/provident-fund-view.component";
 import {MortgageInsurViewComponent} from "./insurance/views/mortgage-insur-view/mortgage-insur-view.component";
 import {SummaryComponent} from "./insurance/views/summary/summary.component";
-import {AccountsSummaryComponent} from "./accounts/accounts-summary/accounts-summary.component";
-import {IncomeViewComponent} from "./accounts/views/income-view/income-view.component";
-import {ExpenseViewComponent} from "./accounts/views/expense-view/expense-view.component";
 import {LoansComponent} from "./loans/loans.component";
-import {LoansOverviewComponent} from "./loans/loans-overview/loans-overview.component";
+import {LoanViewComponent} from './loans/loan-view/loan-view.component';
+import {LoansSummaryComponent} from './loans/loans-summary/loans-summary.component';
 
 export const routes: Routes = [
   { path: 'overview', component: OverviewComponent},
   { path: 'accounts', component: AccountsComponent, canActivate: [AuthGuard],
     children: [
       {path: 'add', component: NewAccountComponent},
-      {path: 'summary', component: AccountsSummaryComponent},
-      {path: 'income', component: IncomeViewComponent},
-      {path: 'expense', component: ExpenseViewComponent},
-      {path: 'bankaccount/:AccountId', component: TransactionsViewComponent},
-      {path: 'creditaccount/:AccountId', component: TransactionsViewComponent}
-      //{path: 'view', component: AccountViewComponent}
+      {path: 'summary', component: TransactionsViewComponent}
     ]
   },
   { path: 'insurance', component: InsuranceComponent, canActivate: [AuthGuard],
@@ -44,7 +37,8 @@ export const routes: Routes = [
   },
   { path: 'loans', component: LoansComponent, canActivate: [AuthGuard],
     children: [
-      {path: 'summary', component: LoansOverviewComponent}
+      {path: 'summary', component: LoansSummaryComponent},
+      {path: ':LoanId', component: LoanViewComponent},
     ]
   },
   { path: 'planning', component: PlanningComponent, canActivate: [AuthGuard] },

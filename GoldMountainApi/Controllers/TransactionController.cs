@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Authentication;
 using System.Threading.Tasks;
+using GoldMountainApi.Controllers.Helper;
 using GoldMountainApi.Services;
+using GoldMountainShared.Models.Bank;
 using GoldMountainShared.Models.Shared;
 using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
@@ -19,18 +22,63 @@ namespace GoldMountainApi.Controllers
         private readonly IBankAccountRepository _bankAccountRepository;
         private readonly ICreditAccountRepository _creditAccountRepository;
         private readonly IDataService _dataService;
+        private readonly IValidationHelper _validationHelper;
 
         public TransactionController(IBankAccountRepository bankAccountRepository, ICreditAccountRepository creditAccountRepository, 
-                                     IDataService dataService)
+                                     IDataService dataService, IValidationHelper validationHelper)
         {
             _bankAccountRepository = bankAccountRepository;
             _creditAccountRepository = creditAccountRepository;
             _dataService = dataService;
+            _validationHelper = validationHelper;
         }
+
+        [HttpGet("user/{userId}/transactions")]
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+        public async Task<IActionResult> GetAgregatedTransactionsByDate(String userId,
+            [FromQuery(Name = "aggregated")] bool isAggregated,
+            [FromQuery(Name = "year")] int year, [FromQuery(Name = "month")] int month)
+        {
+            IEnumerable<TransactionDto> result;
+
+            if (!_validationHelper.ValidateUserPermissions(User, userId))
+            {
+                throw new AuthenticationException();
+            }
+
+            var banksAccounts = await _bankAccountRepository.GetAccountsByUserId(userId) ?? new List<BankAccount>();
+            var creditAccounts = await _creditAccountRepository.GetAccountsByUserId(userId) ?? new List<CreditAccount>();
+
+            List<Transaction> transactions = new List<Transaction>();
+            foreach (var banksAccount in banksAccounts)
+            {
+                var trs = GetTransactionsForAccount(banksAccount.Id, year, month).Result;
+                transactions.AddRange(trs);
+            }
+
+            foreach (var creditAccount in creditAccounts)
+            {
+                var trs = GetTransactionsForAccount(creditAccount.Id, year, month).Result;
+                transactions.AddRange(trs);
+            }
+
+            try
+            {
+                result = AutoMapper.Mapper.Map<IEnumerable<TransactionDto>>(transactions);
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
+            return Ok(result);
+        }
+
 
         //accounts/{accountId}/transactions?year=2018&month=3
         [HttpGet("accounts/{accountId}/transactions")]
-        public async Task<IActionResult> GetTransactionsForAccountByDate(String accountId, 
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+        public async Task<IActionResult> GetTransactionsForAccountByDate(String accountId,
             [FromQuery(Name = "year")] int year, [FromQuery(Name = "month")] int month)
         {
             IEnumerable<TransactionDto> result;
@@ -55,6 +103,7 @@ namespace GoldMountainApi.Controllers
         }
 
         [HttpPost("accounts/{accountId}/transactions")]
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         public async Task<IActionResult> AddTransactionsToAccount(
             [FromBody] IEnumerable<TransactionDto> transactions, String accountId)
         {

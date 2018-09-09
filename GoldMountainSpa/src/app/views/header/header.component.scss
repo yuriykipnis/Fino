@@ -1,5 +1,17 @@
 @import "../../../sass/styles";
 
+nav {
+  width: $navbar-width;
+  height: $navbar-height;
+  background-color: $at-dark-app-bar;
+  padding: 0;
+  min-width: 1000px;
+}
+
+.navbar-bw{
+  min-width: 1000px
+}
+
 .brand-name {
   @include regular-font-xxl;
   color: $at-azure;
@@ -66,13 +78,6 @@
   vertical-align: top;
 }
 
-nav {
-  width: $navbar-width;
-  height: $navbar-height;
-  background-color: $at-dark-app-bar;
-  padding: 0;
-}
-
 .nav-outline {
   background-color: $at-ocean;
   height: 4px;
@@ -80,7 +85,7 @@ nav {
 }
 
 .navbar-brand {
-  margin: 0;
+  margin: 0 40px 0 0;
   padding: 0;
 }
 

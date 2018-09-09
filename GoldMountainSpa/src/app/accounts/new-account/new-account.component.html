@@ -35,8 +35,13 @@
           </form>
         </div>
         <div class="form-group" *ngIf="isLoading">
-          Please wait...
-          We are loading your information
+          <span class="slider-body wait-message">Please wait... We are loading your accounts</span>
+          <p-progressSpinner class="ui-g-2 ui-g-offset-5"
+                             [style]="{width: '60px', height: '60px',top: '30%'}"
+                             strokeWidth="2"
+                             animationDuration="1.0s"
+                             fill="white">
+          </p-progressSpinner>
         </div>
         <div class="form-group" *ngIf="errorMessage">
           {{errorMessage}}
@@ -45,10 +50,15 @@
           <label class="slider-body light-font">Accounts</label>
           <div *ngFor="let account of accounts">
             <div class="group-items" *ngIf="isBankAccount(account)">
-              <label >
-                <input type="checkbox" [name]="account.AccountNumber"  [(ngModel)]=account.IsActive>
-                {{account.Label}}-{{account.BranchNumber}}-{{account.AccountNumber}}
-              </label>
+              <p-card class="bw-account-item">
+                <div>
+                  <span>
+                    <img class="switch-icon link" (click)="onSwitchToggle(account)" *ngIf="!account.IsActive" src="assets/icons/switch-off.svg"/>
+                    <img class="switch-icon link" (click)="onSwitchToggle(account)" *ngIf="account.IsActive" src="assets/icons/switch-on.svg"/>
+                  </span>
+                  <span class="account-number">{{account.BankNumber}}-{{account.BranchNumber}}-{{account.AccountNumber}}</span>
+                </div>
+              </p-card>
             </div>
 
             <div class="group-items" *ngIf="isCreditAccount(account)">

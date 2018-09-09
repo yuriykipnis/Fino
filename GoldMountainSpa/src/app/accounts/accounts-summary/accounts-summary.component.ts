@@ -1,21 +1,41 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import {ChartModule} from 'primeng/chart';
 import {AccountsSummaryService} from "../services/accounts-summary.service";
 import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
+import {SelectButtonModule} from 'primeng/selectbutton';
+import {ButtonModule} from 'primeng/button';
 
 @Component({
   selector: 'app-accounts-summary',
   templateUrl: './accounts-summary.component.html',
-  styleUrls: ['./accounts-summary.component.scss']
+  styleUrls: ['./accounts-summary.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class AccountsSummaryComponent implements OnInit, OnDestroy {
   incomeOutcomeData: any;
   incomeData:any;
   expenseData: any;
+
+  filterScope: {label:string, value:string}[];
+  filterType: {label:string, value:string}[];
+  selectedScope: string;
+  selectedType: string;
+
   accountSummaryUpdateSubscription: Subscription;
 
   constructor(public accountSummaryService: AccountsSummaryService) {
+    this.filterScope = [
+      {label:'Overview', value:'Overview'},
+      {label:'Account', value:'Account'}
+    ];
+
+    this.filterType = [
+      {label:'Income', value:'Income'},
+      {label:'All', value:'All'},
+      {label:'Outcome', value:'Outcome'}
+    ];
+
     this.accountSummaryUpdateSubscription = this.accountSummaryService.summary$
       .subscribe(s => {
         this.updateIncomeOutcomeData();
@@ -25,6 +45,9 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.selectedScope = 'Overview';
+    this.selectedType = 'All';
+
     this.updateIncomeOutcomeData();
   }
 
@@ -32,6 +55,10 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
     this.accountSummaryUpdateSubscription.unsubscribe();
   }
 
+  getBalanceColor(balance : number)
+  {
+    return balance >= 0 ? "#8fac67" : "#d22a77";
+  }
 
   updateIncomeOutcomeData(){
     this.incomeOutcomeData = {

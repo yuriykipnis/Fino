@@ -1,0 +1,53 @@
+<div class="commands-container ui-g">
+  <p-button class="bw-button right" label="Add Account" routerLink="add" ></p-button>
+</div>
+
+<div class="nav-outline">
+  <div *ngIf="false" class="animate-moving-rec"></div>
+</div>
+
+<div class="accounts-status-panel ui-g-12 ui-g-nopad" style="margin-top: 16px">
+  <div class="accounts-status-sub-panel ui-g-12 ui-g-nopad">
+    <div>
+      <span class="ui-g-8">Period Income</span>
+      <span class="ui-g-4 balance" [ngStyle]="{'color': getBalanceColor(periodIncome)}">
+              {{periodIncome | currency:'ILS':'symbol':'1.0-0'}}</span>
+    </div>
+    <div>
+      <span class="ui-g-8">Period Expense</span>
+      <span class="ui-g-4 balance" [ngStyle]="{'color': getBalanceColor(-1)}">
+              -{{periodExpense | currency:'ILS':'symbol':'1.0-0'}}</span>
+    </div>
+    <div>
+      <span class="ui-g-8">Period Balance</span>
+      <span class="ui-g-4 balance" [ngStyle]="{'color': getBalanceColor(periodBalance)}">
+              {{periodBalance | currency:'ILS':'symbol':'1.0-0'}}</span>
+    </div>
+  </div>
+  <div class="accounts-status-sub-panel ui-g-12 ui-g-nopad">
+    <div>
+      <span class="ui-g-8">Total Balance</span>
+      <span class="ui-g-4 balance" [ngStyle]="{'color': getBalanceColor(totalBalance)}">
+              {{totalBalance | currency:'ILS':'symbol':'1.0-0'}}</span>
+    </div>
+  </div>
+
+  <div class="accounts-status-sub-panel ui-g-12 ui-g-nopad">
+    <div>
+      <span class="ui-g-8">Period Bank Fees</span>
+      <span class="ui-g-4 balance" [ngStyle]="{'color': getBalanceColor(0)}">
+              {{0 | currency:'ILS':'symbol':'1.0-0'}}</span>
+    </div>
+    <div>
+      <span class="ui-g-8">Period Credit Fees</span>
+      <span class="ui-g-4 balance" [ngStyle]="{'color': getBalanceColor(0)}">
+              {{0 | currency:'ILS':'symbol':'1.0-0'}}</span>
+    </div>
+  </div>
+
+  <div class="ui-g-12 ui-g-nopad">
+    <span class="ui-g-8">Income VS Expenses</span>
+    <p-chart type="bar" [data]="statusData"></p-chart>
+  </div>
+</div>
+

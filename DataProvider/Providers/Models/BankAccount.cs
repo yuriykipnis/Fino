@@ -12,5 +12,6 @@ namespace DataProvider.Providers.Models
         public Double Balance { get; set; } = Double.NaN;
 
         public IList<Transaction> Transactions { get; set; } = new List<Transaction>();
+        public IList<Loan> Loans { get; set; } = new List<Loan>();
     }
 }

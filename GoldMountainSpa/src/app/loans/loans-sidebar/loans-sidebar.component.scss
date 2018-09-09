@@ -1,0 +1,23 @@
+@import "../../../sass/styles";
+@import "../../../sass/sidebar";
+@import "../../../sass/sidebar-item";
+
+p{
+  margin-bottom: 0;
+}
+
+.loans-sidebar {
+  height:100%;
+  background-color: $at-dark-app-bar;
+  padding:10px;
+  overflow-y: auto;
+  min-width: 300px;
+}
+
+.right {
+  float: right;
+}
+
+.basic-text{
+  @include light-font-md;
+}

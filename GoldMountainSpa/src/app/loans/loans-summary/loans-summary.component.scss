@@ -1,0 +1,15 @@
+@import "../../../sass/styles";
+@import "../../../sass/sidebar";
+
+.table-scrollable{
+  height: 94%;
+  overflow-y: auto;
+}
+
+.label-text{
+  @include light-font-xl;
+}
+
+.light-label-text{
+  @include light-font-lg;
+}

@@ -60,6 +60,12 @@ namespace DataProvider.Providers.Banks.Hapoalim
             return GetAccountTransactions( account, startTime, endTime);
         }
 
+        public IEnumerable<Loan> GetLoans(BankAccountDescriptor accountDescriptor)
+        {
+            var account = GenerateAccountByAccountId(accountDescriptor);
+            return GetAccountLoans(account);
+        }
+
         private HapoalimAccountResponse GenerateAccountByAccountId(BankAccountDescriptor accountDescriptor)
         {
             var accounts = _api.GetAccountsData();
@@ -93,7 +99,71 @@ namespace DataProvider.Providers.Banks.Hapoalim
 
             return result;
         }
-       
+
+        private IList<Loan> GetAccountLoans(HapoalimAccountResponse accountDto)
+        {
+            var loans = _api.GetMortgages(accountDto);
+            var result = new List<Loan>();
+            foreach (var loan in loans.Data)
+            {
+                var startDate = (loan.ExecutingDate == 0) ? DateTime.MinValue : new DateTime((int)(loan.ExecutingDate / 10000), (int)(loan.ExecutingDate / 100 % 100),
+                    (int)(loan.ExecutingDate % 100)).AddMinutes((int)(loan.ExecutingDate % 100));
+
+                var endDate = (loan.CalculatedEndDate == 0) ? DateTime.MinValue : new DateTime((int)(loan.CalculatedEndDate / 10000), (int)(loan.CalculatedEndDate / 100 % 100),
+                    (int)(loan.CalculatedEndDate % 100)).AddMinutes((int)(loan.CalculatedEndDate % 100));
+                
+
+                var newLoan = new Loan
+                {
+                    LoanId = loan.MortgageLoanSerialId,
+
+                    StartDate = startDate,
+                    EndDate = endDate,
+
+                    DeptAmount = loan.RevaluedBalance,
+                    LastPaymentAmount = loan.PaymentAmount,
+                    PrepaymentCommission = loan.PrepaymentCommissionTotalAmount,
+
+                    InsuranceCompany = loan.LifeInsuranceCompanyName,
+                    InterestType = loan.InterestTypeDescription,
+                    LinkageType = loan.LinkageTypeDescription,
+                };
+
+                Double origAmount = 0;
+                foreach (var subLoan in loan.SubLoanData)
+                {
+                    var sd = (subLoan.ExecutingDate == 0) ? DateTime.MinValue : new DateTime((int)(subLoan.ExecutingDate / 10000), (int)(subLoan.ExecutingDate / 100 % 100),
+                        (int)(subLoan.ExecutingDate % 100)).AddMinutes((int)(subLoan.ExecutingDate % 100));
+
+                    var ed = (subLoan.CalculatedEndDate == 0) ? DateTime.MinValue : new DateTime((int)(subLoan.CalculatedEndDate / 10000), (int)(subLoan.CalculatedEndDate / 100 % 100),
+                        (int)(subLoan.CalculatedEndDate % 100)).AddMinutes((int)(subLoan.CalculatedEndDate % 100));
+
+                    var ned = (subLoan.NextExitDate == 0) ? DateTime.MinValue : new DateTime((int)(subLoan.NextExitDate / 10000), (int)(subLoan.NextExitDate / 100 % 100),
+                        (int)(subLoan.NextExitDate % 100)).AddMinutes((int)(subLoan.NextExitDate % 100));
+
+                    origAmount += subLoan.SubLoansPrincipalAmount;
+                    newLoan.SubLoans.Add(new Loan.SubLoan
+                    {
+                        Id = subLoan.SubLoansSerialId.ToString(),
+                        OriginalAmount = subLoan.SubLoansPrincipalAmount,
+                        StartDate = sd,
+                        EndDate = ed,
+                        NextExitDate = ned,
+                        PrincipalAmount = subLoan.PrincipalBalanceAmount,
+                        InterestAmount = subLoan.InterestAndLinkageTotalAmount,
+                        DebtAmount = subLoan.PrincipalAndInterestAndInterestDeferredTotalAmount,
+                        InterestRate = subLoan.ValidityInterestRate
+                    });
+                }
+
+                newLoan.OriginalAmount = origAmount;
+                result.Add(newLoan);
+            }
+
+            return result;
+        }
+
+
         private BankAccount GetAccountInfo(HapoalimAccountResponse account)
         {
             var result = new BankAccount

@@ -1,0 +1,12 @@
+@import '~sass/variables';
+@import '~sass/mixins';
+
+
+.wait-message{
+  @include light-font-lg;
+}
+.account-number{
+  @include light-font-lg;
+  float: right;
+}
+

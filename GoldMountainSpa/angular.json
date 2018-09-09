@@ -23,6 +23,9 @@
             },
             "assets": [
               "src/assets",
+              "src/assets/brand/gm-icon.ico",
+              "src/assets/icons/switch-off.svg",
+              "src/assets/icons/switch-on.svg",
               "src/web.config"
             ],
             "styles": [
@@ -45,6 +48,7 @@
               "src/sass/animated-navbar.scss",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/font-awesome/css/font-awesome.min.css",
+              "node_modules/primeicons/primeicons.css",
               "node_modules/primeng/resources/primeng.min.css",
               "node_modules/primeng/resources/themes/omega/theme.css"
             ],
@@ -117,6 +121,7 @@
               "src/sass/animated-navbar.scss",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/font-awesome/css/font-awesome.min.css",
+              "node_modules/primeicons/primeicons.css",
               "node_modules/primeng/resources/primeng.min.css",
               "node_modules/primeng/resources/themes/omega/theme.css"
             ],

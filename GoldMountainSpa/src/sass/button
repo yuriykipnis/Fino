@@ -1,0 +1,33 @@
+@import "./styles";
+
+.bw-button .ui-button {
+  border: 1px solid $at-light-grey;
+  border-radius: 20px;
+  color: #ffffff;
+  background: $at-ligth-blue;
+  line-height: 1.8em;
+  -webkit-transition: background-color .2s;
+  -moz-transition: background-color .2s;
+  transition: background-color .2s;
+
+  &:hover{
+    border: 1px solid #1f89ce;
+    background: #1f89ce;
+    outline: 0 none;
+    color: #ffffff;
+  }
+
+  &:enabled {
+    border: 1px solid $at-light-grey;
+    border-radius: 20px;
+    color: #ffffff;
+    background: $at-ligth-blue;
+  }
+
+  &:enabled:active:focus {
+  }
+}
+
+.bw-button .ui-button .ui-button-text {
+  line-height: unset;
+}

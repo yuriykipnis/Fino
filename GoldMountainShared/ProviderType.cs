@@ -15,4 +15,11 @@ namespace GoldMountainShared
         Income,
         Expense
     };
+
+    public enum LoanType
+    {
+        Mortgage,
+        Regular
+    };
+    
 }

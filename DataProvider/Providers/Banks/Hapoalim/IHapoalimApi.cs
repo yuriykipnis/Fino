@@ -10,6 +10,7 @@ namespace DataProvider.Providers.Banks.Hapoalim
     {
         IEnumerable<HapoalimAccountResponse> GetAccountsData();
         HapoalimTransactionsResponse GetTransactions(HapoalimAccountResponse account, DateTime startTime, DateTime endTime);
+        HapoalimMortgagesResponse GetMortgages(HapoalimAccountResponse account);
         HapoalimBalanceResponse GetBalance(HapoalimAccountResponse account);
     }
 }

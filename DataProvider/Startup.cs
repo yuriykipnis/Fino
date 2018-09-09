@@ -27,6 +27,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
+using RawLoan = DataProvider.Providers.Models.Loan;
+using Loan = GoldMountainShared.Storage.Documents.Loan;
 using RawTransaction = DataProvider.Providers.Models.Transaction;
 using Transaction = GoldMountainShared.Storage.Documents.Transaction;
 using RawBankAccount = DataProvider.Providers.Models.BankAccount;
@@ -84,8 +87,6 @@ namespace DataProvider
             }
             else
             {
-                app.UseErrorWrapping();
-
                 app.UseExceptionHandler(options =>
                 {
                     options.Run(async context =>
@@ -121,6 +122,9 @@ namespace DataProvider
                 cfg.CreateMap<RawTransaction, Transaction>()
                     .ForSourceMember(src => src.Id, opt => opt.Ignore())
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(o => Guid.NewGuid()));
+
+                cfg.CreateMap<RawLoan, LoanDto>();
+                cfg.CreateMap<RawLoan, Loan>();
 
                 cfg.CreateMap<Transaction, TransactionDto>();
 

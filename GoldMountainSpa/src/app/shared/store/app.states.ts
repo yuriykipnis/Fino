@@ -7,6 +7,7 @@ import {StudyFundProfile} from "../../insurance/models/study-fund.profile";
 import {PensionFundProfile} from "../../insurance/models/pension-fund.profile";
 import {MortgageInsurProfile} from "../../insurance/models/mortgage-insur.profile";
 import {ProvidentFundProfile} from "../../insurance/models/provident-fund.profile";
+import {Loan} from "../../models/loan";
 
 export interface AppState {
   industriesState: IndustriesState;
@@ -18,6 +19,7 @@ export interface AppState {
   pensionFundProfilesState: PensionFundProfilesState;
   providentFundProfilesState: ProvidentFundProfilesState;
   studyFundProfilesState: StudyFundProfilesState;
+  loansState: LoansState;
 }
 
 export interface IndustriesState {
@@ -36,6 +38,9 @@ export interface CreditAccountsState {
   accounts: CreditAccount[];
 }
 
+export interface LoansState {
+  loans: Loan[];
+}
 
 export interface SeInsurProfilesState {
   profiles: SeInsurProfile[];

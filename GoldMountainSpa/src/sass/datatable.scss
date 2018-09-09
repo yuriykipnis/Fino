@@ -14,14 +14,22 @@
       padding: $table-cell-padding;
       border: $table-border;
       border-bottom: $table-bold-border;
-      background-color: $at-ultra-light-grey;
-      color: $at-dark-app-bar;
-      text-align: left;
+      background-color: $at-ligth-blue;
+      color: $at-ultra-light-grey;
       height: 48px;
       line-height: $at-line-height-14;
 
+      text: {
+        transform: uppercase;
+        align: left;
+      }
+
       &:hover {
-        cursor: default;
+        cursor: pointer;
+      }
+
+      &:focus {
+
       }
     }
     &.new-version, &.remove-file {
@@ -56,7 +64,8 @@
 
   .ui-datatable {
     th.ui-sortable-column:not(.ui-state-active):hover {
-      background-color: $at-ultra-light-grey;
+      background-color: $at-ligth-blue;
+      color: $at-ultra-light-grey;
     }
     .ui-datatable-data {
       tr {
@@ -114,8 +123,14 @@
           }
 
           &.ui-datatable-emptymessage {
+            //display: none;
             @include regular-font-md;
-            padding: $table-cell-padding;
+            padding: 20px 0 20px 0;
+            color: $at-purplish-grey;
+            text: {
+              transform: uppercase;
+              align: center;
+            }
 
             &:hover {
               background-color: white;
@@ -188,7 +203,8 @@
 .slider-grid, .history-grid, .drag-area-files-grid {
   th.ui-state-default.ui-unselectable-text {
     border-right: 0;
-    border-left: 0;
+    //border-left: 0;
+    border-bottom: 1px solid $at-border-light-grey;
 
     &:first-child {
       border-left: $table-border;
@@ -223,8 +239,8 @@
     }
 
     padding: $small-grid-cell-padding;
-    line-height: $at-line-height-14;
-    height: 36px;
+    line-height: $at-line-height-12;
+    height: 1em;
   }
 
   .ui-datatable .ui-datatable-data tr td {
@@ -302,20 +318,5 @@
   border-top: $table-border;
 }
 
-.drag-area-files-grid{
-  .ui-datatable {
-    .ui-datatable-scrollable-body{
-      margin-bottom:32px;
-    }
-    .ui-datatable-scrollable-view{
-      min-height: 320px;
-      background-color: $at-ultra-light-grey ;
-      .ui-datatable-scrollable-footer{
-        position: absolute;
-        bottom:0;
-      }
-    }
-  }
-}
 
 

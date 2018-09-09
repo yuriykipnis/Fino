@@ -105,6 +105,11 @@ namespace DataProvider.Providers.Banks.Hapoalim
             return transactionResponce;
         }
 
+        public HapoalimMortgagesResponse GetMortgages(HapoalimAccountResponse account)
+        {
+            throw new NotImplementedException();
+        }
+
         public HapoalimBalanceResponse GetBalance(HapoalimAccountResponse account)
         {
 

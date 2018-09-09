@@ -9,6 +9,7 @@ import * as MortgageInsurProfileReducer from '../../insurance/store/reducers/mor
 import * as PensionFundProfileReducer from '../../insurance/store/reducers/pension-fund-profile.reducer';
 import * as StudyFundProfileReducer from '../../insurance/store/reducers/study-fund-profile.reducer';
 import * as ProvidentFundProfileReducer from '../../insurance/store/reducers/provident-fund-profile.reducer';
+import * as LoanReducer from '../../loans/store/reducers/loan.reducer';
 import { environment } from "../../../environments/environment";
 
 export const reducers: ActionReducerMap<AppState> = {
@@ -19,9 +20,9 @@ export const reducers: ActionReducerMap<AppState> = {
   mortgageInsurProfilesState: MortgageInsurProfileReducer.reducer,
   pensionFundProfilesState: PensionFundProfileReducer.reducer,
   studyFundProfilesState: StudyFundProfileReducer.reducer,
-
   providentFundProfilesState: ProvidentFundProfileReducer.reducer,
-  userProfileState: UserReducer.reducer
+  userProfileState: UserReducer.reducer,
+  loansState: LoanReducer.reducer
 };
 
 export const metaReducers: MetaReducer<AppState>[] = !environment.production ? [logger] : [];

@@ -1,10 +1,12 @@
 import {CreatingAccount} from "./creating-account";
 import {Transaction} from "../../models/transaction";
+import {Loan} from "../../models/loan";
+
 
 export class BankAccount implements CreatingAccount {
   Id: string;
   Label: string;
-  IsActive: boolean
+  IsActive: boolean;
   ProviderName: string;
   BankNumber: string;
   BranchNumber: string;
@@ -12,6 +14,7 @@ export class BankAccount implements CreatingAccount {
   Balance: number;
   LastUpdate: string;
   Transactions: Transaction[];
+  Loans: Loan[];
 
   public constructor(init?:Partial<BankAccount>) {
     Object.assign(this, init);

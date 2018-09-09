@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
@@ -6,11 +6,13 @@ import { AppState } from "../shared/store/app.states";
 import {BankService} from "../services/bank.service";
 import {CreditService} from "../services/credit.service";
 import {UserProfileService} from "../services/user-profile.service";
+import * as fromLoanActions from "./store/actions/loan.action";
 
 @Component({
   selector: 'app-loans',
   templateUrl: './loans.component.html',
-  styleUrls: ['./loans.component.scss']
+  styleUrls: ['./loans.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class LoansComponent implements OnInit, OnDestroy {
 
@@ -33,14 +35,10 @@ export class LoansComponent implements OnInit, OnDestroy {
 
       this.bankService.getAccounts$(up.Id)
         .subscribe(res => {
-            this.isLoansLoading = false;
-          },
-          err => {
-            this.isLoansLoading = false;
-          });
+            res.forEach(r => {
+              this.store.dispatch(new fromLoanActions.FetchLoans(r.Loans));
+            });
 
-      this.creditService.getAccounts$(up.Id)
-        .subscribe(res => {
             this.isLoansLoading = false;
           },
           err => {

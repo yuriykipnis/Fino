@@ -1,2 +1,0 @@
-import { Industry } from "./industry";
-

@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import {CreditAccount} from "../../models/credit-account";
+import {TransactionType} from "../../../models/transaction";
 
 @Component({
   selector: 'app-sidebar-credit-account',
@@ -21,7 +22,8 @@ export class SidebarCreditAccountComponent implements OnInit {
       let tDate = new Date(t.PaymentDate);
       return tDate.getMonth() === now.getMonth() && tDate.getFullYear() === now.getFullYear();
     }).forEach(t => {
-      result += t.Amount;
+      result += (t.Type === TransactionType.Income) ? t.Amount : 0;
+      result -= (t.Type === TransactionType.Expense) ? t.Amount : 0;
     });
 
     return result;

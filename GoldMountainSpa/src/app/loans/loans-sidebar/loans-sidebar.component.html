@@ -1,3 +1,36 @@
-<p>
-  loans-sidebar works!
-</p>
+<div class="loans-sidebar">
+  <p-accordion class="bw-accordion" [multiple]="true" [expandIcon]="fa" [collapseIcon]="fa" activeIndex="[0,1]">
+
+    <p-accordionTab>
+      <p-header>
+        <div>
+          <span>Mortgages</span>
+        </div>
+      </p-header>
+
+      <div *ngFor="let loan of loans$ | async"
+           (click)="openLoanView(loan)">
+        <p-card class="bw-sidebar-item">
+          <div>
+            <span class="">{{loan.Id}}</span>
+            <span class="right">{{loan.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+          </div>
+          <div>
+            <span class="basic-text">{{loan.EndDate | utcToLocalTime | date:'MMMM, y'}}</span>
+            <span class="right">{{loan.InterestType}} - {{loan.LinkageType}}</span>
+          </div>
+        </p-card>
+      </div>
+    </p-accordionTab>
+
+    <p-accordionTab>
+      <p-header>
+        <div>
+          <span>Loans</span>
+        </div>
+      </p-header>
+
+    </p-accordionTab>
+
+  </p-accordion>
+</div>

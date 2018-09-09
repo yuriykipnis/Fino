@@ -1,4 +1,4 @@
-@import "../../../../sass/mixins";
+@import "../../../sass/treetable";
 
 .period{
   @include regular-font-xl;
@@ -8,13 +8,8 @@
   }
 }
 
-.main-container{
-  height:100%;
-  padding:0;
-  padding-right: 5%;
-}
-
 .table-scrollable{
-  height: 94%;
+  height: 100%;
   overflow-y: auto;
 }
+

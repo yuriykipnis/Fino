@@ -135,6 +135,7 @@ namespace GoldMountainApi.Controllers
                 if (accountToUpdate != null)
                 {
                     accountToUpdate.Transactions = ua.Transactions;
+                    accountToUpdate.Loans = ua.Loans;
                     accountToUpdate.Balance = ua.Balance;
                     await _accountRepository.UpdateAccount(accountToUpdate.Id, accountToUpdate);
                 }

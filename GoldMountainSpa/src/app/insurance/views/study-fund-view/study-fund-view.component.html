@@ -31,16 +31,16 @@
 
   <div>
     <label class="light-font">Availability Date</label>
-    <label class="light-font">{{(profile$|async)?.WithdrawalDate | utcToLocalTime |  date:'shortDate'}}</label>
+    <label class="light-font">{{(profile$|async)?.WithdrawalDate | utcToLocalTime |  date:'dd/MM/yy'}}</label>
   </div>
 
   <div>
     <label class="light-font">Creation Date</label>
-    <label class="light-font">{{(profile$|async)?.PolicyOpeningDate | utcToLocalTime |  date:'shortDate'}}</label>
+    <label class="light-font">{{(profile$|async)?.PolicyOpeningDate | utcToLocalTime |  date:'dd/MM/yy'}}</label>
   </div>
 
   <div>
     <label class="light-font">Validation Date</label>
-    <label class="light-font">{{(profile$|async)?.ValidationDate | utcToLocalTime |  date:'shortDate'}}</label>
+    <label class="light-font">{{(profile$|async)?.ValidationDate | utcToLocalTime |  date:'dd/MM/yy'}}</label>
   </div>
 </p-card>

@@ -1,0 +1,87 @@
+<div class="history-grid table-scrollable">
+  <p-dataTable *ngIf="isFlatTable()" [value]="transactions" scrollable="true" rowHover="true"
+               [immutable] = false [globalFilter]="gb">
+    <p-column field="PaymentDate" header="PaymentDate" [sortable]="true" styleClass="col-box-small">
+      <ng-template let-col let-file="rowData" pTemplate="body">
+        <div >
+          {{file[col.field].toLocaleString() | utcToLocalTime |  date:'dd/MM/yy'}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="Description" header="Description" [sortable]="true" styleClass="col-box-small"></p-column>
+    <p-column field="Amount" header="Income" [sortable]="true" styleClass="col-box-small">
+      <ng-template let-data="rowData" pTemplate="body">
+        <div *ngIf="isIncomeTransaction(data['Type'])" [ngStyle]="{'color': getTransactionColor(data['Type'])}">
+          {{data['Amount'] | currency:'ILS':'symbol':'1.0-0'}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="Amount" header="Expense" [sortable]="true" styleClass="col-box-small">
+      <ng-template let-data="rowData" pTemplate="body">
+        <div *ngIf="!isIncomeTransaction(data['Type'])" [ngStyle]="{'color': getTransactionColor(data['Type'])}">
+           -{{data['Amount'] | currency:'ILS':'symbol':'1.0-0'}}
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column *ngIf="isBankAccount() && isSplitScope()" field="CurrentBalance" header="CurrentBalance" [sortable]="true" styleClass="col-box-small">
+      <ng-template let-data="rowData" pTemplate="body">
+        <div [ngStyle]="{'color': getBalanceColor(data['CurrentBalance'])}">
+          {{data['CurrentBalance'] | currency:'ILS':'symbol':'1.0-0'}}
+        </div>
+      </ng-template>
+    </p-column>
+    <ng-template pTemplate="emptymessage">
+      No transactions found
+    </ng-template>
+  </p-dataTable>
+
+  <p-treeTable *ngIf="!isFlatTable()" [value]="transactionsTree" [columns]="treeTableCols">
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of treeTableCols" [ttSortableColumn]="col.field">
+          {{col.header}}
+          <!--<p-treeTableSortIcon [field]="col.field"></p-treeTableSortIcon>-->
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+      <tr>
+        <td>
+          <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+          <span *ngIf="isDate(rowData.PaymentDate)">
+            {{rowData.PaymentDate.toLocaleString() | utcToLocalTime |  date:'dd/MM/yy'}}
+          </span>
+          <span *ngIf="!isDate(rowData.PaymentDate)">
+            {{rowData.PaymentDate}}
+          </span>
+        </td>
+        <td>{{rowData.Description}}</td>
+        <td>
+          <span *ngIf="isIncomeTransaction(rowData.Type)" [ngStyle]="{'color': getTransactionColor(rowData.Type)}">
+            {{rowData.Amount | currency:'ILS':'symbol':'1.0-0'}}
+          </span>
+        </td>
+        <td>
+          <span *ngIf="!isIncomeTransaction(rowData.Type)" [ngStyle]="{'color': getTransactionColor(rowData.Type)}">
+             -{{rowData.Amount | currency:'ILS':'symbol':'1.0-0'}}
+          </span>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage" class="ui-datatable-emptymessage">
+      <tr>
+        <td colspan="4">
+          <div class="ui-datatable-emptymessage">
+            No transactions found
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+  </p-treeTable>
+</div>
+
+
+

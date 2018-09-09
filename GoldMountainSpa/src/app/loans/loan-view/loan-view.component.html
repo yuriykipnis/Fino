@@ -1,0 +1,70 @@
+<div class="ui-g-12 view-container">
+  <h4 class="ui-g light-font">{{(loan$|async)?.Id}} - {{(loan$|async)?.InterestType}} | {{(loan$|async)?.LinkageType}}</h4>
+  <div class="ui-g-12 ui-g-nopad">
+    <span class="ui-g-4 label-text">Start Date</span>
+    <span class="ui-g-4">{{(loan$|async)?.StartDate | utcToLocalTime |  date:'dd/MM/yy'}}</span>
+  </div>
+  <div class="ui-g-12 ui-g-nopad">
+    <span class="ui-g-4 label-text">End Date</span>
+    <span class="ui-g-4">{{(loan$|async)?.EndDate | utcToLocalTime |  date:'dd/MM/yy'}}</span>
+  </div>
+  <div class="ui-g-12 ui-g-nopad">
+    <span class="ui-g-4 label-text">Original Loan</span>
+    <span class="ui-g-4">{{(loan$|async)?.OriginalAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+  </div>
+  <div class="ui-g-12 ui-g-nopad">
+    <span class="ui-g-4 label-text">Current Dept</span>
+    <span class="ui-g-4">{{(loan$|async)?.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+  </div>
+  <div class="ui-g-12 ui-g-nopad">
+    <span class="ui-g-4 label-text">Last Payment</span>
+    <span class="ui-g-4">{{(loan$|async)?.LastPaymentAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+  </div>
+  <div class="ui-g-12 ui-g-nopad">
+    <span class="ui-g-4 label-text">Insurance Company</span>
+    <span class="ui-g-4">{{(loan$|async)?.InsuranceCompany}}</span>
+  </div>
+
+  <div class="ui-g-12">
+    <div *ngFor="let subLoan of (loan$|async)?.SubLoans">
+      <p-card class="ui-g ui-g-nopad">
+        <div class="ui-g-12">
+          <div class="ui-g-12 ui-g-nopad">
+            <span class="ui-g-3 label-text">Original Sub Dept: </span>
+            <span class="ui-g-3">{{subLoan?.OriginalAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+          </div>
+          <div class="ui-g-12 ui-g-nopad">
+            <span class="ui-g-3 light-label-text">Loan Part</span>
+            <span class="ui-g-3 light-label-text">Amount</span>
+            <span class="ui-g-3 light-label-text">Linkage</span>
+            <span class="ui-g-3 light-label-text">Total</span>
+          </div>
+          <div class="ui-g-12 ui-g-nopad">
+            <span class="ui-g-3 light-font">Principal</span>
+            <span class="ui-g-3 light-font">{{subLoan?.PrincipalAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+            <span class="ui-g-3 light-font">0</span>
+            <span class="ui-g-3 light-font">{{subLoan?.PrincipalAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+          </div>
+          <div class="ui-g-12 ui-g-nopad">
+            <span class="ui-g-3 light-font">Interest ({{subLoan?.InterestRate}}%)</span>
+            <span class="ui-g-3 light-font">{{subLoan?.InterestAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+            <span class="ui-g-3 light-font">0</span>
+            <span class="ui-g-3 light-font">{{subLoan?.InterestAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+          </div>
+          <div class="ui-g-12 ui-g-nopad">
+            <span class="ui-g-3 light-font">Total</span>
+            <span class="ui-g-3 light-font">{{subLoan?.PrincipalAmount + subLoan?.InterestAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+            <span class="ui-g-3 light-font">0</span>
+            <span class="ui-g-3 light-font">{{subLoan?.PrincipalAmount + subLoan?.InterestAmount| currency:'ILS':'symbol':'1.0-0'}}</span>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </div>
+
+  <div class="">
+    <router-outlet></router-outlet>
+  </div>
+
+</div>
+

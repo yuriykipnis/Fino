@@ -1,0 +1,15 @@
+<div class="commands-container command-bar-container" style="margin-bottom: 19.5px">
+  <p-selectButton class="bw-selectbutton" [options]="filterScope" [(ngModel)]="selectedScope"></p-selectButton>
+  <p-selectButton class="bw-selectbutton type-filter" [options]="filterType" [(ngModel)]="selectedType"></p-selectButton>
+  <p-selectButton class="bw-selectbutton" [options]="tableType" [(ngModel)]="selectedTableType"></p-selectButton>
+
+  <div class="date-control right">
+    <span class="icon-ct-less left link" (click)="prevMonth()"></span>
+    <span class="date-text">{{period.toLocaleString() | utcToLocalTime |  date:'MMMM, y'}} </span>
+    <span class="icon-ct-more right link" (click)="nextMonth()"></span>
+  </div>
+</div>
+
+<div class="nav-outline">
+  <div *ngIf="false" class="animate-moving-rec"></div>
+</div>

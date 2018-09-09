@@ -1,0 +1,26 @@
+@import "../../../sass/styles";
+@import "../../../sass/selectButton";
+
+.command-bar-container{
+  padding: 0 10px 0 10px;
+}
+
+.date-control{
+  border: 1px solid $at-light-grey;
+  border-radius: 20px;
+  background: #ffffff;
+  font-weight: normal;
+  color: $at-purplish-grey;
+  width: 14em;
+  line-height: 1em;
+
+  padding: 5.25px;
+  text: {
+    align: center;
+  }
+}
+
+.date-text{
+  display: inline-block;
+  vertical-align: middle;
+}

@@ -1,0 +1,119 @@
+@import "variables";
+@import "mixins";
+
+.ui-treetable .ui-treetable-thead > tr > th,
+.ui-treetable .ui-treetable-tfoot > tr > td {
+  @include regular-font-md;
+  background-color: $at-ligth-blue;
+  border: 1px solid #dadbdc;
+  border-bottom: 2px solid #dadbdc;
+  color: $at-ultra-light-grey;
+  padding: 8px 10px;
+  line-height: $at-line-height-12;
+  height: 1em;
+
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.ui-treetable .ui-treetable-tbody .ui-datatable-emptymessage {
+  //display: none;
+  @include regular-font-md;
+  padding: 15px 0 15px 0;
+  color: $at-purplish-grey;
+  line-height: 14px;
+
+  text: {
+    transform: uppercase;
+    align: center;
+  }
+
+  &:hover {
+    background-color: white;
+    cursor: default;
+  }
+}
+
+.ui-treetable .ui-treetable-tbody > tr {
+  @include regular-font-md;
+  background-color: #ffffff;
+  color: #222222;
+  border: 0;
+  height: 32px;
+
+  &:hover {
+    background: #eeeeee;
+    cursor: pointer;
+  }
+}
+
+.ui-treetable .ui-treetable-tbody > tr > td {
+  background-color: inherit;
+  border: 0 solid $at-border-light-grey;
+
+  border-top: $table-border;
+  border-bottom: $table-border;
+
+  line-height: $at-line-height-14;
+  padding: 8px 0 12px 8px;
+
+  &:first-child {
+    border-left: $table-border;
+  }
+  &:last-child {
+    border-right: $table-border;
+  }
+}
+
+.ui-treetable .ui-treetable-tbody > tr.ui-state-highlight {
+  background-color: #186ba0;
+  color: #FFFFFF; }
+
+.ui-treetable .ui-treetable-tbody > tr.ui-state-highlight .ui-treetable-toggler {
+  color: #FFFFFF; }
+
+.ui-treetable .ui-treetable-tbody > tr.ui-contextmenu-selected {
+  background-color: #3ca1e2;
+  color: #FFFFFF; }
+
+.ui-treetable .ui-treetable-tbody > tr.ui-contextmenu-selected .ui-treetable-toggler {
+  color: #FFFFFF; }
+
+.ui-treetable .ui-treetable-tbody > tr .ui-treetable-toggler {
+  color: #222222; }
+
+.ui-treetable .ui-sortable-column .ui-sortable-column-icon {
+  color: #1b1d1f; }
+
+.ui-treetable .ui-sortable-column.ui-state-highlight {
+  background-color: #186ba0;
+  color: #FFFFFF; }
+
+.ui-treetable .ui-sortable-column.ui-state-highlight .ui-sortable-column-icon {
+  color: #FFFFFF; }
+
+.ui-treetable .ui-sortable-column:not(.ui-state-highlight):hover {
+  background-color: $at-ligth-blue;
+  color: $at-ultra-light-grey;
+  //cursor: default;
+}
+
+.ui-treetable .ui-sortable-column:not(.ui-state-highlight):hover .ui-sortable-column-icon {
+  color: #212121; }
+
+.ui-treetable.ui-treetable-hoverable-rows .ui-treetable-tbody > tr:not(.ui-state-highlight):not(.ui-contextmenu-selected):hover {
+  cursor: pointer;
+  background-color: #eeeeee;
+  color: #212121; }
+
+@media (max-width: 35em) {
+  .ui-treetable-responsive .ui-treetable-tbody > tr {
+    border-top: 1px solid #D5D5D5;
+    border-bottom: 1px solid #D5D5D5; } }
+
+/* Row Reorder */
+.ui-treetable .ui-treetable-tbody > tr.ui-treetable-dragpoint-top > td {
+  box-shadow: inset 0 2px 0 0 #186ba0; }
+
+.ui-treetable .ui-treetable-tbody > tr.ui-treetable-dragpoint-bottom > td {
+  box-shadow: inset 0 -2px 0 0 #186ba0; }

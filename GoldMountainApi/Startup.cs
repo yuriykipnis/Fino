@@ -134,6 +134,8 @@ namespace GoldMountainApi
                 cfg.CreateMap<Transaction, TransactionDto>();
                 cfg.CreateMap<TransactionDto, Transaction>();
 
+                cfg.CreateMap<Loan, LoanDto>();
+
                 cfg.CreateMap<BankAccount, BankAccountDto>();
                 cfg.CreateMap<CreditAccount, CreditAccountDto>();
                 cfg.CreateMap<BankAccountDto, BankAccount>();

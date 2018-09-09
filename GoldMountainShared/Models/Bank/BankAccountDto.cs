@@ -15,6 +15,7 @@ namespace GoldMountainShared.Models.Bank
         public Double Balance { get; set; } = Double.NaN;
 
         public IEnumerable<TransactionDto> Transactions { get; set; } = new List<TransactionDto>();
+        public IEnumerable<LoanDto> Loans { get; set; } = new List<LoanDto>();
 
         public DateTime UpdatedOn { get; set; } = DateTime.MinValue;
     }

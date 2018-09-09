@@ -36,8 +36,23 @@ export class BankAccountService implements AccountService {
         })));
       return result;
     });
-
     return response;
+
+    // let result = new Array<BankAccount>();
+    // result.push(
+    //     new BankAccount({
+    //       Label: '12-123-123032',
+    //       ProviderName: 'Hapoalim',
+    //       BankNumber: 12,
+    //       BranchNumber: 972,
+    //       AccountNumber: 130323,
+    //       Balance: 2332.23,
+    //       IsActive: true,
+    //       LastUpdate: 12,
+    //       Transactions: []
+    //     }));
+    //
+    // return result;
   }
 
 }

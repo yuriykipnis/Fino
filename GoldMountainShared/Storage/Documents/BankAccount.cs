@@ -24,6 +24,7 @@ namespace GoldMountainShared.Storage.Documents
         public Double Balance { get; set; } = Double.NaN;
         
         public IEnumerable<Transaction> Transactions { get; set; } = new List<Transaction>();
+        public IEnumerable<Loan> Loans { get; set; } = new List<Loan>();
 
         public DateTime UpdatedOn { get; set; } = DateTime.Now;
         public DateTime CreatedOn { get; set; } = DateTime.Now;

@@ -22,6 +22,7 @@ import { SeInsurService } from "./insurance/services/se-insur.service";
 import { CreditAccountService } from "./accounts/services/credit-account.service";
 import { UserProfileService } from "./services/user-profile.service";
 import { CreditService } from "./services/credit.service";
+import { LoanService } from "./loans/services/loan.service";
 import { InstitutionService } from "./services/institution.service";
 import { StudyFundService } from "./insurance/services/study-fund.service";
 import { PensionFundService } from "./insurance/services/pension-fund.service";
@@ -37,7 +38,7 @@ import { SidebarBankAccountComponent } from './accounts/accounts-sidebar/sidebar
 import { SidebarCreditAccountComponent } from './accounts/accounts-sidebar/sidebar-credit-account/sidebar-credit-account.component';
 import { OverviewComponent } from './overview/overview.component';
 import { SidebarInsurProfileComponent } from './insurance/insur-sidebar/sidebar-insur-profile/sidebar-insur-profile.component';
-import { TransactionsViewComponent } from './accounts/views/transactions-view/transactions-view.component';
+import { TransactionsViewComponent } from './accounts/transactions-view/transactions-view.component';
 import { StudyFundViewComponent } from './insurance/views/study-fund-view/study-fund-view.component';
 import { SeInsurViewComponent } from './insurance/views/se-insur-view/se-insur-view.component';
 import { PensionFundViewComponent } from './insurance/views/pension-fund-view/pension-fund-view.component';
@@ -46,11 +47,13 @@ import { MortgageInsurViewComponent } from './insurance/views/mortgage-insur-vie
 import { SummaryComponent } from './insurance/views/summary/summary.component';
 import { AccountsSummaryComponent } from './accounts/accounts-summary/accounts-summary.component';
 import {AccountsSummaryService} from "./accounts/services/accounts-summary.service";
-import { IncomeViewComponent } from './accounts/views/income-view/income-view.component';
-import { ExpenseViewComponent } from './accounts/views/expense-view/expense-view.component';
 import { LoansSidebarComponent } from './loans/loans-sidebar/loans-sidebar.component';
-import { LoansOverviewComponent } from './loans/loans-overview/loans-overview.component';
+import { LoanViewComponent } from './loans/loan-view/loan-view.component';
 import { LoansComponent } from './loans/loans.component';
+import { LoansSummaryComponent } from './loans/loans-summary/loans-summary.component';
+import { CommandBarComponent } from './accounts/command-bar/command-bar.component';
+import { StatusSidebarComponent } from './accounts/status-sidebar/status-sidebar.component';
+import {AccountControlService} from './accounts/services/account-control.service';
 
 @NgModule({
   declarations: [
@@ -77,11 +80,12 @@ import { LoansComponent } from './loans/loans.component';
     MortgageInsurViewComponent,
     SummaryComponent,
     AccountsSummaryComponent,
-    IncomeViewComponent,
-    ExpenseViewComponent,
     LoansSidebarComponent,
-    LoansOverviewComponent,
-    LoansComponent
+    LoanViewComponent,
+    LoansComponent,
+    LoansSummaryComponent,
+    CommandBarComponent,
+    StatusSidebarComponent
   ],
   imports: [
     BrowserModule,
@@ -99,6 +103,7 @@ import { LoansComponent } from './loans/loans.component';
     InstitutionService,
     BankService,
     CreditService,
+    LoanService,
     SeInsurService,
     PensionFundService,
     StudyFundService,
@@ -108,7 +113,8 @@ import { LoansComponent } from './loans/loans.component';
     UserProfileService,
     BankAccountService,
     CreditAccountService,
-    AccountsSummaryService
+    AccountsSummaryService,
+    AccountControlService,
   ],
   bootstrap: [AppComponent]
 })

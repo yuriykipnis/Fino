@@ -75,6 +75,10 @@ export class NewAccountComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
   }
 
+  onSwitchToggle(account) {
+    account.IsActive = !account.IsActive;
+  }
+
   onSwitchItem(item: Institution) {
     this.selectedInstitution = item;
     this.credentialsForm = this.getCredentialsForm(this.selectedInstitution);

@@ -1,9 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark">
   <a class="navbar-brand" href="#">
-    <span id="brand-icon"><img src="../../assets/brand/gm-icon.ico" width="30" height="30" class="d-inline-block align-top" alt=""></span>
+    <span id="brand-icon"><img src="../../../assets/brand/gm-icon.ico" width="30" height="30" class="d-inline-block align-top" alt=""></span>
     <span class="brand-name">BeWise</span>
   </a>
-  <div *ngIf="true" class="collapse navbar-collapse" id="navbarSupportedContent">
+  <div *ngIf="true" class="collapse navbar-collapse navbar-bw" id="navbarSupportedContent">
     <ul class="nav navbar-nav mr-auto nav-tabs">
       <li class="nav-item">
         <a class="nav-link tab link"
@@ -15,18 +15,10 @@
       </li>
       <li class="nav-item">
         <a class="nav-link tab link"
-           [routerLink]="['accounts/summary']"
+           [routerLink]="['accounts']"
            routerLinkActive="active"
            (click)="switchTab('accounts')">
           Accounts
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link tab link"
-           [routerLink]="['insurance/summary']"
-           routerLinkActive="active"
-           (click)="switchTab('insurance')">
-          Insurance
         </a>
       </li>
       <li class="nav-item">
@@ -37,22 +29,31 @@
           Loans
         </a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link tab link"
-           [routerLink]="['planning']"
-           routerLinkActive="active"
-           (click)="switchTab('planning')">
-          Planning
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link tab link"
-           [routerLink]="['adviser']"
-           routerLinkActive="active"
-           (click)="switchTab('adviser')">
-          Adviser
-        </a>
-      </li>
+
+      <!--<li class="nav-item">-->
+        <!--<a class="nav-link tab link"-->
+           <!--[routerLink]="['insurance/summary']"-->
+           <!--routerLinkActive="active"-->
+           <!--(click)="switchTab('insurance')">-->
+          <!--Insurance-->
+        <!--</a>-->
+      <!--</li>-->
+      <!--<li class="nav-item">-->
+        <!--<a class="nav-link tab link"-->
+           <!--[routerLink]="['planning']"-->
+           <!--routerLinkActive="active"-->
+           <!--(click)="switchTab('planning')">-->
+          <!--Planning-->
+        <!--</a>-->
+      <!--</li>-->
+      <!--<li class="nav-item">-->
+        <!--<a class="nav-link tab link"-->
+           <!--[routerLink]="['adviser']"-->
+           <!--routerLinkActive="active"-->
+           <!--(click)="switchTab('adviser')">-->
+          <!--Adviser-->
+        <!--</a>-->
+      <!--</li>-->
     </ul>
     <ul class="navbar-nav">
       <li class="nav-item link" >

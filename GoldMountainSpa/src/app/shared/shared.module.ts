@@ -12,6 +12,7 @@ import { metaReducers, reducers } from "./store/reducers";
   ],
   exports: [
     UtcToLocalTimePipe,
+    fromPrimeNg.TreeTableModule,
     fromPrimeNg.DataTableModule,
     fromPrimeNg.TabViewModule,
     fromPrimeNg.TabViewModule,
@@ -27,11 +28,12 @@ import { metaReducers, reducers } from "./store/reducers";
     fromPrimeNg.CardModule,
     fromPrimeNg.ChartModule,
     fromPrimeNg.ProgressSpinnerModule,
-    fromPrimeNg.TreeTableModule,
+    fromPrimeNg.SelectButtonModule
   ],
   imports: [
     CommonModule,
     BrowserAnimationsModule,
+    fromPrimeNg.TreeTableModule,
     fromPrimeNg.DataTableModule,
     fromPrimeNg.TabViewModule,
     fromPrimeNg.TabViewModule,
@@ -46,7 +48,7 @@ import { metaReducers, reducers } from "./store/reducers";
     fromPrimeNg.AccordionModule,
     fromPrimeNg.CardModule,
     fromPrimeNg.ChartModule,
-    fromPrimeNg.TreeTableModule,
+    fromPrimeNg.SelectButtonModule,
     StoreModule.forRoot(reducers, {metaReducers})
   ]
 })

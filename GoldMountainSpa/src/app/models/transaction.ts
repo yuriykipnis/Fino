@@ -1,5 +1,9 @@
 export enum TransactionType {
-  Income, Expense
+  Income, Expense, None
+}
+
+export enum TransactionScope {
+  Split, Combine, None
 }
 
 export class Transaction {

@@ -1,31 +1,14 @@
 <div class="accounts-sidebar">
-  <button class="ui-g-12 btn navigation-btn large-btn add-account-btn" routerLink="add" >+ Add Account</button>
-  <div class="ui-g ui-g-nopad sidebar-net" (click)="showSummary()">
-    <div class="ui-g-6 ui-g-nopad sidebar-header left">Net Worth</div>
-    <div class="ui-g-12 ui-g-nopad sidebar-header main">{{accountSummaryService?.totalInBanks - accountSummaryService?.totalInCredit | currency:'ILS':'symbol':'1.0-0'}}</div>
-  </div>
-
-  <div class="ui-g ui-g-nopad sidebar-net" (click)="showIncome()">
-    <div class="ui-g-6 ui-g-nopad sidebar-header left">Current Income</div>
-    <div class="ui-g-6 ui-g-nopad sidebar-header right">{{accountSummaryService?.totalIncome | currency:'ILS':'symbol':'1.0-0'}}</div>
-  </div>
-
-  <div class="ui-g ui-g-nopad sidebar-net" (click)="showExpense()">
-    <div class="ui-g-6 ui-g-nopad sidebar-header left">Current Expense</div>
-    <div class="ui-g-6 ui-g-nopad sidebar-header right">{{accountSummaryService?.totalOutcome | currency:'ILS':'symbol':'1.0-0'}}</div>
-  </div>
-
-  <p-accordion class="bw-accordion" [multiple]="true" [expandIcon]="fa" [collapseIcon]="fa"
-               activeIndex="[0,1]">
+  <p-accordion class="bw-accordion" [multiple]="true" [expandIcon]="fa" [collapseIcon]="fa" activeIndex="[0,1]">
 
     <p-accordionTab>
       <p-header>
         <div>
           <span>Cash</span>
-          <span style="float: right">{{accountSummaryService?.totalInBanks | currency:'ILS':'symbol':'1.0-0'}}</span>
+          <span style="float: right">{{accountsSummaryService?.totalInBanks | currency:'ILS':'symbol':'1.0-0'}}</span>
         </div>
       </p-header>
-      <div *ngFor="let account of bankAccounts$ | async" class=""
+      <div *ngFor="let account of bankAccounts$ | async"
            (click)="openBankAccountView(account)">
         <app-sidebar-bank-account [account]="account"></app-sidebar-bank-account>
       </div>
@@ -35,7 +18,7 @@
       <p-header>
         <div>
           <span>Credit</span>
-          <span style="float: right">{{-1*accountSummaryService?.totalInCredit | currency:'ILS':'symbol':'1.0-0'}}</span>
+          <span style="float: right">{{-1*accountsSummaryService?.totalInCredit | currency:'ILS':'symbol':'1.0-0'}}</span>
         </div>
       </p-header>
       <div *ngFor="let account of creditAccounts$ | async" class=""
@@ -45,4 +28,5 @@
     </p-accordionTab>
 
   </p-accordion>
+
 </div>

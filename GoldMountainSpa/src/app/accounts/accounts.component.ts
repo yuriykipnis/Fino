@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
@@ -12,12 +12,14 @@ import * as fromCreditActions from './store/actions/credit-account.action';
 @Component({
   selector: 'app-accounts',
   templateUrl: './accounts.component.html',
-  styleUrls: ['./accounts.component.scss']
+  styleUrls: ['./accounts.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class AccountsComponent implements OnInit, OnDestroy {
   private userProfileSubscription: Subscription;
   isBankAccountsLoading: boolean = false;
   isCreditAccountsLoading: boolean = false;
+
 
   constructor(private store: Store<AppState>,
               private bankService: BankService,
@@ -28,6 +30,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isBankAccountsLoading = true;
     this.isCreditAccountsLoading = true;
+
 
     this.userProfileSubscription = this.userProfileService.userProfile$.subscribe(up => {
       if (!up || !up.Id) {
@@ -63,4 +66,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
   isLoading() {
     return this.isBankAccountsLoading || this.isCreditAccountsLoading;
   }
+
+  getBalanceColor(balance : number)
+  {
+    return balance >= 0 ? "#8fac67" : "#d22a77";
+  }
+
 }

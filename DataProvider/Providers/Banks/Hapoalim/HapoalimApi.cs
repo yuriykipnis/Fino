@@ -84,6 +84,27 @@ namespace DataProvider.Providers.Banks.Hapoalim
             return content;
         }
 
+        public HapoalimMortgagesResponse GetMortgages(HapoalimAccountResponse account)
+        {
+            var baseAddress = new Uri(LoginDomain);
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
+            cookieContainer.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
+            cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
+            cookieContainer.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
+            cookieContainer.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
+            var api = $@"/ServerServices/credit-and-mortgage/mortgages?accountId={account.BankNumber}-{account.BranchNumber}-{account.AccountNumber}";
+
+            var accountsResponse = CallGetRequest(baseAddress, api, cookieContainer);
+            if (string.IsNullOrEmpty(accountsResponse))
+            {
+                return new HapoalimMortgagesResponse();
+            }
+
+            var content = JsonConvert.DeserializeObject<HapoalimMortgagesResponse>(accountsResponse);
+            return content;
+        }
+
         public HapoalimBalanceResponse GetBalance(HapoalimAccountResponse account)
         {
             var baseAddress = new Uri(LoginDomain);

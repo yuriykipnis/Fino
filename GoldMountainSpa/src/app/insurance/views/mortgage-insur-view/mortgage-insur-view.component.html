@@ -12,12 +12,12 @@
 
     <div>
       <label class="light-font">Creation Date</label>
-      <label class="light-font">{{(profile$|async)?.PolicyOpeningDate | utcToLocalTime |  date:'shortDate'}}</label>
+      <label class="light-font">{{(profile$|async)?.PolicyOpeningDate | utcToLocalTime |  date:'dd/MM/yy'}}</label>
     </div>
 
     <div>
       <label class="light-font">Validation Date</label>
-      <label class="light-font">{{(profile$|async)?.ValidationDate | utcToLocalTime |  date:'shortDate'}}</label>
+      <label class="light-font">{{(profile$|async)?.ValidationDate | utcToLocalTime |  date:'dd/MM/yy'}}</label>
     </div>
   </div>
 
@@ -32,7 +32,7 @@
     </div>
     <div>
       <label class="light-font">Insurance due date</label>
-      <label class="light-font">{{cover?.DueDate | utcToLocalTime |  date:'shortDate'}}</label>
+      <label class="light-font">{{cover?.DueDate | utcToLocalTime |  date:'dd/MM/yy'}}</label>
     </div>
     <div>
       <label class="light-font">Monthly fee</label>

@@ -52,5 +52,8 @@ namespace GoldMountainShared.Storage
 
         public IMongoCollection<Transaction> Transactions =>
             _database.GetCollection<Transaction>("Transactions");
+
+        public IMongoCollection<Loan> Loans =>
+            _database.GetCollection<Loan>("Loans");
     }
 }

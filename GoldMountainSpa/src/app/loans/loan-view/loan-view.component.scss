@@ -1,0 +1,19 @@
+@import "../../../sass/styles";
+
+.view-container{
+  height:100%;
+  padding: 50px 20px 20px 0px;
+  padding-right: 5%;
+}
+
+.table-scrollable{
+  height: 94%;
+  overflow-y: auto;
+}
+
+.caption-text{
+
+  font-family: "Interstate", Arial, sans-serif;
+  font-weight: 300;
+  font-size: 28px;
+}

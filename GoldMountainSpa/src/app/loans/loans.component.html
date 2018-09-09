@@ -1,20 +1,19 @@
-<div *ngIf="!isLoading()"
-     class="ui-g ui-g-nopad main-container">
+<div *ngIf="!isLoading()" class="ui-g ui-g-nopad main-container">
   <div class="ui-g-3 ui-g-nopad">
     <app-loans-sidebar class="ui-g-10 ui-g-nopad main-container"></app-loans-sidebar>
   </div>
 
-  <div class="ui-g-9 main-container">
+  <div *ngIf="!isLoading()" class="main-container ui-g-9 ui-g-nopad">
     <router-outlet></router-outlet>
+  </div>
+
+  <div *ngIf="isLoading()" class="main-container ui-g-9 ui-g-nopad">
+    <p-progressSpinner class="ui-g-2 ui-g-offset-5"
+                       [style]="{width: '200px', height: '200px',top: '30%'}"
+                       strokeWidth="2"
+                       animationDuration="1.0s"
+                       fill="white">
+    </p-progressSpinner>
   </div>
 </div>
 
-<div *ngIf="isLoading()"
-     class="ui-g ui-g-nopad main-container">
-  <p-progressSpinner class="ui-g-2 ui-g-offset-5"
-                     [style]="{width: '200px', height: '200px',top: '30%'}"
-                     strokeWidth="2"
-                     animationDuration="1.0s"
-                     fill="white">
-  </p-progressSpinner>
-</div>

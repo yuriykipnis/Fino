@@ -16,7 +16,7 @@
             <span class="right">{{loan.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
           </div>
           <div>
-            <span class="basic-text">{{loan.EndDate | utcToLocalTime | date:'MMMM, y'}}</span>
+            <span class="basic-text">{{loan.PayoffDate | utcToLocalTime | date:'MMMM, y'}}</span>
             <span class="right">{{loan.InterestType}} - {{loan.LinkageType}}</span>
           </div>
         </p-card>

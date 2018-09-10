@@ -299,7 +299,29 @@
   }
 
   .ui-datatable tfoot td.ui-state-default {
-    background: $at-pale-grey-two;
+    @include regular-font-md;
+
+    background: #ffffff;
+    border: 0;
+    border-top: 1px solid $at-border-light-grey;
+    padding-left: 8px;
+    font-weight: 600;
+    text: {
+      transform: uppercase;
+      align: left;
+    }
+  }
+
+  .ui-datatable tfoot td.ui-state-default span div{
+    &.income {
+      color: $at-positive-amount;
+      font-weight: 400;
+    }
+
+    &.expense {
+      color: $at-negative-amount;
+      font-weight: 400;
+    }
   }
 }
 

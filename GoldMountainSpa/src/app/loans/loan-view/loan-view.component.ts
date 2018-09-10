@@ -10,6 +10,8 @@ import {UserProfileService} from "../../services/user-profile.service";
 import {AppState} from "../../shared/store/app.states";
 import * as fromLoanActions from "../store/actions/loan.action";
 import * as loanReducer from "../store/reducers/loan.reducer";
+import {LoanControlService} from '../services/loan-control.service';
+import {LoanViewModel} from "../models/loan-view.model";
 
 @Component({
   selector: 'app-loan-view',
@@ -18,20 +20,29 @@ import * as loanReducer from "../store/reducers/loan.reducer";
   encapsulation: ViewEncapsulation.None
 })
 export class LoanViewComponent implements OnInit, OnDestroy {
-  loans$: Observable<Loan[]>;
-  loan$: Observable<Loan>;
+  loan: LoanViewModel;
   loanId: string;
+  loanAmortisation: any;
+
   private userProfileSubscription: Subscription;
+  private loanSelectedSubscription: Subscription;
 
   constructor(private store: Store<AppState>,
               private router: Router, public route: ActivatedRoute,
               private loanService: LoanService,
+              private loanControlService: LoanControlService,
               private userProfileService: UserProfileService) {
-    this.loans$ = store.select(loanReducer.getLoans);
+
+    this.loan = loanControlService.getSelectedLoan();
+
   }
 
   ngOnInit() {
-    this.loan$ = this.retriveLoan();
+    this.loanSelectedSubscription = this.loanControlService.selectedLoanChanged$.subscribe(loan => {
+      //Loan new loan into this view
+      this.loan = loan;
+      this.updateLoanAmortisation();
+    });
 
     this.userProfileSubscription = this.userProfileService.userProfile$.subscribe(up => {
       if (!up || !up.Id) {
@@ -42,15 +53,31 @@ export class LoanViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.loanSelectedSubscription.unsubscribe();
     this.userProfileSubscription.unsubscribe();
   }
 
-  private retriveLoan() : Observable<Loan>{
-    return this.route.paramMap
-      .switchMap((params: ParamMap) => {
-        this.loanId = params.get('LoanId');
-        return this.loans$.map(loans => loans.find( loan => loan.Id == this.loanId));
-      });
+  updateLoanAmortisation(){
+    this.loanAmortisation = {
+      labels: [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027],
+      datasets: [
+        {
+          label: 'Interest',
+          backgroundColor: '#0066cc',
+          borderColor: '#0066cc',
+          data: [
+            70, 63, 56, 49, 42, 35, 28, 21, 14, 7
+          ]
+        },
+        {
+          label: 'Principal',
+          backgroundColor: '#99ccff',
+          borderColor: '#99ccff',
+          data: [
+            30, 37, 44, 51, 58, 65, 72, 79, 86, 93
+          ]
+        }
+      ]
+    }
   }
-
 }

@@ -218,6 +218,9 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
   }
 
   getBalanceColor(balance : number)  {
+    if (balance === NaN){
+      return "#8fac67";
+    }
     return balance >= 0 ? "#8fac67" : "#d22a77";
   }
 
@@ -245,11 +248,33 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
     return this.transactionType == TransactionType.Income;
   }
 
-  isDate(text: string): any {
+  isDate(text: string): boolean {
     return (new Date(text)).toString() !== 'Invalid Date';
+  }
+
+  isNumber(text: string): boolean{
+    return text !== "NaN";
   }
 
   isCombineTable() : boolean{
     return this.transactionScope == TransactionScope.Combine;
+  }
+
+  getTotalIncome() : number{
+    let income = 0;
+    this.transactions.forEach(t => {
+      income += t.Type === TransactionType.Income ? t.Amount : 0;
+    })
+
+    return income;
+  }
+
+  getTotalExpense() : number{
+    let income = 0;
+    this.transactions.forEach(t => {
+      income += t.Type === TransactionType.Expense ? t.Amount : 0;
+    })
+
+    return income;
   }
 }

@@ -14,8 +14,6 @@ import {ProvidentFundViewComponent} from "./insurance/views/provident-fund-view/
 import {MortgageInsurViewComponent} from "./insurance/views/mortgage-insur-view/mortgage-insur-view.component";
 import {SummaryComponent} from "./insurance/views/summary/summary.component";
 import {LoansComponent} from "./loans/loans.component";
-import {LoanViewComponent} from './loans/loan-view/loan-view.component';
-import {LoansSummaryComponent} from './loans/loans-summary/loans-summary.component';
 
 export const routes: Routes = [
   { path: 'overview', component: OverviewComponent},
@@ -37,8 +35,8 @@ export const routes: Routes = [
   },
   { path: 'loans', component: LoansComponent, canActivate: [AuthGuard],
     children: [
-      {path: 'summary', component: LoansSummaryComponent},
-      {path: ':LoanId', component: LoanViewComponent},
+      //{path: 'summary', component: LoansSummaryComponent},
+      //{path: ':LoanId', component: LoanViewComponent},
     ]
   },
   { path: 'planning', component: PlanningComponent, canActivate: [AuthGuard] },

@@ -11,9 +11,38 @@
   overflow-y: auto;
 }
 
-.caption-text{
+.loan-caption{
+  @include light-font-xl;
+  font-size: 24px;
+  padding: 10px 0 10px 20px;
+}
 
-  font-family: "Interstate", Arial, sans-serif;
-  font-weight: 300;
-  font-size: 28px;
+.loan-summary{
+  @include regular-font-lg;
+
+  width: 100%;
+  background: $at-pale-grey;
+  margin: 20px 10px 10px 0px;
+  color: $at-ligth-blue;
+  line-height: 26px;
+}
+
+.loan-summary-section{
+  padding: 10px 20px 10px 10px;
+}
+
+.regular {
+  @include light-font-lg;
+  color: $at-purplish-grey;
+}
+
+.light {
+  @include light-font-lg;
+  color:$at-text-sub-headline;
+}
+
+.bank-name{
+  @include light-font-md;
+  color: $at-purplish-grey;
+  text-align: right;
 }

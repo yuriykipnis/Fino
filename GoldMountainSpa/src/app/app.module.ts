@@ -54,6 +54,8 @@ import { LoansSummaryComponent } from './loans/loans-summary/loans-summary.compo
 import { CommandBarComponent } from './accounts/command-bar/command-bar.component';
 import { StatusSidebarComponent } from './accounts/status-sidebar/status-sidebar.component';
 import {AccountControlService} from './accounts/services/account-control.service';
+import { LoansStatusBarComponent } from './loans/loans-status-bar/loans-status-bar.component';
+import {LoanControlService} from './loans/services/loan-control.service';
 
 @NgModule({
   declarations: [
@@ -85,7 +87,8 @@ import {AccountControlService} from './accounts/services/account-control.service
     LoansComponent,
     LoansSummaryComponent,
     CommandBarComponent,
-    StatusSidebarComponent
+    StatusSidebarComponent,
+    LoansStatusBarComponent
   ],
   imports: [
     BrowserModule,
@@ -115,6 +118,7 @@ import {AccountControlService} from './accounts/services/account-control.service
     CreditAccountService,
     AccountsSummaryService,
     AccountControlService,
+    LoanControlService,
   ],
   bootstrap: [AppComponent]
 })

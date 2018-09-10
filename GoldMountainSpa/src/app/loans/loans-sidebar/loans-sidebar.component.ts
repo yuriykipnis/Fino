@@ -7,6 +7,10 @@ import {Subscription} from 'rxjs/Subscription';
 import {AccountsSummaryService} from "../../accounts/services/accounts-summary.service";
 import * as loanReducer from "../store/reducers/loan.reducer";
 import {Loan} from "app/models/loan";
+import {LoanControlService} from "../services/loan-control.service";
+import {AccountType} from "../../accounts/models/account-identifier";
+import {LoanViewModel} from '../models/loan-view.model';
+import {SubLoan} from "../../models/subLoan";
 
 @Component({
   selector: 'app-loans-sidebar',
@@ -15,24 +19,30 @@ import {Loan} from "app/models/loan";
   encapsulation: ViewEncapsulation.None
 })
 export class LoansSidebarComponent implements OnInit {
-  loans$: Observable<Loan[]>;
+  loans$: Observable<LoanViewModel[]>;
+  loansSubscription: Subscription;
 
   constructor(private store: Store<AppState>,
               private router: Router, private route: ActivatedRoute,
-              public accountSummaryService: AccountsSummaryService) {
+              public loanControlService: LoanControlService) {
     this.loans$ = store.select(loanReducer.getLoans);
   }
 
   ngOnInit() {
-
+    this.loansSubscription = this.loans$.subscribe(res =>{
+      if (res.length > 0 && !this.loanControlService.getSelectedLoan()) {
+        this.loanControlService.changeSelectedLoan(res[0]);
+      }
+    });
   }
 
   ngOnDestroy() {
-
+    this.loansSubscription.unsubscribe();
   }
 
   openLoanView(loan: any) {
-    this.router.navigate([loan.Id], {relativeTo: this.route});
+    this.loanControlService.changeSelectedLoan(loan);
   }
+
 
 }

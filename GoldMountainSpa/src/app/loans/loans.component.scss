@@ -1,3 +1,7 @@
+@import "../../sass/styles";
+@import "../../sass/selectButton";
+@import "../../sass/button";
+
 .main-container{
   height:100%;
   padding:0;
@@ -6,4 +10,38 @@
 .main-scrollable{
   padding-right: 5%;
   overflow-y: auto;
+}
+
+.loan-container{
+  position: absolute;
+  top: 90px;
+  bottom: 0;
+}
+
+.loan-view {
+  padding: 16px 14px 6px 10px;
+}
+
+.loans-container{
+  margin-top: 12px;
+  margin-bottom: 18px;
+  display: block
+}
+
+.loan-bar-container{
+  padding: 0 10px 0 10px;
+}
+
+.right{
+  float: right;
+}
+
+.left{
+  float: left;
+}
+
+.nav-outline {
+  background-color: $at-ocean;
+  height: 4px;
+  width: 100%;
 }

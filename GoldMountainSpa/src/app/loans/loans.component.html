@@ -1,10 +1,17 @@
-<div *ngIf="!isLoading()" class="ui-g ui-g-nopad main-container">
+<div class="ui-g ui-g-nopad main-container">
   <div class="ui-g-3 ui-g-nopad">
     <app-loans-sidebar class="ui-g-10 ui-g-nopad main-container"></app-loans-sidebar>
   </div>
 
-  <div *ngIf="!isLoading()" class="main-container ui-g-9 ui-g-nopad">
-    <router-outlet></router-outlet>
+  <div class="ui-g-9 ui-g-nopad">
+    <div class="ui-g ui-g-nopad" style="margin-left: -5.6%;">
+      <div class="ui-g-9 loans-container">
+        <app-loan-view></app-loan-view>
+      </div>
+      <div class="ui-g-3">
+        <app-loans-status-bar></app-loans-status-bar>
+      </div>
+    </div>
   </div>
 
   <div *ngIf="isLoading()" class="main-container ui-g-9 ui-g-nopad">
@@ -15,5 +22,7 @@
                        fill="white">
     </p-progressSpinner>
   </div>
+
+  <router-outlet></router-outlet>
 </div>
 

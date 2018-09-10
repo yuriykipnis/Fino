@@ -1,8 +1,7 @@
 @import "variables";
 @import "mixins";
 
-.ui-treetable .ui-treetable-thead > tr > th,
-.ui-treetable .ui-treetable-tfoot > tr > td {
+.ui-treetable .ui-treetable-thead > tr > th{
   @include regular-font-md;
   background-color: $at-ligth-blue;
   border: 1px solid #dadbdc;
@@ -14,6 +13,41 @@
 
   text-transform: uppercase;
   text-align: left;
+}
+
+.ui-treetable .ui-treetable-tfoot > tr > td {
+  @include regular-font-md;
+
+  border: 0 solid $at-border-light-grey;
+  border-top: $table-bold-border;
+  border-bottom: $table-border;
+
+  background: #ffffff;
+  padding-left: 8px;
+  font-weight: 600;
+  text: {
+    transform: uppercase;
+    align: left;
+  }
+
+  &:first-child {
+    border-left: $table-border;
+  }
+  &:last-child {
+    border-right: $table-border;
+  }
+}
+
+.ui-treetable .ui-treetable-tfoot > tr > td div {
+  &.income {
+    color: $at-positive-amount;
+    font-weight: 400;
+  }
+
+  &.expense {
+    color: $at-negative-amount;
+    font-weight: 400;
+  }
 }
 
 .ui-treetable .ui-treetable-tbody .ui-datatable-emptymessage {
@@ -47,7 +81,7 @@
   }
 }
 
-.ui-treetable .ui-treetable-tbody > tr > td {
+.ui-treetable .ui-treetable-tbody > tr > td{
   background-color: inherit;
   border: 0 solid $at-border-light-grey;
 

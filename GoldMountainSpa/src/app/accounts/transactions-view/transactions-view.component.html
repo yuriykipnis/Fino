@@ -7,12 +7,21 @@
           {{file[col.field].toLocaleString() | utcToLocalTime |  date:'dd/MM/yy'}}
         </div>
       </ng-template>
+      <ng-template pTemplate="footer">
+        <div>Total</div>
+      </ng-template>
     </p-column>
-    <p-column field="Description" header="Description" [sortable]="true" styleClass="col-box-small"></p-column>
+    <p-column field="Description" header="Description" [sortable]="true" styleClass="col-box-small">
+    </p-column>
     <p-column field="Amount" header="Income" [sortable]="true" styleClass="col-box-small">
       <ng-template let-data="rowData" pTemplate="body">
         <div *ngIf="isIncomeTransaction(data['Type'])" [ngStyle]="{'color': getTransactionColor(data['Type'])}">
           {{data['Amount'] | currency:'ILS':'symbol':'1.2-2'}}
+        </div>
+      </ng-template>
+      <ng-template pTemplate="footer">
+        <div class="income">
+          {{getTotalIncome() | currency:'ILS':'symbol':'1.2-2'}}
         </div>
       </ng-template>
     </p-column>
@@ -22,19 +31,19 @@
            -{{data['Amount'] | currency:'ILS':'symbol':'1.2-2'}}
         </div>
       </ng-template>
+      <ng-template pTemplate="footer">
+        <div class="expense">
+          -{{getTotalExpense() | currency:'ILS':'symbol':'1.2-2'}}
+        </div>
+      </ng-template>
     </p-column>
     <p-column *ngIf="isBankAccount() && isSplitScope()" field="CurrentBalance" header="CurrentBalance" [sortable]="true" styleClass="col-box-small">
       <ng-template let-data="rowData" pTemplate="body">
-        <div [ngStyle]="{'color': getBalanceColor(data['CurrentBalance'])}">
+        <div *ngIf="isNumber(data['CurrentBalance'])" [ngStyle]="{'color': getBalanceColor(data['CurrentBalance'])}">
           {{data['CurrentBalance'] | currency:'ILS':'symbol':'1.2-2'}}
         </div>
       </ng-template>
     </p-column>
-
-    <!--<ng-template pTemplate="rowgroupfooter" let-car>-->
-      <!--<td colspan="5" style="text-align:right">Total Price</td>-->
-      <!--<td>sdasdasdasd</td>-->
-    <!--</ng-template>-->
 
     <ng-template pTemplate="emptymessage">
       No transactions found
@@ -73,6 +82,23 @@
           <span *ngIf="!isIncomeTransaction(rowData.Type)" [ngStyle]="{'color': getTransactionColor(rowData.Type)}">
              -{{rowData.Amount | currency:'ILS':'symbol':'1.2-2'}}
           </span>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="footer" let-columns>
+      <tr class="footer">
+        <td>Total</td>
+        <td></td>
+        <td>
+          <div class="income">
+            {{getTotalIncome() | currency:'ILS':'symbol':'1.2-2'}}
+          </div>
+        </td>
+        <td>
+          <div class="expense">
+          -{{getTotalExpense() | currency:'ILS':'symbol':'1.2-2'}}
+          </div>
         </td>
       </tr>
     </ng-template>

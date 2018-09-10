@@ -53,10 +53,6 @@ export class CommandBarComponent implements OnInit, OnDestroy {
     this.selectedScope = accountControlService.getTransactionScope();
     this.selectedTableType = accountControlService.getTableType();
 
-    this.accountSelectedSubscription = accountControlService.selectedAccountChanged$.subscribe(selectedAccount => {
-      this.selectedScope = TransactionScope.Split;
-    });
-
     this.filterScope = [
       {label:'Split', value:TransactionScope.Split},
       {label:'Combine', value:TransactionScope.Combine}
@@ -75,6 +71,9 @@ export class CommandBarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.accountSelectedSubscription = this.accountControlService.selectedAccountChanged$.subscribe(selectedAccount => {
+      this.selectedScope = TransactionScope.Split;
+    });
   }
 
   ngOnDestroy() {

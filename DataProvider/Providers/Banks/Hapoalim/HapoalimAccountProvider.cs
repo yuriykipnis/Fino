@@ -92,6 +92,7 @@ namespace DataProvider.Providers.Banks.Hapoalim
                     Description = transaction.ActivityDescription,
                     CurrentBalance = transaction.CurrentBalance,
                     Amount = transaction.EventAmount,
+                    IsFee = transaction.ActivityTypeCode == (int)HapoalimActivityType.Fee,
                     Type = transaction.EventActivityTypeCode == 1 ? TransactionType.Income : TransactionType.Expense,
                     SupplierId = transaction.ReferenceNumber.ToString(),
                 });
@@ -189,4 +190,14 @@ namespace DataProvider.Providers.Banks.Hapoalim
             _api?.Dispose();
         }
     }
+
+    public enum HapoalimActivityType
+    {
+        Fee = 473,
+        Salary = 159,
+        Loan = 469,
+        Income = 175,
+        DirectDebit = 515,
+        Check = 493
+    };
 }

@@ -7,6 +7,7 @@ namespace DataProvider.Providers.Models
         public Guid AccountId { get; set; }
         public long Id { get; set; }
         public TransactionType Type { get; set; }
+        public Boolean IsFee { get; set; }
         public DateTime PurchaseDate { get; set; }
         public DateTime PaymentDate { get; set; }
         public string Description { get; set; }

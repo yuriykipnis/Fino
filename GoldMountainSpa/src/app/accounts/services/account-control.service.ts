@@ -15,12 +15,14 @@ export class AccountControlService {
   private transactionScopeSource = new Subject<TransactionScope>();
   private tableTypeSource = new Subject<TableType>();
   private selectedAccountSource = new Subject<AccountIdentifier>();
+  private isLoadingSource = new Subject<boolean>();
 
   private viewPeriod: Date;
   private transactionType: TransactionType;
   private transactionScope: TransactionScope;
   private tableType: TableType;
   private selectedAccount: AccountIdentifier;
+  private isLoading: boolean;
 
   // Observable string streams
   selectedAccountChanged$ = this.selectedAccountSource.asObservable();
@@ -28,6 +30,7 @@ export class AccountControlService {
   transactionTypeChanged$ = this.transactionTypeSource.asObservable();
   tableTypeChanged$ = this.tableTypeSource.asObservable();
   transactionScopeChanged$ = this.transactionScopeSource.asObservable();
+  isLoadingChanged$ = this.isLoadingSource.asObservable();
 
   constructor(){
     this.viewPeriod = new Date();
@@ -35,6 +38,7 @@ export class AccountControlService {
     this.transactionScope = TransactionScope.Split;
     this.tableType = TableType.Flat;
     this.selectedAccount = null;
+    this.isLoading = false;
   }
 
   // Service message commands
@@ -74,6 +78,11 @@ export class AccountControlService {
     }
   }
 
+  changeLoadingState(isLoading: boolean) {
+    if (this.isLoading !== isLoading){
+      this.isLoadingSource.next(this.isLoading);
+    }
+  }
 
   getViewPeriod():Date{
     return this.viewPeriod;
@@ -93,5 +102,9 @@ export class AccountControlService {
 
   getSelectedAccount():AccountIdentifier{
     return this.selectedAccount;
+  }
+
+  getIsLoading():boolean{
+    return this.isLoading;
   }
 }

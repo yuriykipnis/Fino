@@ -16,11 +16,14 @@ namespace GoldMountainShared.Storage.Documents
 
         public Guid Id { get; set; } = Guid.NewGuid();
         public TransactionType Type { get; set; }
+        public Boolean IsFee { get; set; }
+
         public DateTime PurchaseDate { get; set; } = DateTime.MinValue;
         public DateTime PaymentDate { get; set; } = DateTime.MinValue;
         public String Description { get; set; } = String.Empty;
         public Double Amount { get; set; }
         public Double CurrentBalance { get; set; }
+
 
         public DateTime UpdatedOn { get; set; } = DateTime.Now;
         public DateTime CreatedOn { get; set; } = DateTime.Now;

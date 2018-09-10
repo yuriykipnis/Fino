@@ -29,6 +29,7 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
   transactionScope: TransactionScope;
   tableType: TableType;
   userProfile: UserProfile;
+  isLoading: boolean;
 
   private userProfileSubscription: Subscription;
   private viewPeriodSubscription: Subscription;
@@ -36,6 +37,7 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
   private tableTypeSubscription: Subscription;
   private transactionScopeSubscription: Subscription;
   private selectedAccountIdSubscription: Subscription;
+  private loadingStateSubscription: Subscription;
 
   treeTableCols: { field: string, header: string }[];
 
@@ -52,52 +54,8 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
     this.transactionScope = accountControlService.getTransactionScope();
     this.period = accountControlService.getViewPeriod();
     this.period.toDateString();
-
-    this.viewPeriodSubscription = accountControlService.viewPeriodChanged$.subscribe(
-      period => {
-        this.period = period;
-        this.updateTransactions(this.selectedAccount);
-      });
-
-    this.transactionTypeSubscription = accountControlService.transactionTypeChanged$.subscribe(
-      transactionType => {
-        this.transactionType = transactionType;
-        if (this.transactionScope === TransactionScope.Split){
-          this.updateTransactions(this.selectedAccount);
-        } else {
-          this.updateTransactions(null);
-        }
-      })
-
-    this.transactionScopeSubscription = accountControlService.transactionScopeChanged$.subscribe(
-      transactionScope => {
-        this.transactionScope = transactionScope;
-        if (transactionScope === TransactionScope.Split){
-          this.updateTransactions(this.selectedAccount);
-        } else {
-          this.updateTransactions(null);
-        }
-      });
-
-    this.selectedAccountIdSubscription = accountControlService.selectedAccountChanged$.subscribe(
-      selectedAccount => {
-        this.selectedAccount = selectedAccount;
-        this.updateTransactions(this.selectedAccount);
-      });
-
-    this.tableTypeSubscription = accountControlService.tableTypeChanged$.subscribe(
-        selectedTableType => {
-        this.tableType = selectedTableType;
-      });
-
-    this.userProfileSubscription = this.userProfileService.userProfile$.subscribe(up => {
-      this.userProfile = up;
-    });
-  }
-
-  ngOnInit() {
     this.transactions = new Array<Transaction>();
-    this.updateTransactions(this.selectedAccount);
+    this.isLoading = accountControlService.getIsLoading();
 
     this.treeTableCols = [
       { field: 'PaymentDate', header: 'PaymentDate' },
@@ -107,6 +65,60 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
     ];
   }
 
+  ngOnInit() {
+    this.updateTransactions(this.selectedAccount);
+
+    this.viewPeriodSubscription = this.accountControlService.viewPeriodChanged$.subscribe(
+      period => {
+        this.period = period;
+        if (this.transactionScope === TransactionScope.Split){
+          this.updateTransactions(this.selectedAccount);
+        } else {
+          this.updateTransactions(null);
+        }
+      });
+
+    this.transactionTypeSubscription = this.accountControlService.transactionTypeChanged$.subscribe(
+      transactionType => {
+        this.transactionType = transactionType;
+        if (this.transactionScope === TransactionScope.Split){
+          this.updateTransactions(this.selectedAccount);
+        } else {
+          this.updateTransactions(null);
+        }
+      })
+
+    this.transactionScopeSubscription = this.accountControlService.transactionScopeChanged$.subscribe(
+      transactionScope => {
+        this.transactionScope = transactionScope;
+        if (transactionScope === TransactionScope.Split){
+          this.updateTransactions(this.selectedAccount);
+        } else {
+          this.updateTransactions(null);
+        }
+      });
+
+    this.selectedAccountIdSubscription = this.accountControlService.selectedAccountChanged$.subscribe(
+      selectedAccount => {
+        this.selectedAccount = selectedAccount;
+        this.updateTransactions(this.selectedAccount);
+      });
+
+    this.tableTypeSubscription = this.accountControlService.tableTypeChanged$.subscribe(
+      selectedTableType => {
+        this.tableType = selectedTableType;
+      });
+
+    this.userProfileSubscription = this.userProfileService.userProfile$.subscribe(up => {
+      this.userProfile = up;
+      this.transactions.splice(0, this.transactions.length);
+    });
+
+    this.loadingStateSubscription = this.accountControlService.isLoadingChanged$.subscribe(isLoading =>{
+      this.isLoading = isLoading;
+    })
+  }
+
   ngOnDestroy() {
     this.viewPeriodSubscription.unsubscribe();
     this.transactionTypeSubscription.unsubscribe();
@@ -114,10 +126,11 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
     this.transactionScopeSubscription.unsubscribe();
     this.selectedAccountIdSubscription.unsubscribe();
     this.userProfileSubscription.unsubscribe();
+    this.loadingStateSubscription.unsubscribe();
   }
 
   private retrieveAllTransactions$() : Observable<Transaction[]>{
-    if (!this.userProfile.Id) {
+    if (!this.userProfile || !this.userProfile.Id) {
       return new Observable<Transaction[]>();
     }
     return this.bankService.getAllTransactions$(this.userProfile.Id, this.period);
@@ -135,7 +148,7 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
   }
 
   private updateTransactions(account: AccountIdentifier){
-    this.transactions.splice(0, this.transactions.length);
+
     if (account){
       this.retrieveTransactions$(account)
         .map(trs => {
@@ -163,6 +176,7 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
   }
 
   private populateFlatTransactions(transactions: Transaction[]){
+    this.transactions.splice(0, this.transactions.length);
     transactions.forEach(t => this.transactions.push(new Transaction(t)));
   }
 
@@ -200,7 +214,7 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
   }
 
   getTransactionColor(type : TransactionType) {
-    return type === TransactionType.Income ? "green" : "red";
+    return type === TransactionType.Income ? "#8fac67" : "#d22a77";
   }
 
   getBalanceColor(balance : number)  {

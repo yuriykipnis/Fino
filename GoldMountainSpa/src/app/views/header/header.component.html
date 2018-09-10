@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark">
   <a class="navbar-brand" href="#">
     <span id="brand-icon"><img src="../../../assets/brand/gm-icon.ico" width="30" height="30" class="d-inline-block align-top" alt=""></span>
-    <span class="brand-name">BeWise</span>
+    <span class="brand-name">Fino</span>
   </a>
   <div *ngIf="true" class="collapse navbar-collapse navbar-bw" id="navbarSupportedContent">
     <ul class="nav navbar-nav mr-auto nav-tabs">
@@ -29,7 +29,14 @@
           Loans
         </a>
       </li>
-
+      <li class="nav-item">
+        <a class="nav-link tab link"
+           [routerLink]="['contactUs']"
+           routerLinkActive="active"
+           (click)="switchTab('overview')">
+          Contact Us
+        </a>
+      </li>
       <!--<li class="nav-item">-->
         <!--<a class="nav-link tab link"-->
            <!--[routerLink]="['insurance/summary']"-->

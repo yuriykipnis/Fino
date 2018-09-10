@@ -12,27 +12,34 @@
     <p-column field="Amount" header="Income" [sortable]="true" styleClass="col-box-small">
       <ng-template let-data="rowData" pTemplate="body">
         <div *ngIf="isIncomeTransaction(data['Type'])" [ngStyle]="{'color': getTransactionColor(data['Type'])}">
-          {{data['Amount'] | currency:'ILS':'symbol':'1.0-0'}}
+          {{data['Amount'] | currency:'ILS':'symbol':'1.2-2'}}
         </div>
       </ng-template>
     </p-column>
     <p-column field="Amount" header="Expense" [sortable]="true" styleClass="col-box-small">
       <ng-template let-data="rowData" pTemplate="body">
         <div *ngIf="!isIncomeTransaction(data['Type'])" [ngStyle]="{'color': getTransactionColor(data['Type'])}">
-           -{{data['Amount'] | currency:'ILS':'symbol':'1.0-0'}}
+           -{{data['Amount'] | currency:'ILS':'symbol':'1.2-2'}}
         </div>
       </ng-template>
     </p-column>
     <p-column *ngIf="isBankAccount() && isSplitScope()" field="CurrentBalance" header="CurrentBalance" [sortable]="true" styleClass="col-box-small">
       <ng-template let-data="rowData" pTemplate="body">
         <div [ngStyle]="{'color': getBalanceColor(data['CurrentBalance'])}">
-          {{data['CurrentBalance'] | currency:'ILS':'symbol':'1.0-0'}}
+          {{data['CurrentBalance'] | currency:'ILS':'symbol':'1.2-2'}}
         </div>
       </ng-template>
     </p-column>
+
+    <!--<ng-template pTemplate="rowgroupfooter" let-car>-->
+      <!--<td colspan="5" style="text-align:right">Total Price</td>-->
+      <!--<td>sdasdasdasd</td>-->
+    <!--</ng-template>-->
+
     <ng-template pTemplate="emptymessage">
       No transactions found
     </ng-template>
+
   </p-dataTable>
 
   <p-treeTable *ngIf="!isFlatTable()" [value]="transactionsTree" [columns]="treeTableCols">
@@ -59,12 +66,12 @@
         <td>{{rowData.Description}}</td>
         <td>
           <span *ngIf="isIncomeTransaction(rowData.Type)" [ngStyle]="{'color': getTransactionColor(rowData.Type)}">
-            {{rowData.Amount | currency:'ILS':'symbol':'1.0-0'}}
+            {{rowData.Amount | currency:'ILS':'symbol':'1.2-2'}}
           </span>
         </td>
         <td>
           <span *ngIf="!isIncomeTransaction(rowData.Type)" [ngStyle]="{'color': getTransactionColor(rowData.Type)}">
-             -{{rowData.Amount | currency:'ILS':'symbol':'1.0-0'}}
+             -{{rowData.Amount | currency:'ILS':'symbol':'1.2-2'}}
           </span>
         </td>
       </tr>
@@ -81,6 +88,15 @@
     </ng-template>
 
   </p-treeTable>
+
+  <div *ngIf="isLoading" class="main-container ui-g-9 ui-g-nopad">
+    <p-progressSpinner class="ui-g-2 ui-g-offset-5"
+                       [style]="{width: '200px', height: '200px',top: '30%'}"
+                       strokeWidth="2"
+                       animationDuration="1.0s"
+                       fill="white">
+    </p-progressSpinner>
+  </div>
 </div>
 
 

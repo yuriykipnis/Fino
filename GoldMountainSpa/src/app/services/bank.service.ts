@@ -171,4 +171,22 @@ export class BankService {
 
     return response;
   }
+
+  getFees$(userId : string, period : Date): Observable<number> {
+    let year = period.getFullYear();
+    let month = period.getMonth() + 1;
+    let params = new HttpParams()
+      .set('aggregated', "true")
+      .set('year', year.toString())
+      .set('month', month.toString());
+    let headers = new HttpHeaders()
+      .set('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
+
+    let url = environment.api.clientApiUrl + '/user/' + userId + '/banks/fees';
+    var response = this.http.get<number>(url, {params: params, headers: headers}).map((res: any) => {
+      return res;
+    });
+
+    return response;
+  }
 }

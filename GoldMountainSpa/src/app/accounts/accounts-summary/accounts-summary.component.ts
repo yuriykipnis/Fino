@@ -74,7 +74,7 @@ export class AccountsSummaryComponent implements OnInit, OnDestroy {
           label: 'Expense',
           backgroundColor: '#cc3830',
           borderColor: '#b3232f',
-          data: this.accountSummaryService.outcomeMonthly[0]
+          data: this.accountSummaryService.expenseMonthly[0]
         }
       ]
     };

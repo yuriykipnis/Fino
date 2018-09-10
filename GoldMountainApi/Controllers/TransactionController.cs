@@ -5,7 +5,6 @@ using System.Security.Authentication;
 using System.Threading.Tasks;
 using GoldMountainApi.Controllers.Helper;
 using GoldMountainApi.Services;
-using GoldMountainShared.Models.Bank;
 using GoldMountainShared.Models.Shared;
 using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
@@ -46,21 +45,7 @@ namespace GoldMountainApi.Controllers
                 throw new AuthenticationException();
             }
 
-            var banksAccounts = await _bankAccountRepository.GetAccountsByUserId(userId) ?? new List<BankAccount>();
-            var creditAccounts = await _creditAccountRepository.GetAccountsByUserId(userId) ?? new List<CreditAccount>();
-
-            List<Transaction> transactions = new List<Transaction>();
-            foreach (var banksAccount in banksAccounts)
-            {
-                var trs = GetTransactionsForAccount(banksAccount.Id, year, month).Result;
-                transactions.AddRange(trs);
-            }
-
-            foreach (var creditAccount in creditAccounts)
-            {
-                var trs = GetTransactionsForAccount(creditAccount.Id, year, month).Result;
-                transactions.AddRange(trs);
-            }
+            var transactions = await GetTransactionsForUser(userId, year, month);
 
             try
             {
@@ -124,6 +109,29 @@ namespace GoldMountainApi.Controllers
             return Ok(result);
         }
 
+        [HttpGet("user/{userId}/banks/fees")]
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+        public async Task<IActionResult> GetFeesByDate(String userId,
+            [FromQuery(Name = "year")] int year, [FromQuery(Name = "month")] int month)
+        {
+            double result = 0;
+            if (!_validationHelper.ValidateUserPermissions(User, userId))
+            {
+                throw new AuthenticationException();
+            }
+
+            var transactions = await GetBankTransactionsForUser(userId, year, month);
+            var fees = transactions.Where(t => t.IsFee);
+
+            foreach (var fee in fees)
+            {
+                result += fee.Amount;
+            }
+
+            return Ok(result);
+        }
+
+
         private async Task<IEnumerable<Transaction>> GetTransactionsForAccount(Guid id, int year, int month)
         {
             var bankAccount = await _bankAccountRepository.GetAccount(id);
@@ -147,6 +155,42 @@ namespace GoldMountainApi.Controllers
             }
 
             return new List<Transaction>();
+        }
+
+        private async Task<IEnumerable<Transaction>> GetBankTransactionsForUser(String userId, int year, int month)
+        {
+            var banksAccounts = await _bankAccountRepository.GetAccountsByUserId(userId) ?? new List<BankAccount>();
+
+            List<Transaction> transactions = new List<Transaction>();
+            foreach (var banksAccount in banksAccounts)
+            {
+                var trs = GetTransactionsForAccount(banksAccount.Id, year, month).Result;
+                transactions.AddRange(trs);
+            }
+
+            return transactions;
+        }
+
+        private async Task<IEnumerable<Transaction>> GetCreditTransactionsForUser(String userId, int year, int month)
+        {
+            var creditAccounts = await _creditAccountRepository.GetAccountsByUserId(userId) ?? new List<CreditAccount>();
+
+            List<Transaction> transactions = new List<Transaction>();
+            foreach (var creditAccount in creditAccounts)
+            {
+                var trs = GetTransactionsForAccount(creditAccount.Id, year, month).Result;
+                transactions.AddRange(trs);
+            }
+
+            return transactions;
+        }
+
+        private async Task<IEnumerable<Transaction>> GetTransactionsForUser(String userId, int year, int month)
+        {
+            var bankTransactions = await GetBankTransactionsForUser(userId, year, month);
+            var creditTransactions = await GetCreditTransactionsForUser(userId, year, month);
+
+            return bankTransactions.Concat(creditTransactions);
         }
 
         private async Task<IEnumerable<Transaction>> UpdateAccountWithTransactions(Guid id, IEnumerable<Transaction> transactions)

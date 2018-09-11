@@ -69,6 +69,8 @@ export class LoanViewComponent implements OnInit, OnDestroy {
             70, 63, 56, 49, 42, 35, 28, 21, 14, 7
           ]
         },
+        //"#8fac67" : "#d22a77"
+        //'#0066cc' : '#99ccff'
         {
           label: 'Principal',
           backgroundColor: '#99ccff',

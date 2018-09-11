@@ -56,6 +56,7 @@ import { StatusSidebarComponent } from './accounts/status-sidebar/status-sidebar
 import {AccountControlService} from './accounts/services/account-control.service';
 import { LoansStatusBarComponent } from './loans/loans-status-bar/loans-status-bar.component';
 import {LoanControlService} from './loans/services/loan-control.service';
+import { ContactUsComponent } from './contact-us/contact-us.component';
 
 @NgModule({
   declarations: [
@@ -88,7 +89,8 @@ import {LoanControlService} from './loans/services/loan-control.service';
     LoansSummaryComponent,
     CommandBarComponent,
     StatusSidebarComponent,
-    LoansStatusBarComponent
+    LoansStatusBarComponent,
+    ContactUsComponent
   ],
   imports: [
     BrowserModule,

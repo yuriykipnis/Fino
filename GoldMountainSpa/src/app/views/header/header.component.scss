@@ -2,10 +2,12 @@
 
 nav {
   width: $navbar-width;
-  height: $navbar-height;
   background-color: $at-dark-app-bar;
   padding: 0;
-  min-width: 1000px;
+}
+
+h4 {
+  margin:0;
 }
 
 .navbar-bw{
@@ -15,19 +17,16 @@ nav {
 .brand-name {
   @include regular-font-xxl;
   color: $at-azure;
-  padding: 17px 138px 15px 20px;
-  display: inline-block;
-  vertical-align: top;
-  line-height: 1;
+  min-width: 6em;
+  padding: 0.3em 0 0.2em 1em !important;
 }
 
-#brand-icon {
-  display: inline-block;
-  padding: 13px 0 9.1px 32.5px;
+.brand-icon {
+  margin: 0.4em 0 0 0;
 }
 
 .icon-ct-menu {
-  padding: 13px 13px 12px 13px;
+  padding: 10px;
   color: $at-text-light;
 }
 
@@ -58,11 +57,6 @@ nav {
   color: $at-text-light;
 }
 
-#username-photo {
-  padding: 17px 24px 12px 8px;
-  color: $at-text-light;
-}
-
 #application {
   @include light-font-lg;
   color: $at-text-light;
@@ -84,11 +78,6 @@ nav {
   width: 100%;
 }
 
-.navbar-brand {
-  margin: 0 40px 0 0;
-  padding: 0;
-}
-
 .nav-tabs {
   border-bottom: none;
   .nav-link.active {
@@ -98,22 +87,46 @@ nav {
 
 .navbar-expand-lg {
   .navbar-nav {
+    flex-direction: unset;
+    padding: 0;
     .nav-link {
       padding: 0;
+      margin: 0;
+      border: 0;
+      border-radius: 0;
+      line-height: $at-line-height-3;
+      color: $at-text-light;
+      width: $tab-width;
+
       &.tab {
         @include regular-font-lg;
         text: {
           transform: uppercase;
           align: center;
         }
-        line-height: $at-line-height-18;
-        color: $at-text-light;
-        width: $tab-width;
-        padding: 16px 28px;
-        border: 0;
-        border-radius: 0;
-        margin: 0;
       };
+
+      &.menu{
+        @include regular-font-lg;
+        text: {
+          transform: none;
+          align: center;
+        }
+        width: unset;
+      };
+
+      &.username {
+        @include light-font-lg;
+        text: {
+          transform: none;
+          align: center;
+        }
+        border-left: $navbar-separator;
+      }
+
+      .photo{
+        padding: 0 2em 0 1em;
+      }
     }
 
     select{
@@ -128,6 +141,10 @@ nav {
   }
 }
 
+.menu-container{
+  padding: 0;
+}
+
 .nav-log{
   padding: 10px 15px;
   border: 1px solid $at-greyish-brown;
@@ -139,14 +156,11 @@ nav {
   background: $at-peacock-greyish-blue;
 }
 
-.nav-item {
-  margin: 4px 0 4px 0;
-}
-
 .nav-button {
   margin: 4px 0 4px 0;
 }
 
 .nav-item:hover {
   background: $at-peacock-greyish-blue;
+  margin: 0;
 }

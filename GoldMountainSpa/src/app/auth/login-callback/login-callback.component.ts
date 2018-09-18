@@ -1,10 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { AppState } from "../../shared/store/app.states";
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from "../auth.service";
-import * as fromActions from '../../shared/store/actions/user-profile.action';
 
 @Component({
   selector: 'app-login-callback',
@@ -12,7 +11,7 @@ import * as fromActions from '../../shared/store/actions/user-profile.action';
   styleUrls: ['./login-callback.component.scss']
 })
 
-export class LoginCallbackComponent implements OnInit {
+export class LoginCallbackComponent implements OnInit{
 
   constructor(private store: Store<AppState>,
               public router: Router,
@@ -21,6 +20,5 @@ export class LoginCallbackComponent implements OnInit {
 
   ngOnInit() {
     this.authService.handleLoginCallback();
-    this.router.navigate(['/']);
   }
 }

@@ -21,6 +21,8 @@
           </div>
         </p-card>
       </div>
+
+      <p-progressBar *ngIf="isLoading" mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
     </p-accordionTab>
 
     <p-accordionTab>
@@ -29,7 +31,7 @@
           <span>Loans</span>
         </div>
       </p-header>
-
+      <p-progressBar *ngIf="isLoading" mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
     </p-accordionTab>
 
   </p-accordion>

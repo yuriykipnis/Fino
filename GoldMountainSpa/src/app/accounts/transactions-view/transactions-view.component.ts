@@ -55,7 +55,6 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
     this.period = accountControlService.getViewPeriod();
     this.period.toDateString();
     this.transactions = new Array<Transaction>();
-    this.isLoading = accountControlService.getIsLoading();
 
     this.treeTableCols = [
       { field: 'PaymentDate', header: 'PaymentDate' },
@@ -66,6 +65,7 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading = this.accountControlService.getIsLoading();
     this.updateTransactions(this.selectedAccount);
 
     this.viewPeriodSubscription = this.accountControlService.viewPeriodChanged$.subscribe(
@@ -276,5 +276,20 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
     })
 
     return income;
+  }
+
+  getProviderImage(providerName: string) : string{
+
+    switch (providerName) {
+      case "Hapoalim": {
+        return "../../../assets/hapoalim.png";
+      }
+      case "Amex": {
+        return "../../../assets/amex.png";
+      }
+      default: {
+        return "";
+      }
+    }
   }
 }

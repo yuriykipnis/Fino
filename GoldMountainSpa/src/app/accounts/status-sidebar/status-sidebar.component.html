@@ -1,12 +1,11 @@
-<div class="commands-container ui-g">
-  <p-button class="bw-button right" label="Add Account" routerLink="add" ></p-button>
-</div>
+<div class="status-side-bar">
+  <div class="p-grid p-justify-end p-nogutter command-bar-container">
+    <p-button class="bw-button" label="Add Account" routerLink="add" style="flex-direction: row-reverse"></p-button>
+  </div>
 
-<div class="nav-outline">
-  <div *ngIf="false" class="animate-moving-rec"></div>
-</div>
+  <div class="nav-outline" style="margin-top: -1px;"></div>
 
-<div class="accounts-status-panel ui-g-12 ui-g-nopad" style="margin-top: 16px">
+  <div class="accounts-status-panel ui-g-12 ui-g-nopad" style="margin-top: 16px">
   <div class="accounts-status-sub-panel ui-g-12 ui-g-nopad">
     <div class="ui-g">
       <span class="ui-g-6">Period Income</span>
@@ -50,4 +49,4 @@
     <p-chart type="bar"[data]="monthlyBalance"></p-chart>
   </div>
 </div>
-
+</div>

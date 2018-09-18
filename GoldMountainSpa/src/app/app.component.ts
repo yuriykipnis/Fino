@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { AuthService } from "./auth/auth.service";
+import {OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -7,11 +8,14 @@ import { AuthService } from "./auth/auth.service";
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent {
+export class AppComponent implements OnInit{
   title = 'app';
 
   constructor(public authService: AuthService) {
-    authService.handleAuthentication();
+  }
+
+  ngOnInit() {
+    this.authService.handleAuthentication();
   }
 }
 

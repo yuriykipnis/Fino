@@ -21,13 +21,22 @@ export class AccountsComponent implements OnInit, OnDestroy {
   isBankAccountsLoading: boolean = false;
   isCreditAccountsLoading: boolean = false;
 
-
   constructor(private store: Store<AppState>,
               private bankService: BankService,
               private creditService: CreditService,
               private userProfileService: UserProfileService,
               private accountControlService: AccountControlService) {
   }
+
+  sleep= function pause(numberMillis) {
+    var now = new Date();
+    var exitTime = now.getTime() + numberMillis;
+    while (true) {
+      now = new Date();
+      if (now.getTime() > exitTime)
+        return;
+    }
+  };
 
   ngOnInit() {
     this.isBankAccountsLoading = true;
@@ -41,10 +50,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
         return;
       }
 
+      //this.accountControlService.changeLoadingState(true);
       this.bankService.getAccounts$(up.Id)
         .subscribe(res => {
             this.store.dispatch(new fromBankActions.FetchBankAccounts(res));
-            this.isBankAccountsLoading = false;
             this.accountControlService.changeLoadingState(false);
           },
           err => {
@@ -56,11 +65,11 @@ export class AccountsComponent implements OnInit, OnDestroy {
         .subscribe(res => {
             this.store.dispatch(new fromCreditActions.FetchCreditAccounts(res));
             this.isCreditAccountsLoading = false;
-            this.accountControlService.changeLoadingState(false);
+            //this.accountControlService.changeLoadingState(false);
           },
           err => {
             this.isCreditAccountsLoading = false;
-            this.accountControlService.changeLoadingState(false);
+            //this.accountControlService.changeLoadingState(false);
           });
     });
   }
@@ -70,7 +79,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
   }
 
   isLoading() {
-    return this.isBankAccountsLoading || this.isCreditAccountsLoading;
+    return this.isBankAccountsLoading;
+    //return this.isBankAccountsLoading || this.isCreditAccountsLoading;
   }
 
   getBalanceColor(balance : number)
@@ -79,3 +89,4 @@ export class AccountsComponent implements OnInit, OnDestroy {
   }
 
 }
+

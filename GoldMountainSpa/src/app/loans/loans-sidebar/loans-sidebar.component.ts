@@ -4,13 +4,10 @@ import {AppState} from "../../shared/store/app.states";
 import { Store } from '@ngrx/store';
 import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
-import {AccountsSummaryService} from "../../accounts/services/accounts-summary.service";
 import * as loanReducer from "../store/reducers/loan.reducer";
-import {Loan} from "app/models/loan";
 import {LoanControlService} from "../services/loan-control.service";
-import {AccountType} from "../../accounts/models/account-identifier";
 import {LoanViewModel} from '../models/loan-view.model';
-import {SubLoan} from "../../models/subLoan";
+import {AccountControlService} from "../../accounts/services/account-control.service";
 
 @Component({
   selector: 'app-loans-sidebar',
@@ -21,14 +18,22 @@ import {SubLoan} from "../../models/subLoan";
 export class LoansSidebarComponent implements OnInit {
   loans$: Observable<LoanViewModel[]>;
   loansSubscription: Subscription;
+  loadingStateSubscription: Subscription;
+  isLoading: boolean;
 
   constructor(private store: Store<AppState>,
               private router: Router, private route: ActivatedRoute,
-              public loanControlService: LoanControlService) {
+              private loanControlService: LoanControlService,
+              private accountControlService: AccountControlService) {
     this.loans$ = store.select(loanReducer.getLoans);
   }
 
   ngOnInit() {
+    this.isLoading = this.accountControlService.getIsLoading();
+    this.loadingStateSubscription = this.accountControlService.isLoadingChanged$.subscribe(newState => {
+      this.isLoading = newState;
+    });
+
     this.loansSubscription = this.loans$.subscribe(res =>{
       if (res.length > 0 && !this.loanControlService.getSelectedLoan()) {
         this.loanControlService.changeSelectedLoan(res[0]);
@@ -38,11 +43,10 @@ export class LoansSidebarComponent implements OnInit {
 
   ngOnDestroy() {
     this.loansSubscription.unsubscribe();
+    this.loadingStateSubscription.unsubscribe();
   }
 
   openLoanView(loan: any) {
     this.loanControlService.changeSelectedLoan(loan);
   }
-
-
 }

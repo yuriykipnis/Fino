@@ -5,6 +5,7 @@
 .main-container{
   height:100%;
   padding:0;
+  min-width: 60em;
 }
 
 .main-scrollable{
@@ -12,29 +13,9 @@
   overflow-y: auto;
 }
 
-.transactions-container{
-  position: absolute;
-  top: 90px;
-  bottom: 0;
-}
-
-.transactions-view {
-  padding: 16px 14px 6px 10px;
-}
-
-.commands-container{
-  margin-top: 12px;
-  margin-bottom: 18px;
-  display: block
-}
-
 .scrollable-container{
   height: 100%;
   overflow-y: auto;
-}
-
-.type-filter{
-  margin: 0 15px 0 15px;
 }
 
 .right{

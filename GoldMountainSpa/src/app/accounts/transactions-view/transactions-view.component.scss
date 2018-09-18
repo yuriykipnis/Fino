@@ -13,3 +13,12 @@
   overflow-y: auto;
 }
 
+.transactions-container{
+  position: absolute;
+  top: 5em;
+  left: 20em;
+  right: 20em;
+  bottom: 0;
+  min-width: 20em;
+  padding: 0.5em 0 0 1em;
+}

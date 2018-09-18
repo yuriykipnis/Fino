@@ -17,7 +17,7 @@ import {LoansComponent} from "./loans/loans.component";
 import {ContactUsComponent} from "./contact-us/contact-us.component";
 
 export const routes: Routes = [
-  { path: 'overview', component: OverviewComponent},
+  { path: 'overview', component: OverviewComponent, canActivate: [AuthGuard]},
   { path: 'accounts', component: AccountsComponent, canActivate: [AuthGuard],
     children: [
       {path: 'add', component: NewAccountComponent},
@@ -36,11 +36,12 @@ export const routes: Routes = [
   },
   { path: 'loans', component: LoansComponent, canActivate: [AuthGuard],
     children: [
+      {path: 'add', component: NewAccountComponent},
       //{path: 'summary', component: LoansSummaryComponent},
       //{path: ':LoanId', component: LoanViewComponent},
     ]
   },
-  { path: 'contact-us', component: ContactUsComponent},
+  { path: 'contact-us', component: ContactUsComponent, canActivate: [AuthGuard]},
   { path: 'planning', component: PlanningComponent, canActivate: [AuthGuard] },
   { path: 'adviser', component: PlanningComponent, canActivate: [AuthGuard] },
   { path: 'login-callback', component: LoginCallbackComponent },

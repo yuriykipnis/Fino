@@ -14,6 +14,8 @@ namespace DataProvider.Providers.Cards.Amex
     {
         private readonly IAmexApi _api;
 
+        private const string _providerName = "Amex";
+
         public AmexAccountProvider(IAmexApi api)
         {
             _api = api;
@@ -136,6 +138,7 @@ namespace DataProvider.Providers.Cards.Amex
                             PurchaseDate = purchaseDate,
                             PaymentDate = purchaseDate.AddMonths(paymentDate),
                             Description = string.IsNullOrEmpty(creditInfo) ? supplierName : string.Format("{0} - {1}", supplierName, creditInfo),
+                            ProviderName = _providerName,
                             CurrentBalance = Double.NaN,
                             Amount = paymentSum > 0 ? paymentSum : -1 * paymentSum,
                             Type = paymentSum > 0 ? TransactionType.Expense : TransactionType.Income
@@ -162,6 +165,7 @@ namespace DataProvider.Providers.Cards.Amex
                             PurchaseDate = purchaseDate,
                             PaymentDate = purchaseDate.AddMonths(paymentDate),
                             Description = supplierName,
+                            ProviderName = _providerName,
                             CurrentBalance = Double.NaN,
                             Amount = paymentSum,
                             Type = TransactionType.Expense

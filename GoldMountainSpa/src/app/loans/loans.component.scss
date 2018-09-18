@@ -5,6 +5,7 @@
 .main-container{
   height:100%;
   padding:0;
+  min-width: 60em;
 }
 
 .main-scrollable{
@@ -16,10 +17,6 @@
   position: absolute;
   top: 90px;
   bottom: 0;
-}
-
-.loan-view {
-  padding: 16px 14px 6px 10px;
 }
 
 .loans-container{
@@ -44,4 +41,19 @@
   background-color: $at-ocean;
   height: 4px;
   width: 100%;
+}
+
+@media all and (max-width: 74em) {
+  #loan-view {
+    visibility: hidden;
+    clear: both;
+    display: none;
+
+  }
+  #loan-view-container{
+    flex-grow: 0;
+  }
+  #loans-statusbar {
+    width: 40em;
+  }
 }

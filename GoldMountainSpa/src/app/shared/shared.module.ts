@@ -28,7 +28,8 @@ import { metaReducers, reducers } from "./store/reducers";
     fromPrimeNg.CardModule,
     fromPrimeNg.ChartModule,
     fromPrimeNg.ProgressSpinnerModule,
-    fromPrimeNg.SelectButtonModule
+    fromPrimeNg.SelectButtonModule,
+    fromPrimeNg.ProgressBarModule
   ],
   imports: [
     CommonModule,
@@ -49,6 +50,7 @@ import { metaReducers, reducers } from "./store/reducers";
     fromPrimeNg.CardModule,
     fromPrimeNg.ChartModule,
     fromPrimeNg.SelectButtonModule,
+    fromPrimeNg.ProgressBarModule,
     StoreModule.forRoot(reducers, {metaReducers})
   ]
 })

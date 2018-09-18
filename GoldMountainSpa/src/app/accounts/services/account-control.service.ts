@@ -80,6 +80,7 @@ export class AccountControlService {
 
   changeLoadingState(isLoading: boolean) {
     if (this.isLoading !== isLoading){
+      this.isLoading = isLoading;
       this.isLoadingSource.next(this.isLoading);
     }
   }

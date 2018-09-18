@@ -20,19 +20,19 @@ export class LoansStatusBarComponent implements OnInit {
       labels: [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027],
       datasets: [
         {
-          label: 'Interest',
-          backgroundColor: '#0066cc',
-          borderColor: '#0066cc',
+          label: 'Recommended',
+          backgroundColor: '#8fac67',
+          borderColor: '#8fac67',
           data: [
-            63, 55, 47, 39, 31, 23, 15, 7, 3, 1
+            1200, 1060, 920, 780,640, 500, 360, 220, 80 ,0
           ]
         },
         {
-          label: 'Principal',
-          backgroundColor: '#99ccff',
-          borderColor: '#99ccff',
+          label: 'Current',
+          backgroundColor: '#d22a77',
+          borderColor: '#d22a77',
           data: [
-            30, 37, 44, 51, 58, 65, 72, 79, 86, 93
+            1200, 1120, 1040, 960, 900, 840, 760, 680, 600, 540
           ]
         }
       ]

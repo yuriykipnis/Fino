@@ -1,64 +1,55 @@
-<div class="loans-container ui-g">
-  <p-button class="bw-button right" label="Add Account" routerLink="add" ></p-button>
-</div>
+<div id="loans-statusbar" class="status-side-bar">
+  <div class="p-grid p-justify-end p-nogutter command-bar-container">
+    <p-button class="bw-button" label="Add Account" routerLink="add" style="flex-direction: row-reverse"></p-button>
+  </div>
+  <div class="nav-outline">
+    <div *ngIf="false" class="animate-moving-rec"></div>
+  </div>
 
-<div class="nav-outline">
-  <div *ngIf="false" class="animate-moving-rec"></div>
-</div>
+  <div class="p-grid p-nogutter accounts-status-sub-panel">
+    <div class="p-col-12">
+        <span class="">Total Loan</span>
+        <span class="right">{{1865300.00 | currency:'ILS':'symbol':'1.2-2'}}</span>
+    </div>
 
-<!--<h1 style="color:#d22a77; padding-top: 50px">-->
-  <!--Our recommendation will come here-->
-<!--</h1>-->
+    <div class="p-col-12">
+        <span class="">Total Interest (7%)</span>
+        <span class="right">{{900300.00 | currency:'ILS':'symbol':'1.2-2'}}</span>
+    </div>
 
-<div class="accounts-status-sub-panel ui-g-12 ui-g-nopad">
-    <div class="ui-g-12 ui-g-nopad">
-      <span class="ui-g-6">Total Loan</span>
-      <span class="ui-g-6 right">{{1865300.00 | currency:'ILS':'symbol':'1.2-2'}}</span>
+    <div class="p-col-12">
+        <span class="">Total Payoff</span>
+        <span class="right">{{2340200.00 | currency:'ILS':'symbol':'1.2-2'}}</span>
     </div>
-    <div class="ui-g-12 ui-g-nopad">
-      <span class="ui-g-6">Total Interest (7%)</span>
-      <span class="ui-g-6 right">{{900300.00 | currency:'ILS':'symbol':'1.2-2'}}</span>
+
+    <div class="p-col-12">
+      <span class="">Remaining</span>
+      <span class="right">{{1600415.00 | currency:'ILS':'symbol':'1.2-2'}}</span>
     </div>
-    <div class="ui-g-12 ui-g-nopad">
-      <span class="ui-g-6">Total Payoff</span>
-      <span class="ui-g-6 right">{{2340200.00 | currency:'ILS':'symbol':'1.2-2'}}</span>
+  </div>
+
+  <div class="p-grid p-nogutter accounts-status-sub-panel" style="padding-top: 2em">
+    <div class="p-col-12">
+        <span class="ui-g-12 accounts-status-sub-panel">Recommended Loan Amortization</span>
+        <p-chart type="line" [data]="recomendedLoanAmortisation"></p-chart>
     </div>
-    <div class="ui-g-12 ui-g-nopad">
-      <span class="ui-g-6">Paid Amount</span>
-      <span class="ui-g-6 right">{{730230.00 | currency:'ILS':'symbol':'1.2-2'}}</span>
-    </div>
-    <div class="ui-g-12 ui-g-nopad">
+
+    <div class="p-col-12">
       <span class="ui-g-6">Remaining</span>
-      <span class="ui-g-6 right">{{1600415.00 | currency:'ILS':'symbol':'1.2-2'}}</span>
+      <span class="ui-g-6 right">{{1370310.00 | currency:'ILS':'symbol':'1.2-2'}}</span>
     </div>
 
+    <p-button class="p-col-12 right" style="padding-bottom: 30px" label="Raise Request" ></p-button>
+
+    <div class="nav-outline p-col-12"></div>
+  </div>
+
+  <div class="p-grid p-nogutter accounts-status-sub-panel" style="padding-top: 2em">
+    <div class="p-col-12">
+      <span>Based on the analysis of your finance profile we suggest you on the following products...</span>
+    </div>
+
+    <p-button class="p-col-12 right" label="Raise Request"></p-button>
+  </div>
+
 </div>
-
-<!--<div class="nav-outline ui-g-12 ui-g-nopad">-->
-  <!--<div *ngIf="false" class="animate-moving-rec"></div>-->
-<!--</div>-->
-
-<div class="ui-g-12 ui-g-nopad" style="padding-top: 30px">
-    <span class="ui-g-12 accounts-status-sub-panel">Recommended Loan Amortization</span>
-    <p-chart type="bar"[data]="recomendedLoanAmortisation"></p-chart>
-</div>
-
-<div class="ui-g-12 ui-g-nopad">
-  <span class="ui-g-6">Remaining</span>
-  <span class="ui-g-6 right">{{1370310.00 | currency:'ILS':'symbol':'1.2-2'}}</span>
-</div>
-
-<p-button class="ui-g-12 right" style="padding-bottom: 30px"
-          label="Raise Request" ></p-button>
-
-
-<div class="nav-outline ui-g-12 ui-g-nopad">
-  <div *ngIf="false" class="animate-moving-rec"></div>
-</div>
-
-<div class="ui-g-12 ui-g-nopad" style="padding-top: 30px">
-  <span>Based on the analysis of your finance profile we suggest you on the following products...</span>
-</div>
-
-<p-button class="ui-g-12 right" label="Raise Request"></p-button>
-

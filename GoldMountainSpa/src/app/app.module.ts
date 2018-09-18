@@ -4,7 +4,6 @@ import { RouterModule } from '@angular/router';
 import { SharedModule } from './shared/shared.module';
 import { AppComponent } from './app.component';
 import { routes } from "./index";
-import { LoadingComponent } from './views/loading/loading.component';
 import { MainComponent } from './views/main/main.component';
 import { HeaderComponent } from './views/header/header.component';
 import { AccountsComponent } from './accounts/accounts.component';
@@ -61,7 +60,6 @@ import { ContactUsComponent } from './contact-us/contact-us.component';
 @NgModule({
   declarations: [
     AppComponent,
-    LoadingComponent,
     MainComponent,
     HeaderComponent,
     AccountsComponent,
@@ -90,7 +88,7 @@ import { ContactUsComponent } from './contact-us/contact-us.component';
     CommandBarComponent,
     StatusSidebarComponent,
     LoansStatusBarComponent,
-    ContactUsComponent
+    ContactUsComponent,
   ],
   imports: [
     BrowserModule,

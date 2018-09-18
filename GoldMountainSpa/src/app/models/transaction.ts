@@ -11,6 +11,7 @@ export class Transaction {
   PaymentDate: string;
   PurchaseDate: string;
   Description: string;
+  ProviderName: string;
   Amount: number;
   CurrentBalance: number;
   Type: TransactionType;

@@ -9,6 +9,7 @@ import * as fromActions from '../shared/store/actions/user-profile.action';
 import * as userProfileReducer from '../shared/store/reducers/user-profile.reducer';
 import {UserProfile} from "../models/user.profile";
 import {Observable} from 'rxjs/Observable';
+import {NgZone} from '@angular/core';
 
 @Injectable()
 export class AuthService {
@@ -25,8 +26,10 @@ export class AuthService {
   userProfile: Observable<UserProfile>;
 
   constructor(private store: Store<AppState>,
-              public router: Router) {
+              public router: Router,
+              private zone: NgZone) {
     this.userProfile = store.select(userProfileReducer.getUserProfile);
+
   }
 
   public login(): void {
@@ -39,7 +42,9 @@ export class AuthService {
     localStorage.removeItem('id_token');
 
     this.store.dispatch(new fromActions.SetProfile(new UserProfile()));
-    this.router.navigate(['../']);
+    //this.router.navigate(['/']);
+    window.location.href = '/';
+    window.console.log("Redirect to Login from auth service");
   }
 
   public handleAuthentication(): void {
@@ -55,6 +60,8 @@ export class AuthService {
         window.location.hash = '';
         this.setProfile(authResult.accessToken);
         this.setSession(authResult);
+        this.router.navigate(['/']);
+        //window.location.href = 'overview/';
       } else if (err) {
         console.error(`Error: ${err.error}`);
       }

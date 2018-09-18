@@ -10,6 +10,7 @@ namespace DataProvider.Providers.Banks.Hapoalim
     public class HapoalimAccountProvider : IBankAccountProvider
     {
         private readonly IHapoalimApi _api;
+        private const string _providerName = "Hapoalim";
 
         public HapoalimAccountProvider(IHapoalimApi api)
         {
@@ -90,6 +91,7 @@ namespace DataProvider.Providers.Banks.Hapoalim
                     PurchaseDate = eventDate,
                     PaymentDate = eventDate,
                     Description = transaction.ActivityDescription,
+                    ProviderName = _providerName,
                     CurrentBalance = transaction.CurrentBalance,
                     Amount = transaction.EventAmount,
                     IsFee = transaction.ActivityTypeCode == (int)HapoalimActivityType.Fee,

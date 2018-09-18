@@ -24,16 +24,24 @@ export class AccountsSidebarComponent implements OnInit {
   creditAccounts$: Observable<CreditAccount[]>;
   bankAccountsSubscription: Subscription;
   creditAccountsSubscription: Subscription;
+  loadingStateSubscription: Subscription;
+  isLoading: boolean;
 
   constructor(private store: Store<AppState>,
               private accountControlService: AccountControlService,
               private accountsSummaryService: AccountsSummaryService,
-              private router: Router, private route: ActivatedRoute) {
+              private router: Router,
+              private route: ActivatedRoute) {
     this.bankAccounts$ = store.select(bankAccountReducer.getBankAccounts);
     this.creditAccounts$ = store.select(creditAccountReducer.getCreditAccounts);
   }
 
   ngOnInit() {
+    this.isLoading = this.accountControlService.getIsLoading();
+    this.loadingStateSubscription = this.accountControlService.isLoadingChanged$.subscribe(newState => {
+      this.isLoading = newState;
+    });
+
     this.bankAccountsSubscription = this.bankAccounts$.subscribe(res => {
       if (res.length > 0 && !this.accountControlService.getSelectedAccount()) {
         this.accountControlService.changeSelectedAccountId({Id: res[0].Id, Type: AccountType.Bank});
@@ -65,5 +73,6 @@ export class AccountsSidebarComponent implements OnInit {
       Type: AccountType.Credit
     });
   }
+
 }
 

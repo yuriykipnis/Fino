@@ -43,6 +43,7 @@ export class CreditService {
               PaymentDate: t.paymentDate,
               PurchaseDate: t.purchaseDate,
               Description: t.description,
+              ProviderName: t.providerName,
               Amount: t.amount,
               CurrentBalance: 0,
               Type: t.type
@@ -74,6 +75,7 @@ export class CreditService {
           PaymentDate: t.paymentDate,
           PurchaseDate: t.purchaseDate,
           Description: t.description,
+          ProviderName: t.providerName,
           Amount: t.amount,
           CurrentBalance: 0,
           Type: t.type

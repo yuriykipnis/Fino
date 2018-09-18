@@ -1,28 +1,15 @@
-<div class="ui-g ui-g-nopad main-container">
-  <div class="ui-g-3 ui-g-nopad">
-    <app-accounts-sidebar class="ui-g-10 ui-g-nopad main-container"></app-accounts-sidebar>
+<div class="p-grid p-nogutter main-container">
+  <div class="p-col-fixed" style="width:20em">
+    <app-accounts-sidebar></app-accounts-sidebar>
   </div>
 
-  <div class="ui-g-9 ui-g-nopad">
-    <div class="ui-g ui-g-nopad" style="margin-left: -5.6%;">
-      <div class="ui-g-9">
-
-        <app-command-bar></app-command-bar>
-
-        <div class="transactions-container">
-          <div class="ui-g ui-g-nopad main-container">
-            <div class="ui-g-9 ui-g-nopad transactions-view">
-              <app-transactions-view></app-transactions-view>
-            </div>
-          </div>
-        </div>
-
-      </div>
-      <div class="ui-g-3">
-        <app-status-sidebar></app-status-sidebar>
-      </div>
-    </div>
+  <div class="p-col">
+    <app-command-bar></app-command-bar>
+    <app-transactions-view></app-transactions-view>
   </div>
+
+  <app-status-sidebar class="p-col-fixed" style="width:20em"></app-status-sidebar>
+
   <router-outlet></router-outlet>
 </div>
 

@@ -1,17 +1,16 @@
 @import "./styles";
 
-
-.bw-selectbutton .ui-selectbutton .ui-button:not(.ui-state-disabled):not(.ui-state-active):hover {
+.ui-selectbutton .ui-button:not(.ui-state-disabled):not(.ui-state-active):hover {
   border-color: $at-light-grey;
   background: #ffffff;
   color: $at-purplish-grey; }
 
-.bw-selectbutton .ui-selectbutton .ui-button:not(.ui-state-disabled):not(.ui-state-active):hover a {
+.ui-selectbutton .ui-button:not(.ui-state-disabled):not(.ui-state-active):hover a {
   color: $at-purplish-grey; }
 
 /* ButtonSet */
-.bw-selectbutton .ui-togglebutton.ui-button.ui-state-default,
-.bw-selectbutton .ui-selectbutton .ui-button.ui-state-default{
+.ui-togglebutton.ui-button.ui-state-default,
+.ui-selectbutton .ui-button.ui-state-default{
   border: 1px solid $at-light-grey;
   background: #ffffff;
   font-weight: normal;
@@ -19,26 +18,26 @@
   width: 6em;
 }
 
-.bw-selectbutton .ui-togglebutton.ui-button.ui-state-default:first-child,
-.bw-selectbutton .ui-selectbutton .ui-button.ui-state-default:first-child {
+.ui-togglebutton.ui-button.ui-state-default:first-child,
+.ui-selectbutton .ui-button.ui-state-default:first-child {
   border-radius: 20px 0 0 20px;
 }
 
-.bw-selectbutton .ui-togglebutton.ui-button.ui-state-default:last-child,
-.bw-selectbutton .ui-selectbutton .ui-button.ui-state-default:last-child {
+.ui-togglebutton.ui-button.ui-state-default:last-child,
+.ui-selectbutton .ui-button.ui-state-default:last-child {
   border-radius: 0 20px 20px 0;
 }
 
-.bw-selectbutton .ui-togglebutton.ui-button.ui-state-hover, .bw-selectbutton .ui-togglebutton.ui-button.ui-state-focus,
-.bw-selectbutton .ui-selectbutton .ui-button.ui-state-hover, .bw-selectbutton .ui-selectbutton .ui-button.ui-state-focus,
-.bw-selectbutton .ui-selectbutton .ui-button:focus {
+.ui-togglebutton.ui-button.ui-state-hover, .bw-selectbutton .ui-togglebutton.ui-button.ui-state-focus,
+.ui-selectbutton .ui-button.ui-state-hover, .bw-selectbutton .ui-selectbutton .ui-button.ui-state-focus,
+.ui-selectbutton .ui-button:focus {
   background: #eeeeee;
   font-weight: normal;
   color: $at-purplish-grey; }
 
-.bw-selectbutton .ui-togglebutton.ui-button.ui-state-focus,
-.bw-selectbutton .ui-selectbutton .ui-button.ui-state-focus.ui-state-active,
-.bw-selectbutton .ui-selectbutton .ui-button.ui-state-active {
+.ui-togglebutton.ui-button.ui-state-focus,
+.ui-selectbutton .ui-button.ui-state-focus.ui-state-active,
+.ui-selectbutton .ui-button.ui-state-active {
   background: $at-ligth-blue;
   color: #ffffff;
   -webkit-box-shadow: none;
@@ -46,7 +45,7 @@
   box-shadow: none;
 }
 
-.bw-selectbutton .ui-button .ui-button-text {
+.ui-button .ui-button-text {
   line-height: 1.8em;
   font-size: $at-font-size-lg;
 }

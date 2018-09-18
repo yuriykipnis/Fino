@@ -2,10 +2,11 @@
 @import "../../../sass/selectButton";
 
 .command-bar-container{
-  padding: 0 10px 0 10px;
+  padding: 1em 0 1em 1em;
 }
 
 .date-control{
+  display: inline-block;
   border: 1px solid $at-light-grey;
   border-radius: 20px;
   background: #ffffff;
@@ -23,4 +24,31 @@
 .date-text{
   display: inline-block;
   vertical-align: middle;
+}
+
+.ui-buttonset-3{
+  width: 18em;
+}
+
+.mid-button {
+  padding: 0 1em 0 1em;
+}
+
+@media all and (max-width: 100em) {
+  #scope-filter, #table-type-filter {
+    visibility: hidden;
+    clear: both;
+    display: none;
+  }
+}
+
+@media all and (max-width: 76em) {
+  #transaction-type-filter {
+    visibility: hidden;
+    clear: both;
+    display: none;
+  }
+  #date-control {
+    float: unset;
+  }
 }

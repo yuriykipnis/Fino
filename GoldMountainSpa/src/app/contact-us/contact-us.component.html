@@ -1,1 +1,51 @@
-<h1>Contact Us</h1>
+<form [formGroup]="userform" (ngSubmit)="onSubmit(userform.value)">
+<div class="p-grid">
+  <p-panel class="p-col-6 p-offset-3" header="Contact Us">
+  <div class="p-grid">
+    <div class="">
+      Name *:
+    </div>
+    <div class="ui-grid-col-6">
+      <input pInputText type="text" formControlName="name" placeholder="Required"/>
+    </div>
+    <div class="ui-grid-col-4">
+      <p-message severity="error" text="Name is required" *ngIf="!userform.controls['name'].valid&&userform.controls['name'].dirty"></p-message>
+    </div>
+  </div>
+
+  <div class="p-grid">
+    <div class="">
+      Email *:
+    </div>
+    <div class="">
+      <input pInputText type="text" formControlName="email" placeholder="Required"/>
+    </div>
+    <div class="">
+      <p-message severity="error" text="Email is required" *ngIf="!userform.controls['email'].valid&&userform.controls['email'].dirty"></p-message>
+    </div>
+  </div>
+
+  <div class="p-grid">
+    <div class="">
+      Phone Number :
+    </div>
+    <div class="">
+      <input pInputText type="text" formControlName="email" placeholder="Required"/>
+    </div>
+  </div>
+
+  <div class="p-grid">
+    <div class="">
+      Description:
+    </div>
+    <div class="">
+      <textarea pInputTextarea type="text" formControlName="message"></textarea>
+    </div>
+    <div class=""></div>
+  </div>
+
+  <p-button class="bw-button" label="Send" routerLink="send"></p-button>
+
+</p-panel>
+</div>
+</form>

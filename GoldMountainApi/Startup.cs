@@ -96,6 +96,7 @@ namespace GoldMountainApi
             services.AddTransient<IInstitutionRepository, InstitutionRepository>();
             services.AddTransient<IDataService, DataService>();
             services.AddSingleton<IValidationHelper, ValidationHelper>();
+            services.AddSingleton<IEmailHelper, EmailHelper>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

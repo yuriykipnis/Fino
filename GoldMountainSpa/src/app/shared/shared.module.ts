@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UtcToLocalTimePipe } from './utc-to-local-time.pipe';
 import * as fromPrimeNg from 'primeng/primeng';
+import { MessagesModule } from 'primeng/messages';
+import { MessageModule } from 'primeng/message';
 import { StoreModule } from '@ngrx/store';
 import { metaReducers, reducers } from "./store/reducers";
 
@@ -29,7 +31,9 @@ import { metaReducers, reducers } from "./store/reducers";
     fromPrimeNg.ChartModule,
     fromPrimeNg.ProgressSpinnerModule,
     fromPrimeNg.SelectButtonModule,
-    fromPrimeNg.ProgressBarModule
+    fromPrimeNg.ProgressBarModule,
+    MessagesModule,
+    MessageModule
   ],
   imports: [
     CommonModule,
@@ -51,6 +55,8 @@ import { metaReducers, reducers } from "./store/reducers";
     fromPrimeNg.ChartModule,
     fromPrimeNg.SelectButtonModule,
     fromPrimeNg.ProgressBarModule,
+    MessagesModule,
+    MessageModule,
     StoreModule.forRoot(reducers, {metaReducers})
   ]
 })

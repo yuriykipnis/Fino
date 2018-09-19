@@ -1,0 +1,14 @@
+.ui-inputtext {
+  background-color: #ffffff;
+  color: #222222; }
+
+.ui-inputtext:enabled:hover {
+  border-color: #c0c0c0; }
+
+.ui-inputtext.ui-state-focus,
+.ui-inputtext:focus {
+  outline: 0 none;
+  border-color: #c0c0c0;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none; }

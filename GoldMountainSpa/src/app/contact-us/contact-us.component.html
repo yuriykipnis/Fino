@@ -21,29 +21,28 @@
         <div class="p-grid">
           <div class="p-col-12 ui-inputgroup">
             <span class="ui-inputgroup-addon"><i class="fa fa-user"></i></span>
-            <input type="text" pInputText placeholder="Name"  style="width: 100%">
+            <input requered pInputText type="text" placeholder="Name" [(ngModel)]="name">
           </div>
           <div class="p-col-6 ui-inputgroup">
             <span class="ui-inputgroup-addon"><i class="fa fa-envelope"></i></span>
-            <input type="text" pInputText placeholder="Email" style="width: 100%">
+            <input requered pInputText type="email" name="email" placeholder="Email" [(ngModel)]="email">
           </div>
           <div class="p-col-6 ui-inputgroup">
             <span class="ui-inputgroup-addon"><i class="fa fa-phone"></i></span>
-            <input type="text" pInputText placeholder="Phone Number"  style="width: 100%">
+            <input type="text" pInputText placeholder="Phone Number" [(ngModel)]="phone">
           </div>
-          <!--<div class="p-col-12" *ngIf="!userform.controls['email'].valid && userform.controls['email'].dirty">-->
-            <!--<p-message severity="error" text="Email is required" ></p-message>-->
-          <!--</div>-->
           <div class="p-col-12 ui-inputgroup">
             <span class="ui-inputgroup-addon"><i class="fa fa-pencil"></i></span>
-            <input type="text" pInputText placeholder="Subject"  style="width: 100%">
+            <input type="text" pInputText placeholder="Subject" [(ngModel)]="subject">
           </div>
           <div class="p-col-12 ui-inputgroup">
-            <textarea pInputTextarea [(ngModel)]="property" [rows]="8" [cols]="65"></textarea>
+            <textarea pInputTextarea [rows]="8" [cols]="65" [(ngModel)]="message"></textarea>
           </div>
           <div class="p-col-12">
             <div class="p-grid p-justify-end p-nogutter">
-              <p-button class="bw-button" label="Send to Fino"
+              <!--<input type="submit" value="Send to Fino" />-->
+              <p-button class="bw-button" label="Send to Fino" (click)="onSend()"
+                        [disabled]="!isValid"
                         style="flex-direction: row-reverse"></p-button>
             </div>
           </div>

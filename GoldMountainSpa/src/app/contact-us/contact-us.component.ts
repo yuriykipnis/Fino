@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, AfterViewInit } from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {FormBuilder} from '@angular/forms';
 import {MessageService} from 'primeng/primeng';
@@ -12,24 +12,35 @@ import {Validators} from '@angular/forms';
   encapsulation: ViewEncapsulation.None
 })
 export class ContactUsComponent implements OnInit {
-  userform: FormGroup;
-  submitted: boolean;
+  emailRegexp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+  name: string;
+  email: string;
+  phone: string;
+  subject: string;
   message: string;
 
-  constructor(private fb: FormBuilder) {}
+  isSubmitted : boolean;
+
+  constructor() {
+  }
 
   ngOnInit() {
-    this.userform = this.fb.group({
-      'name': new FormControl('', Validators.required),
-      'email': new FormControl('', Validators.required),
-      'message': new FormControl(''),
-    });
+    this.isSubmitted = false;
   }
 
-  onSubmit(value: string) {
-    //this.submitted = true;
-    //this.messageService.add({severity:'info', summary:'Success', detail:'Form Submitted'});
+  onSend() {
+
   }
 
+  get isValid() : boolean {
+    let isEmailValid = this.emailRegexp.test(this.email);
 
+    if (this.name && this.name.length > 0 &&
+        this.email && isEmailValid &&
+        this.message && this.message.length > 0) {
+      return true;
+    }
+
+    return false;
+  }
 }

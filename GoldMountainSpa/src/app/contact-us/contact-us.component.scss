@@ -1,5 +1,15 @@
-@import "../../sass/styles";
+@import "../../sass/inputtext";
 @import "../../sass/button";
+@import "../../sass/styles";
+
+a:hover, a:visited, a:link, a:active{
+  text-decoration: none;
+}
+
+input{
+  width: 100%;
+
+}
 
 .main-container{
   height:100%;
@@ -40,6 +50,16 @@
   padding-left: 1.2em;
 }
 
-a:hover, a:visited, a:link, a:active{
-  text-decoration: none;
+form {
+    input[type="email"] {
+      &:valid {
+      }
+      &:invalid:not(:focus):not(:placeholder-shown) {
+        background: pink;
+      }
+      &:invalid:focus:not(:placeholder-shown) {
+
+      }
+    }
 }
+

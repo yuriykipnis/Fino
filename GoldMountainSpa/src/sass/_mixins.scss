@@ -63,3 +63,11 @@
     size: $at-font-size-xxl;
   }
 }
+
+@mixin regular-font-xxxl {
+  font: {
+    family: $ct-font-family;
+    weight: $ct-font-weight-bold;
+    size: $at-font-size-xxxl;
+  }
+}

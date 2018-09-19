@@ -1,0 +1,45 @@
+@import "../../sass/styles";
+@import "../../sass/button";
+
+.main-container{
+  height:100%;
+  padding:0;
+  min-width: 60em;
+}
+
+.contact-us-caption{
+  @include regular-font-xxxl;
+  color: $at-ligth-blue;
+  line-height: $at-line-height-6;
+
+}
+
+.connect-with-us-container{
+  background: $at-dark-app-bar;
+  line-height: $at-line-height-4;
+}
+
+.contact-with-us{
+  @include regular-font-xxl;
+  color: $at-text-light;
+  padding-right: 1em;
+  font-size: $at-font-size-xxxl;
+  font-weight: $ct-font-weight-xlight;
+  line-height: $at-line-height-3;
+}
+
+.social-network-wrapper{
+  display: inline-flex;
+  align-items: center;
+  vertical-align: bottom;
+}
+
+.social-network-image{
+  font-size: 2em;
+  color: $at-text-light;
+  padding-left: 1.2em;
+}
+
+a:hover, a:visited, a:link, a:active{
+  text-decoration: none;
+}

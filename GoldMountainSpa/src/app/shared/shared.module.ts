@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UtcToLocalTimePipe } from './utc-to-local-time.pipe';
 import * as fromPrimeNg from 'primeng/primeng';
-import { MessagesModule } from 'primeng/messages';
-import { MessageModule } from 'primeng/message';
 import { StoreModule } from '@ngrx/store';
 import { metaReducers, reducers } from "./store/reducers";
 
@@ -16,7 +14,6 @@ import { metaReducers, reducers } from "./store/reducers";
     UtcToLocalTimePipe,
     fromPrimeNg.TreeTableModule,
     fromPrimeNg.DataTableModule,
-    fromPrimeNg.TabViewModule,
     fromPrimeNg.TabViewModule,
     fromPrimeNg.DropdownModule,
     fromPrimeNg.PanelModule,
@@ -32,15 +29,20 @@ import { metaReducers, reducers } from "./store/reducers";
     fromPrimeNg.ProgressSpinnerModule,
     fromPrimeNg.SelectButtonModule,
     fromPrimeNg.ProgressBarModule,
-    MessagesModule,
-    MessageModule
+    fromPrimeNg.MessagesModule,
+    fromPrimeNg.MessageModule,
+
+    fromPrimeNg.InputTextareaModule,
+    fromPrimeNg.InputTextModule,
+    fromPrimeNg.CheckboxModule,
+    fromPrimeNg.ButtonModule,
+    fromPrimeNg.CodeHighlighterModule,
   ],
   imports: [
     CommonModule,
     BrowserAnimationsModule,
     fromPrimeNg.TreeTableModule,
     fromPrimeNg.DataTableModule,
-    fromPrimeNg.TabViewModule,
     fromPrimeNg.TabViewModule,
     fromPrimeNg.DropdownModule,
     fromPrimeNg.PanelModule,
@@ -55,8 +57,14 @@ import { metaReducers, reducers } from "./store/reducers";
     fromPrimeNg.ChartModule,
     fromPrimeNg.SelectButtonModule,
     fromPrimeNg.ProgressBarModule,
-    MessagesModule,
-    MessageModule,
+    fromPrimeNg.MessagesModule,
+    fromPrimeNg.MessageModule,
+
+    fromPrimeNg.InputTextareaModule,
+    fromPrimeNg.InputTextModule,
+    fromPrimeNg.CheckboxModule,
+    fromPrimeNg.ButtonModule,
+    fromPrimeNg.CodeHighlighterModule,
     StoreModule.forRoot(reducers, {metaReducers})
   ]
 })

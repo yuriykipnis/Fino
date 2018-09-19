@@ -1,51 +1,139 @@
-<form [formGroup]="userform" (ngSubmit)="onSubmit(userform.value)">
-<div class="p-grid">
-  <p-panel class="p-col-6 p-offset-3" header="Contact Us">
-  <div class="p-grid">
-    <div class="">
-      Name *:
-    </div>
-    <div class="ui-grid-col-6">
-      <input pInputText type="text" formControlName="name" placeholder="Required"/>
-    </div>
-    <div class="ui-grid-col-4">
-      <p-message severity="error" text="Name is required" *ngIf="!userform.controls['name'].valid&&userform.controls['name'].dirty"></p-message>
+<div class="p-grid main-container">
+  <div class="p-col-8 p-offset-2 contact-us-container">
+    <div class="p-grid p-justify-center">
+      <div class="p-col-12" style="text-align:center">
+        <span class="contact-us-caption" >We'd Love to Hear From You!</span>
+      </div>
+
+      <div class="p-col-6">
+        <p>
+          Fino is a modern solution that enables effective management of a personal financial profile....
+        </p>
+        <p>
+          We believe in.......
+        </p>
+        <p>
+          Our vision is .....
+        </p>
+      </div>
+
+      <div class="p-col-6">
+        <div class="p-grid">
+          <div class="p-col-12 ui-inputgroup">
+            <span class="ui-inputgroup-addon"><i class="fa fa-user"></i></span>
+            <input type="text" pInputText placeholder="Name"  style="width: 100%">
+          </div>
+          <div class="p-col-6 ui-inputgroup">
+            <span class="ui-inputgroup-addon"><i class="fa fa-envelope"></i></span>
+            <input type="text" pInputText placeholder="Email" style="width: 100%">
+          </div>
+          <div class="p-col-6 ui-inputgroup">
+            <span class="ui-inputgroup-addon"><i class="fa fa-phone"></i></span>
+            <input type="text" pInputText placeholder="Phone Number"  style="width: 100%">
+          </div>
+          <!--<div class="p-col-12" *ngIf="!userform.controls['email'].valid && userform.controls['email'].dirty">-->
+            <!--<p-message severity="error" text="Email is required" ></p-message>-->
+          <!--</div>-->
+          <div class="p-col-12 ui-inputgroup">
+            <span class="ui-inputgroup-addon"><i class="fa fa-pencil"></i></span>
+            <input type="text" pInputText placeholder="Subject"  style="width: 100%">
+          </div>
+          <div class="p-col-12 ui-inputgroup">
+            <textarea pInputTextarea [(ngModel)]="property" [rows]="8" [cols]="65"></textarea>
+          </div>
+          <div class="p-col-12">
+            <div class="p-grid p-justify-end p-nogutter">
+              <p-button class="bw-button" label="Send to Fino"
+                        style="flex-direction: row-reverse"></p-button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="p-grid">
-    <div class="">
-      Email *:
-    </div>
-    <div class="">
-      <input pInputText type="text" formControlName="email" placeholder="Required"/>
-    </div>
-    <div class="">
-      <p-message severity="error" text="Email is required" *ngIf="!userform.controls['email'].valid&&userform.controls['email'].dirty"></p-message>
+  <div class="p-col-12 p-col-align-end" style="text-align:center">
+    <div class="p-grid p-justify-center connect-with-us-container">
+      <div class="contact-with-us">Connect With Us</div>
+
+      <a href="http://facebook.com" target="_blank">
+        <span class="social-network-wrapper">
+          <i class="fa fa-facebook social-network-image"></i>
+        </span>
+      </a>
+      <a href="http://twitter.com" target="_blank">
+        <span class="social-network-wrapper">
+          <i class="fa fa-twitter social-network-image"></i>
+        </span>
+      </a>
+      <a href="http://youtube.com" target="_blank">
+        <span class="social-network-wrapper">
+          <i class="fa fa-youtube social-network-image"></i>
+        </span>
+      </a>
+      <a href="http://linkedin.com" target="_blank">
+        <span class="social-network-wrapper">
+          <i class="fa fa-linkedin social-network-image"></i>
+        </span>
+      </a>
+      <a href="http://instagram.com" target="_blank">
+        <span class="social-network-wrapper">
+          <i class="fa fa-instagram social-network-image"></i>
+        </span>
+      </a>
     </div>
   </div>
-
-  <div class="p-grid">
-    <div class="">
-      Phone Number :
-    </div>
-    <div class="">
-      <input pInputText type="text" formControlName="email" placeholder="Required"/>
-    </div>
-  </div>
-
-  <div class="p-grid">
-    <div class="">
-      Description:
-    </div>
-    <div class="">
-      <textarea pInputTextarea type="text" formControlName="message"></textarea>
-    </div>
-    <div class=""></div>
-  </div>
-
-  <p-button class="bw-button" label="Send" routerLink="send"></p-button>
-
-</p-panel>
 </div>
-</form>
+
+
+<!--<form [formGroup]="userform" (ngSubmit)="onSubmit(userform.value)">-->
+<!--<div class="p-grid">-->
+  <!--<p-panel class="p-col-6 p-offset-3" header="We'd Love to Hear from You!">-->
+  <!--<div class="p-grid">-->
+    <!--<div class="">-->
+      <!--Name *:-->
+    <!--</div>-->
+    <!--<div class="ui-grid-col-6">-->
+      <!--<input pInputText type="text" formControlName="name" placeholder="Required"/>-->
+    <!--</div>-->
+    <!--<div class="ui-grid-col-4">-->
+      <!--<p-message severity="error" text="Name is required" *ngIf="!userform.controls['name'].valid&&userform.controls['name'].dirty"></p-message>-->
+    <!--</div>-->
+  <!--</div>-->
+
+  <!--<div class="p-grid">-->
+    <!--<div class="">-->
+      <!--Email *:-->
+    <!--</div>-->
+    <!--<div class="">-->
+      <!--<input pInputText type="text" formControlName="email" placeholder="Required"/>-->
+    <!--</div>-->
+    <!--<div class="">-->
+      <!--<p-message severity="error" text="Email is required" *ngIf="!userform.controls['email'].valid&&userform.controls['email'].dirty"></p-message>-->
+    <!--</div>-->
+  <!--</div>-->
+
+  <!--<div class="p-grid">-->
+    <!--<div class="">-->
+      <!--Phone Number :-->
+    <!--</div>-->
+    <!--<div class="">-->
+      <!--<input pInputText type="text" formControlName="email" placeholder="Required"/>-->
+    <!--</div>-->
+  <!--</div>-->
+
+  <!--<div class="p-grid">-->
+    <!--<div class="">-->
+      <!--Description:-->
+    <!--</div>-->
+    <!--<div class="">-->
+      <!--<textarea pInputTextarea type="text" formControlName="message"></textarea>-->
+    <!--</div>-->
+    <!--<div class=""></div>-->
+  <!--</div>-->
+
+  <!--<p-button class="bw-button" label="Send" routerLink="send"></p-button>-->
+
+<!--</p-panel>-->
+<!--</div>-->
+<!--</form>-->

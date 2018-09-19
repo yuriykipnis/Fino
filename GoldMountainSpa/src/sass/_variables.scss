@@ -77,8 +77,10 @@ $light-border: 1px solid $at-border-light;
 // fonts
 $ct-font-family: "Interstate", Arial, sans-serif;
 $ct-font-source-code: 'Source Code Pro', monospace;
+$ct-font-weight-bold: 600;
 $ct-font-weight-regular: 400;
 $ct-font-weight-light: 300;
+$ct-font-weight-xlight: 200;
 
 // font sizes
 $at-font-size-sm: 12px;
@@ -86,13 +88,18 @@ $at-font-size-md: 13px;
 $at-font-size-lg: 15px;
 $at-font-size-xl: 18px;
 $at-font-size-xxl: 22px;
+$at-font-size-xxxl: 2em;
 
 // Line Heights
-$at-line-height-3: 3em;
 $at-line-height-12: 12px;
 $at-line-height-14: 14px;
-$at-line-height-4: 4em;
 $at-line-height-18: 18px;
+
+$at-line-height-2: 2em;
+$at-line-height-3: 3em;
+$at-line-height-4: 4em;
+$at-line-height-6: 6em;
+
 
 // paddings
 $vn-spacing-xx-small: 4px;

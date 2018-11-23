@@ -1,1 +1,74 @@
-<h1>Overview</h1>
+<div class="p-grid overview-container">
+  <div class="p-col-12">
+
+    <div class="p-grid">
+      <div class="p-col-6 p-nogutter overview-sub-container">
+        <div class="p-col-12">
+          <span class="overview-caption">Income & Expenses</span>
+          <span class="overview-caption right" [ngStyle]="{'color': getBalanceColor(overviewData?.NetWorth)}">
+            {{overviewData?.NetWorth | currency:'ILS':'symbol':'1.2-2'}}</span>
+        </div>
+        <div class="overview-outline"></div>
+        <div class="p-grid p-nogutter" style="padding-top: 2em">
+          <div class="p-col-6" >
+            <p-chart type="doughnut" [data]="netWorthIncomeData" [options]="netWorthIncomeOptions"></p-chart>
+          </div>
+
+          <div class="p-col-6">
+            <p-chart type="doughnut" [data]="netWorthExpenseData" [options]="netWorthExpenseOptions"></p-chart>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-col-6 p-nogutter overview-sub-container">
+        <div class="p-col-12">
+          <span class="overview-caption">Mortgages</span>
+          <span class="overview-caption right" [ngStyle]="{'color': '#d22a77'}">
+            {{overviewData?.MortgageOverview?.Principal | currency:'ILS':'symbol':'1.2-2'}}</span>
+        </div>
+
+        <div class="overview-outline"></div>
+        <div class="p-grid p-nogutter" style="padding-top: 2em">
+          <div class="p-col-6">
+            <div class="overview-caption">Number of Loans</div>
+            <div class="overview-caption">{{overviewData?.NumberOfMortgages}}</div>
+          </div>
+          <div class="p-col-6">
+            <p-chart type="pie" [data]="mortgagesData" [options]="mortgagesOptions" ></p-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="p-col-12">
+
+    <div class="p-grid">
+      <div class="p-col-6 overview-sub-container">
+        <span class="overview-caption">Cash Flow</span>
+        <div class="overview-outline"></div>
+        <p-chart type="bar" [data]="cashFlowData" [options]="cashFlowDataOptions"></p-chart>
+      </div>
+
+      <div class="p-col-6 p-nogutter overview-sub-container">
+        <div class="p-col-12 ">
+          <span class="overview-caption">Loans</span>
+          <span class="overview-caption right" [ngStyle]="{'color': '#d22a77'}">
+            {{overviewData?.LoanOverview?.Principal | currency:'ILS':'symbol':'1.2-2'}}</span>
+        </div>
+        <div class="overview-outline"></div>
+        <div class="p-grid p-nogutter" style="padding-top: 2em">
+          <div class="p-col-6">
+            <div class="overview-caption">Number of Loans</div>
+            <div class="overview-caption">{{overviewData?.NumberOfLoans}}</div>
+          </div>
+          <div class="p-col-6">
+            <p-chart type="pie" [data]="loansData" [options]="loansOptions" ></p-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -114,7 +114,7 @@ namespace GoldMountainApi.Controllers
         public async Task<IActionResult> GetFeesByDate(String userId,
             [FromQuery(Name = "year")] int year, [FromQuery(Name = "month")] int month)
         {
-            double result = 0;
+            Decimal result = 0;
             if (!_validationHelper.ValidateUserPermissions(User, userId))
             {
                 throw new AuthenticationException();

@@ -1,5 +1,3 @@
-import {SubLoan} from "../../models/subLoan";
-
 export class LoanViewModel {
   Id: string;
   BankLabel: string;
@@ -7,6 +5,10 @@ export class LoanViewModel {
   BankNumber: string;
   BankBranchNumber: string;
   BankAccountNumber: string;
+
+  CityName: string;
+  StreetName: string;
+  BuildingNumber: string;
 
   StartDate: string;
   PayoffDate: string;
@@ -18,8 +20,6 @@ export class LoanViewModel {
   InterestType: string;
   LinkageType: string;
   InsuranceCompany: string;
-
-  SubLoans: SubLoan[];
 
   public constructor(init?:Partial<LoanViewModel>) {
     Object.assign(this, init);

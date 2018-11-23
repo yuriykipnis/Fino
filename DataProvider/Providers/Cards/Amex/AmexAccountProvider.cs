@@ -123,7 +123,7 @@ namespace DataProvider.Providers.Cards.Amex
                     string[] date = string.IsNullOrEmpty(pd) ? new[] { "1", "1", "2000" } : pd.Split('/');
                     var voucherNumberRatz = Convert.ToInt64(transaction.VoucherNumberRatz);
                     var supplierName = transaction.SupplierName;
-                    var paymentSum = Convert.ToDouble(transaction.PaymentSum);
+                    var paymentSum = Convert.ToDecimal(transaction.PaymentSum);
                     var supplierId = transaction.SupplierId;
                     var creditInfo = transaction.MoreInfo;
 
@@ -139,7 +139,7 @@ namespace DataProvider.Providers.Cards.Amex
                             PaymentDate = purchaseDate.AddMonths(paymentDate),
                             Description = string.IsNullOrEmpty(creditInfo) ? supplierName : string.Format("{0} - {1}", supplierName, creditInfo),
                             ProviderName = _providerName,
-                            CurrentBalance = Double.NaN,
+                            CurrentBalance = Decimal.Zero,
                             Amount = paymentSum > 0 ? paymentSum : -1 * paymentSum,
                             Type = paymentSum > 0 ? TransactionType.Expense : TransactionType.Income
                         });
@@ -151,7 +151,7 @@ namespace DataProvider.Providers.Cards.Amex
                     string[] date = string.IsNullOrEmpty(pd) ? new[] { "1", "1", "2000" } : pd.Split('/');
                     var voucherNumberRatz = Convert.ToInt64(transaction.VoucherNumberRatzOutbound);
                     var supplierName = string.IsNullOrEmpty(transaction.SupplierNameOutbound) ? "" : transaction.SupplierNameOutbound;
-                    var paymentSum = Convert.ToDouble(transaction.PaymentSumOutbound);
+                    var paymentSum = Convert.ToDecimal(transaction.PaymentSumOutbound);
                     var supplierId = transaction.SupplierId;
 
                     if (voucherNumberRatz != 0)
@@ -166,7 +166,7 @@ namespace DataProvider.Providers.Cards.Amex
                             PaymentDate = purchaseDate.AddMonths(paymentDate),
                             Description = supplierName,
                             ProviderName = _providerName,
-                            CurrentBalance = Double.NaN,
+                            CurrentBalance = Decimal.Zero,
                             Amount = paymentSum,
                             Type = TransactionType.Expense
                         });

@@ -19,6 +19,7 @@ export class HeaderComponent implements OnInit, OnChanges {
   profile$: Observable<UserProfile>;
   private currentTab = 'accounts';
 
+
   constructor(private store: Store<AppState>,
               private authService: AuthService,
               private router: Router) {
@@ -26,7 +27,7 @@ export class HeaderComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    // this.store.dispatch(new fromActions.FetchProfile());
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -37,4 +38,5 @@ export class HeaderComponent implements OnInit, OnChanges {
       console.log("Switched tab to - ", tab);
       this.currentTab = tab;
   }
+
 }

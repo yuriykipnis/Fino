@@ -130,7 +130,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<bool> UpdateAccountBalance(Guid id, double balance)
+        public async Task<bool> UpdateAccountBalance(Guid id, Decimal balance)
         {
             var filter = Builders<BankAccount>.Filter.Eq(s => s.Id, id);
             var update = Builders<BankAccount>.Update

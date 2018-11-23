@@ -27,18 +27,18 @@ namespace DataProvider.Providers.Cards.Amex.Dto
       public int PaymentDate { get; set; }
       public object TotalSumList { get; set; }
       public string StatementDate { get; set; }
-      public Double TotalDolarCharge { get; set; }
-      public Double TotalEuroCharge { get; set; }
-      public Double TotalShekelCharge { get; set; }
-      public Double TotalNormalShekelCharge { get; set; }
-      public Double TotalPaymentsShekelCharge { get; set; }
-      public Double TotalKPaymentsShekelCharge { get; set; }
-      public Double TotalCreditShekelCharge { get; set; }
-      public Double TotalShekelAbroadCharge { get; set; }
-      public Double TotalRefundCharge { get; set; }
-      public Double TotalDelayedCharge { get; set; }
-      public Double FlexibleAmountCharge { get; set; }
-      public Double OverloadAmountCharge { get; set; }
+      public Decimal TotalDolarCharge { get; set; }
+      public Decimal TotalEuroCharge { get; set; }
+      public Decimal TotalShekelCharge { get; set; }
+      public Decimal TotalNormalShekelCharge { get; set; }
+      public Decimal TotalPaymentsShekelCharge { get; set; }
+      public Decimal TotalKPaymentsShekelCharge { get; set; }
+      public Decimal TotalCreditShekelCharge { get; set; }
+      public Decimal TotalShekelAbroadCharge { get; set; }
+      public Decimal TotalRefundCharge { get; set; }
+      public Decimal TotalDelayedCharge { get; set; }
+      public Decimal FlexibleAmountCharge { get; set; }
+      public Decimal OverloadAmountCharge { get; set; }
       public String OnlyCardName { get; set; }
     }
   }

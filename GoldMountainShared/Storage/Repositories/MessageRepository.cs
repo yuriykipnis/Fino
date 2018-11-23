@@ -4,13 +4,14 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using GoldMountainShared.Storage.Documents;
+using GoldMountainShared.Storage.Interfaces;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace GoldMountainShared.Storage.Repositories
 {
-    public class MessageRepository
+    public class MessageRepository : IMessageRepository
     {
         private readonly DbContext _context = null;
 
@@ -18,7 +19,6 @@ namespace GoldMountainShared.Storage.Repositories
         {
             _context = new DbContext(settings);
         }
-
 
         public async Task<IEnumerable<ContactMessage>> GetAllMessages()
         {
@@ -87,7 +87,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddAccount(ContactMessage item)
+        public async Task AddMessage(ContactMessage item)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddAccounts(IEnumerable<ContactMessage> items)
+        public async Task AddMessages(IEnumerable<ContactMessage> items)
         {
             try
             {

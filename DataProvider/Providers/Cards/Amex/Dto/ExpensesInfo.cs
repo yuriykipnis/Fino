@@ -8,7 +8,7 @@ namespace DataProvider.Providers.Cards.Amex.Dto
     public class ExpensesInfo
     {
         public IEnumerable<CardTransaction> Transactions { get; set; }
-        public Double NextCharge { get; set; }
+        public Decimal NextCharge { get; set; }
 
     }
 }

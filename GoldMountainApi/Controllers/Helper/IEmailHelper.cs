@@ -1,9 +1,10 @@
-﻿using GoldMountainShared.Storage.Documents;
+﻿using System.Threading.Tasks;
+using GoldMountainShared.Storage.Documents;
 
 namespace GoldMountainApi.Controllers.Helper
 {
     public interface IEmailHelper
     {
-        void SendMessage(ContactMessage message);
+        Task SendMessage(ContactMessage message);
     }
 }

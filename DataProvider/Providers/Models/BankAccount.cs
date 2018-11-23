@@ -9,9 +9,9 @@ namespace DataProvider.Providers.Models
         public int BankNumber { get; set; } = 0;
         public int BranchNumber { get; set; } = 0;
         public string AccountNumber { get; set; } = string.Empty;
-        public Double Balance { get; set; } = Double.NaN;
+        public Decimal Balance { get; set; } = Decimal.Zero;
 
         public IList<Transaction> Transactions { get; set; } = new List<Transaction>();
-        public IList<Loan> Loans { get; set; } = new List<Loan>();
+        public IList<Mortgage> Mortgages { get; set; } = new List<Mortgage>();
     }
 }

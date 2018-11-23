@@ -3,11 +3,22 @@
     <app-loans-sidebar class="main-container"></app-loans-sidebar>
   </div>
 
-  <div id="loan-view-container" class="p-col">
-    <app-loan-view ></app-loan-view>
+  <div class="p-col">
+    <div class="p-grid">
+      <div class="p-col-6">
+        <app-loan-view></app-loan-view>
+      </div>
+
+      <div class="p-col-6">
+        <app-loans-status-bar></app-loans-status-bar>
+      </div>
+    </div>
   </div>
 
-  <app-loans-status-bar class="p-col-fixed" style="width:20em"></app-loans-status-bar>
+  <!--<div id="loan-view-container" class="p-col">-->
+    <!--<app-loan-view ></app-loan-view>-->
+  <!--</div>-->
+  <!--<app-loans-status-bar class="p-col-fixed" style="width:20em"></app-loans-status-bar>-->
 
   <router-outlet></router-outlet>
 </div>

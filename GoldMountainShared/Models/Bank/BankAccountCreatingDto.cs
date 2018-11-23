@@ -10,6 +10,6 @@ namespace GoldMountainShared.Models.Bank
         public int BankNumber { get; set; } = 0;
         public int BranchNumber { get; set; } = 0;
         public string AccountNumber { get; set; } = string.Empty;
-        public Double Balance { get; set; } = Double.NaN;
+        public Decimal Balance { get; set; } = Decimal.Zero;
     }
 }

@@ -1,38 +1,28 @@
 <div class="loans-sidebar">
-  <p-accordion class="bw-accordion" [multiple]="true" [expandIcon]="fa" [collapseIcon]="fa" activeIndex="[0,1]">
-
-    <p-accordionTab>
-      <p-header>
-        <div>
-          <span>Mortgages</span>
-        </div>
-      </p-header>
-
-      <div *ngFor="let loan of loans$ | async"
-           (click)="openLoanView(loan)">
-        <p-card class="bw-sidebar-item">
+  <p-accordion class="bw-accordion" [multiple]="true" [expandIcon]="fa" [collapseIcon]="fa" activeIndex="[0,1]"
+               *ngFor="let mortgage of mortgages">
+      <p-accordionTab>
+        <p-header>
           <div>
-            <span class="">{{loan.Id}}</span>
-            <span class="right">{{loan.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+            <span>Mortgage</span>
+            <span class="right">{{mortgage.key}}</span>
           </div>
-          <div>
-            <span class="basic-text">{{loan.PayoffDate | utcToLocalTime | date:'MMMM, y'}}</span>
-            <span class="right">{{loan.InterestType}} - {{loan.LinkageType}}</span>
-          </div>
-        </p-card>
-      </div>
+        </p-header>
 
-      <p-progressBar *ngIf="isLoading" mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
-    </p-accordionTab>
-
-    <p-accordionTab>
-      <p-header>
-        <div>
-          <span>Loans</span>
+        <div *ngFor="let loan of mortgage.loans"
+             (click)="openLoanView(loan)">
+          <p-card class="bw-sidebar-item">
+            <div>
+              <span class="">{{loan.Id}}</span>
+              <span class="right">{{loan.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+            </div>
+            <div>
+              <span class="basic-text">{{loan.PayoffDate | utcToLocalTime | date:'MMMM, y'}}</span>
+              <span class="right">{{loan.InterestType}} - {{loan.LinkageType}}</span>
+            </div>
+          </p-card>
         </div>
-      </p-header>
-      <p-progressBar *ngIf="isLoading" mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
-    </p-accordionTab>
-
+        <p-progressBar *ngIf="isLoading" mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+      </p-accordionTab>
   </p-accordion>
 </div>

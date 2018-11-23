@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { Loan } from "../../../models/loan";
+import { Mortgage } from "../../../models/mortgage";
 import {LoanViewModel} from "../../models/loan-view.model";
 
 export const ADD_LOAN = 'ADD_LOAN';

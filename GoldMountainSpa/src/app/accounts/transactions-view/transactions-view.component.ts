@@ -287,6 +287,9 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
       case "Amex": {
         return "../../../assets/amex.png";
       }
+      case "Leumi": {
+        return "../../../assets/leumi.png";
+      }
       default: {
         return "";
       }

@@ -21,9 +21,10 @@ namespace GoldMountainShared.Storage.Documents
         public int BankNumber { get; set; } = 0;
         public int BranchNumber { get; set; } = 0;
         public string AccountNumber { get; set; } = string.Empty;
-        public Double Balance { get; set; } = Double.NaN;
+        public Decimal Balance { get; set; } = Decimal.Zero;
         
         public IEnumerable<Transaction> Transactions { get; set; } = new List<Transaction>();
+        public IEnumerable<Mortgage> Mortgages { get; set; } = new List<Mortgage>();
         public IEnumerable<Loan> Loans { get; set; } = new List<Loan>();
 
         public DateTime UpdatedOn { get; set; } = DateTime.Now;

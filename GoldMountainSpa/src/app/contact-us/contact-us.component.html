@@ -1,31 +1,43 @@
 <div class="p-grid main-container">
-  <div class="p-col-8 p-offset-2 contact-us-container">
+  <div class="p-col-10 p-offset-1 contact-us-container">
     <div class="p-grid p-justify-center">
       <div class="p-col-12" style="text-align:center">
         <span class="contact-us-caption" >We'd Love to Hear From You!</span>
       </div>
 
-      <div class="p-col-6">
-        <p>
-          Fino is a modern solution that enables effective management of a personal financial profile....
+      <div class="p-col-6" style="padding-right: 4em">
+        <p class="contact-us-sub-caption">
+          Personal finance made simple
         </p>
         <p>
-          We believe in.......
+          Our mission is assisting you to make informed financial decisions that cut expenses, save money and
+          secure your family's future.
         </p>
+
         <p>
-          Our vision is .....
+          Fino provides a simple but comprehensive view of your private finance profile. It enables access and
+          consolidation of private financial sources from banks to insurance companies at one place.
+          We believe that you know best what you need, we assist you deliver it.
+        </p>
+
+        <p>
+          Fino is a startup company that is continuously building the best in class personal financial application
+          by hearing it's users and gathering ongoing feedback. We are open for you ideas and always happy to hear
+          about your needs in a personal finance area. Don't hesitate to contact us with new ideas and wishes.
         </p>
       </div>
 
-      <div class="p-col-6">
-        <div class="p-grid">
+      <div class="p-col-6"  style="padding-left: 4em">
+        <div *ngIf="!isSent" class="p-grid">
           <div class="p-col-12 ui-inputgroup">
             <span class="ui-inputgroup-addon"><i class="fa fa-user"></i></span>
-            <input requered pInputText type="text" placeholder="Name" [(ngModel)]="name">
+            <input requered pInputText type="text" placeholder="Name" [(ngModel)]="name"
+                   [ngStyle]="getNameBackground()">
           </div>
           <div class="p-col-6 ui-inputgroup">
             <span class="ui-inputgroup-addon"><i class="fa fa-envelope"></i></span>
-            <input requered pInputText type="email" name="email" placeholder="Email" [(ngModel)]="email">
+            <input requered pInputText type="email" placeholder="Email" [(ngModel)]="email"
+                   [ngStyle]="getEmailBackground()">
           </div>
           <div class="p-col-6 ui-inputgroup">
             <span class="ui-inputgroup-addon"><i class="fa fa-phone"></i></span>
@@ -36,16 +48,19 @@
             <input type="text" pInputText placeholder="Subject" [(ngModel)]="subject">
           </div>
           <div class="p-col-12 ui-inputgroup">
-            <textarea pInputTextarea [rows]="8" [cols]="65" [(ngModel)]="message"></textarea>
+            <textarea pInputTextarea [rows]="8" [(ngModel)]="message" style="width: 100%"
+                      [ngStyle]="getMessageBackground()"></textarea>
           </div>
           <div class="p-col-12">
             <div class="p-grid p-justify-end p-nogutter">
-              <!--<input type="submit" value="Send to Fino" />-->
               <p-button class="bw-button" label="Send to Fino" (click)="onSend()"
-                        [disabled]="!isValid"
                         style="flex-direction: row-reverse"></p-button>
             </div>
           </div>
+        </div>
+        <div *ngIf="isSent" class="p-grid">
+          Thanks You!
+          We will review your message during upcoming 24 hours.
         </div>
       </div>
     </div>

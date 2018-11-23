@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { Loan } from "../../models/loan";
+import { Mortgage } from "../../models/mortgage";
 import { Observable } from 'rxjs/Observable';
-import {SubLoan} from "../../models/subLoan";
 
 @Component({
   selector: 'app-loans-summary',
@@ -10,33 +9,21 @@ import {SubLoan} from "../../models/subLoan";
   encapsulation: ViewEncapsulation.None
 })
 export class LoansSummaryComponent implements OnInit {
-  loan: Loan;
+  loan: Mortgage;
 
   constructor() { }
 
   ngOnInit() {
-    this.loan = new Loan({
+    this.loan = new Mortgage({
       Id: "6248290690326",
       StartDate: "2015-04-25T21:26:00.000Z",
       EndDate: "2045-06-09T21:10:00.000Z",
       OriginalAmount: 406000.0,
       DeptAmount: 366550.24,
-      LastPaymentAmount: 1250.68,
       PrepaymentCommission: 426.53,
       InsuranceCompany: "כלל חברה לביטוח בעמ",
       InterestType: "פריים",
       LinkageType: "לא צמוד",
-      SubLoans: []
     });
-
-    this.loan.SubLoans.push(new SubLoan({
-      OriginalAmount: 206000.0,
-      PrincipalAmount: 185713.9,
-      InterestAmount: 10.68,
-      NextExitDate: "2018-09-09T21:10:00.000Z",
-      StartDate: "2015-04-25T21:26:00.000Z",
-      EndDate: "2045-05-09T21:10:00.000Z",
-      InterestRate : 0.7
-    }));
   }
 }

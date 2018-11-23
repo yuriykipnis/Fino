@@ -115,7 +115,7 @@ namespace GoldMountainApi.Controllers
         }
 
         [HttpPut("BankAccounts/{id}")]
-        public void Put(Guid id, [FromBody]double balance)
+        public void Put(Guid id, [FromBody]Decimal balance)
         {
             _accountRepository.UpdateAccountBalance(id, balance);
         }
@@ -135,6 +135,7 @@ namespace GoldMountainApi.Controllers
                 if (accountToUpdate != null)
                 {
                     accountToUpdate.Transactions = ua.Transactions;
+                    accountToUpdate.Mortgages = ua.Mortgages;
                     accountToUpdate.Loans = ua.Loans;
                     accountToUpdate.Balance = ua.Balance;
                     await _accountRepository.UpdateAccount(accountToUpdate.Id, accountToUpdate);

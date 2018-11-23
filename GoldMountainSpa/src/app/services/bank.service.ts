@@ -6,16 +6,17 @@ import { RequestOptions, RequestMethod, Headers, ResponseContentType } from '@an
 import { BankAccount } from "../accounts/models/bank-account";
 import { Transaction } from "../models/transaction";
 import {environment} from "../../environments/environment";
-import {Loan} from '../models/loan';
-import { SubLoan } from "../models/subLoan";
+import {Mortgage} from '../models/mortgage';
+import {AccountService} from './account.service';
+import {Loan} from "../models/loan";
 
 @Injectable()
-export class BankService {
+export class BankService implements AccountService{
 
   constructor(private http: HttpClient) {  }
 
   getAccounts$(userId : string): Observable<BankAccount[]> {
-    let url = environment.api.clientApiUrl + '/user/' + userId + '/BankAccounts';
+    let url = environment.api.clientApiUrl + '/user/' + userId + '/bankAccounts';
     let headers = new HttpHeaders()
       .set('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
 
@@ -31,6 +32,7 @@ export class BankService {
           AccountNumber: r.accountNumber,
           Balance: r.balance,
           Transactions: new Array<Transaction>(),
+          Mortgages: new Array<Mortgage>(),
           Loans: new Array<Loan>(),
           IsActive: true,
           LastUpdate: r.updatedOn
@@ -50,37 +52,54 @@ export class BankService {
             }))
         });
 
-        r.loans.forEach(l => {
-          let newLoan = new Loan({
+        r.mortgages.forEach(l => {
+          let newMortgage = new Mortgage({
             Id: l.loanId,
             StartDate: l.startDate,
             EndDate: l.endDate,
             NextPaymentDate: l.nextPaymentDate,
             OriginalAmount: l.originalAmount,
             DeptAmount: l.deptAmount,
-            LastPaymentAmount: l.lastPaymentAmount,
             PrepaymentCommission: l.prepaymentCommission,
             InterestType: l.interestType,
             LinkageType: l.linkageType,
             InsuranceCompany: l.insuranceCompany,
-            SubLoans: []
+            AssetCity: l.asset.cityName,
+            AssetStreet: l.asset.streetName,
+            AssetBuildingNumber: l.asset.buildingNumber,
           });
+          newAccount.Mortgages.push(newMortgage);
+        });
+          // l.subLoans.forEach(sl => {
+          //   let newSubLoan = new SubLoan({
+          //     Id: sl.id,
+          //     OriginalAmount: sl.originalAmount,
+          //     PrincipalAmount: sl.principalAmount,
+          //     InterestAmount: sl.interestAmount,
+          //     DeptAmount: sl.deptAmount,
+          //     NextExitDate: sl.nextExitDate,
+          //     StartDate: sl.startDate,
+          //     EndDate: sl.endDate,
+          //     InterestRate: sl.interestRate,
+          //   });
+          //   newMortgage.SubLoans.push(newSubLoan);
+          // });
 
-          l.subLoans.forEach(sl => {
-            let newSubLoan = new SubLoan({
-              Id: sl.id,
-              OriginalAmount: sl.originalAmount,
-              PrincipalAmount: sl.principalAmount,
-              InterestAmount: sl.interestAmount,
-              DeptAmount: sl.deptAmount,
-              NextExitDate: sl.nextExitDate,
-              StartDate: sl.startDate,
-              EndDate: sl.endDate,
-              InterestRate: sl.interestRate,
-            });
-            newLoan.SubLoans.push(newSubLoan);
+        r.loans.forEach(l => {
+          let newLoan = new Loan({
+            Id: l.loanId,
+            StartDate: l.startDate,
+            EndDate: l.endDate,
+            OriginalAmount: l.originalAmount,
+            DeptAmount: l.deptAmount,
+            InterestRate: l.interestRate,
+            NumberOfPrincipalPayments: l.numberOfPrincipalPayments,
+            NumberOfInterestPayments: l.numberOfInterestPayments,
+            NextPrincipalPayment: l.nextPrincipalPayment,
+            NextInterestPayment: l.nextInterestPayment,
+            NextPaymentDate: l.nextPaymentDate,
+            NextPayment: l.nextPayment
           });
-
           newAccount.Loans.push(newLoan);
         });
 
@@ -89,6 +108,35 @@ export class BankService {
       return result;
     });
 
+    return response;
+  }
+
+  getExistingAccounts$(userId : string,
+               institutionName: string,
+               credentials: Array<[string, string]>): Observable<BankAccount[]> {
+    let body = {
+      UserId: userId,
+      Name: institutionName,
+      Credentials: credentials
+    };
+
+    var response = this.http.post<BankAccount[]>(environment.api.dataProviderUrl + '/BankAccounts', body).map((res: any[]) => {
+      let result = new Array<BankAccount>();
+      res.forEach(r => result.push(
+        new BankAccount({
+          Id: r.id,
+          Label: r.label,
+          ProviderName: r.providerName,
+          BankNumber: r.bankNumber,
+          BranchNumber: r.branchNumber,
+          AccountNumber: r.accountNumber,
+          Balance: r.balance,
+          IsActive: true,
+          LastUpdate: r.updatedOn,
+          Transactions: []
+        })));
+      return result;
+    });
     return response;
   }
 

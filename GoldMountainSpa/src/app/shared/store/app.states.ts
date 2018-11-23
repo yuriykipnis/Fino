@@ -7,7 +7,7 @@ import {StudyFundProfile} from "../../insurance/models/study-fund.profile";
 import {PensionFundProfile} from "../../insurance/models/pension-fund.profile";
 import {MortgageInsurProfile} from "../../insurance/models/mortgage-insur.profile";
 import {ProvidentFundProfile} from "../../insurance/models/provident-fund.profile";
-import {Loan} from "../../models/loan";
+import {Mortgage} from "../../models/mortgage";
 import {LoanViewModel} from "../../loans/models/loan-view.model";
 
 export interface AppState {

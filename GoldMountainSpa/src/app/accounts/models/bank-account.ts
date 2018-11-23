@@ -1,5 +1,6 @@
 import {CreatingAccount} from "./creating-account";
 import {Transaction} from "../../models/transaction";
+import {Mortgage} from "../../models/mortgage";
 import {Loan} from "../../models/loan";
 
 
@@ -14,6 +15,7 @@ export class BankAccount implements CreatingAccount {
   Balance: number;
   LastUpdate: string;
   Transactions: Transaction[];
+  Mortgages: Mortgage[];
   Loans: Loan[];
 
   public constructor(init?:Partial<BankAccount>) {

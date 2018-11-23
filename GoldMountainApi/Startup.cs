@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using GoldMountainApi.Controllers.Helper;
+using GoldMountainApi.Models;
 using GoldMountainApi.Services;
 using GoldMountainShared.Models;
 using GoldMountainShared.Models.Bank;
@@ -94,6 +95,7 @@ namespace GoldMountainApi
             services.AddTransient<IMortgageInsurAccountRepository, MortgageInsurAccountRepository>();
             services.AddTransient<IProviderRepository, ProviderRepository>();
             services.AddTransient<IInstitutionRepository, InstitutionRepository>();
+            services.AddTransient<IMessageRepository, MessageRepository>();
             services.AddTransient<IDataService, DataService>();
             services.AddSingleton<IValidationHelper, ValidationHelper>();
             services.AddSingleton<IEmailHelper, EmailHelper>();
@@ -135,12 +137,14 @@ namespace GoldMountainApi
                 cfg.CreateMap<Transaction, TransactionDto>();
                 cfg.CreateMap<TransactionDto, Transaction>();
 
-                cfg.CreateMap<Loan, LoanDto>();
+                cfg.CreateMap<Mortgage, MortgageDto>();
 
                 cfg.CreateMap<BankAccount, BankAccountDto>();
                 cfg.CreateMap<CreditAccount, CreditAccountDto>();
                 cfg.CreateMap<BankAccountDto, BankAccount>();
                 cfg.CreateMap<CreditAccountDto, CreditAccount>();
+
+                cfg.CreateMap<ContactMessageDto, ContactMessage>();
 
                 cfg.CreateMap<SeInsurAccount, SeInsurAccountDto>();
                 cfg.CreateMap<ProvidentFundAccount, ProvidentFundAccountDto>();

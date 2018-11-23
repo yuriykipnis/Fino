@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { Router, ActivatedRoute } from '@angular/router';
 import {Institution, InstitutionType} from "../../models/institution";
 import { Observable } from 'rxjs';
-import { BankAccountService } from "../services/bank-account.service";
 import { TextboxQuestion } from "./textboxQuestion";
 import { ProviderService } from "../../services/provider.service";
 import { Store } from '@ngrx/store';
@@ -14,15 +13,12 @@ import {AppState} from '../../shared/store/app.states';
 import {UserProfile} from "../../models/user.profile";
 import {InstitutionService} from "../../services/institution.service";
 import {AddCreditAccount} from "../store/actions/credit-account.action";
-import {AccountService} from "../services/account.service";
 import {CreatingAccount} from "../models/creating-account";
-import {CreditAccountService} from "../services/credit-account.service";
 import {CreditAccount} from "../models/credit-account";
 import {BankAccount} from "../models/bank-account";
-import * as fromBankActions from '../store/actions/bank-account.action';
-import * as fromCreditActions from '../store/actions/credit-account.action';
 import {BankService} from "../../services/bank.service";
 import {CreditService} from "../../services/credit.service";
+import {AccountService} from '../../services/account.service';
 
 @Component({
   selector: 'app-new-account',
@@ -47,8 +43,6 @@ export class NewAccountComponent implements OnInit, OnDestroy {
               private institutionService: InstitutionService,
               private bankService: BankService,
               private creditService: CreditService,
-              private bankAccountService: BankAccountService,
-              private creditAccountService: CreditAccountService,
               private providerService: ProviderService,
               private userProfileService: UserProfileService) {
     this.isLoading = false;
@@ -92,12 +86,12 @@ export class NewAccountComponent implements OnInit, OnDestroy {
     let accountService : AccountService = null;
 
     if (this.selectedInstitution.Type === InstitutionType.Bank) {
-      accountService = this.bankAccountService;
+      accountService = this.bankService;
     } else if(this.selectedInstitution.Type === InstitutionType.Credit) {
-      accountService = this.creditAccountService;
+      accountService = this.creditService;
     }
 
-    accountService.getAccounts$(this.userProfile.Id, this.selectedInstitution.Name, credentials).subscribe(
+    accountService.getExistingAccounts$(this.userProfile.Id, this.selectedInstitution.Name, credentials).subscribe(
       res => {
         this.accounts = res;
         this.isLoading = false;

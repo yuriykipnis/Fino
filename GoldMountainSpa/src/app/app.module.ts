@@ -16,9 +16,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BankAccountService } from "./accounts/services/bank-account.service";
 import { SeInsurService } from "./insurance/services/se-insur.service";
-import { CreditAccountService } from "./accounts/services/credit-account.service";
 import { UserProfileService } from "./services/user-profile.service";
 import { CreditService } from "./services/credit.service";
 import { LoanService } from "./loans/services/loan.service";
@@ -44,7 +42,6 @@ import { PensionFundViewComponent } from './insurance/views/pension-fund-view/pe
 import { ProvidentFundViewComponent } from './insurance/views/provident-fund-view/provident-fund-view.component';
 import { MortgageInsurViewComponent } from './insurance/views/mortgage-insur-view/mortgage-insur-view.component';
 import { SummaryComponent } from './insurance/views/summary/summary.component';
-import { AccountsSummaryComponent } from './accounts/accounts-summary/accounts-summary.component';
 import {AccountsSummaryService} from "./accounts/services/accounts-summary.service";
 import { LoansSidebarComponent } from './loans/loans-sidebar/loans-sidebar.component';
 import { LoanViewComponent } from './loans/loan-view/loan-view.component';
@@ -56,6 +53,8 @@ import {AccountControlService} from './accounts/services/account-control.service
 import { LoansStatusBarComponent } from './loans/loans-status-bar/loans-status-bar.component';
 import {LoanControlService} from './loans/services/loan-control.service';
 import { ContactUsComponent } from './contact-us/contact-us.component';
+import {ContactService} from "./services/contact.service";
+import {OverviewService} from './services/overview.service';
 
 @NgModule({
   declarations: [
@@ -80,7 +79,6 @@ import { ContactUsComponent } from './contact-us/contact-us.component';
     ProvidentFundViewComponent,
     MortgageInsurViewComponent,
     SummaryComponent,
-    AccountsSummaryComponent,
     LoansSidebarComponent,
     LoanViewComponent,
     LoansComponent,
@@ -114,11 +112,11 @@ import { ContactUsComponent } from './contact-us/contact-us.component';
     ProvidentFundService,
     ProviderService,
     UserProfileService,
-    BankAccountService,
-    CreditAccountService,
     AccountsSummaryService,
     AccountControlService,
     LoanControlService,
+    ContactService,
+    OverviewService
   ],
   bootstrap: [AppComponent]
 })

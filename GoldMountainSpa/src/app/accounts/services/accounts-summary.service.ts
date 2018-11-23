@@ -16,32 +16,22 @@ import {BankService} from "../../services/bank.service";
 import {CreditService} from "../../services/credit.service";
 import {UserProfileService} from "../../services/user-profile.service";
 import {UserProfile} from "../../models/user.profile";
+import {InstitutionType} from '../../models/institution';
 
 @Injectable()
 export class AccountsSummaryService{
-//-------------------------------------------------------
-  totalInBanks: number = 0;
-  totalInCredit: number = 0;
-  totalIncome: number = 0;
-  totalOutcome: number = 0;
-  incomeMonthly: number[][];
-  expenseMonthly: number[][];
-  futureObligations: number[];
-  creditOutcome: number;
-  checkOutcome: number;
-  cashOutcome: number;
-  bankTransactionOutcome: number;
-  allTransactions: Transaction[];
-  effTransactions$: Observable<Transaction[]>;
-  private _accountSummary = new BehaviorSubject<any>(0);
-  summary$ = this._accountSummary.asObservable();
-//-------------------------------------------------------
+  private period: Date;
+  private userProfile: UserProfile;
 
-  viewPeriodSubscription: Subscription;
-  bankAccountsSubscription: Subscription;
-  creditAccountsSubscription: Subscription;
-  userProfileSubscription: Subscription;
-  period: Date;
+  private periodIncome: number;
+  private periodExpense: number;
+  private periodBalance: number;
+  private totalBalance: number;
+  private periodBankFees: number;
+  private incomeMonthly: number[][];
+  private expenseMonthly: number[][];
+  private totalInBanks: number = 0;
+  private totalInCredit: number = 0;
 
   private periodIncomeSource = new Subject<number>();
   private periodExpenseSource = new Subject<number>();
@@ -49,6 +39,7 @@ export class AccountsSummaryService{
   private totalBalanceSource = new Subject<number>();
   private bankFeeSource = new Subject<number>();
   private monthlyBalanceSource = new Subject<{income: number[], expense: number[]}>();
+
   periodIncomeChanged$ = this.periodIncomeSource.asObservable();
   periodExpenseChanged$ = this.periodExpenseSource.asObservable();
   periodBalanceChanged$ = this.periodBalanceSource.asObservable();
@@ -56,17 +47,15 @@ export class AccountsSummaryService{
   monthlyBalanceChanged$ = this.monthlyBalanceSource.asObservable();
   bankFeeChanged$ = this.bankFeeSource.asObservable();
 
+  private viewPeriodSubscription: Subscription;
+  private bankAccountsSubscription: Subscription;
+  private creditAccountsSubscription: Subscription;
+  private userProfileSubscription: Subscription;
+
   private bankAccounts$: Observable<BankAccount[]>;
   private creditAccounts$: Observable<CreditAccount[]>;
   private bankAccounts: BankAccount[];
   private creditAccounts: CreditAccount[];
-
-  private userProfile: UserProfile;
-  private periodIncome: number;
-  private periodExpense: number;
-  private periodBalance: number;
-  private totalBalance: number;
-  private periodBankFees: number;
 
   constructor(private store: Store<AppState>,
               private bankService: BankService,
@@ -149,7 +138,7 @@ export class AccountsSummaryService{
     }
   }
 
-  countStatus() {
+  private countStatus() {
     this.totalBalance = 0;
     this.periodIncome = 0;
     this.periodExpense = 0;
@@ -170,10 +159,10 @@ export class AccountsSummaryService{
 
           let monthIndex = 11 - (12 * (now.getFullYear() - tDate.getFullYear()) + now.getMonth() - tDate.getMonth());
           if (monthIndex >= 0 && monthIndex < 12) {
-            if (isNaN(this.incomeMonthly[0][monthIndex])) this.incomeMonthly[0][monthIndex] = 0;
-            if (isNaN(this.expenseMonthly[0][monthIndex])) this.expenseMonthly[0][monthIndex] = 0;
-            this.incomeMonthly[0][monthIndex] += (t.Type === TransactionType.Income) ? t.Amount : 0;
-            this.expenseMonthly[0][monthIndex] += (t.Type === TransactionType.Expense) ? t.Amount : 0;
+            if (isNaN(this.incomeMonthly[InstitutionType.Bank][monthIndex])) this.incomeMonthly[InstitutionType.Bank][monthIndex] = 0;
+            if (isNaN(this.expenseMonthly[InstitutionType.Bank][monthIndex])) this.expenseMonthly[InstitutionType.Bank][monthIndex] = 0;
+            this.incomeMonthly[InstitutionType.Bank][monthIndex] += (t.Type === TransactionType.Income) ? t.Amount : 0;
+            this.expenseMonthly[InstitutionType.Bank][monthIndex] += (t.Type === TransactionType.Expense) ? t.Amount : 0;
           }
         });
 
@@ -200,10 +189,10 @@ export class AccountsSummaryService{
 
           let monthIndex = 11 - (12 * (now.getFullYear() - tDate.getFullYear()) + now.getMonth() - tDate.getMonth());
           if (monthIndex >= 0 && monthIndex < 12) {
-            if (isNaN(this.incomeMonthly[1][monthIndex])) this.incomeMonthly[1][monthIndex] = 0;
-            if (isNaN(this.expenseMonthly[1][monthIndex])) this.expenseMonthly[1][monthIndex] = 0;
-            this.incomeMonthly[1][monthIndex] += (t.Type === TransactionType.Income) ? t.Amount : 0;
-            this.expenseMonthly[1][monthIndex] += (t.Type === TransactionType.Expense) ? t.Amount : 0;
+            if (isNaN(this.incomeMonthly[InstitutionType.Credit][monthIndex])) this.incomeMonthly[InstitutionType.Credit][monthIndex] = 0;
+            if (isNaN(this.expenseMonthly[InstitutionType.Credit][monthIndex])) this.expenseMonthly[InstitutionType.Credit][monthIndex] = 0;
+            this.incomeMonthly[InstitutionType.Credit][monthIndex] += (t.Type === TransactionType.Income) ? t.Amount : 0;
+            this.expenseMonthly[InstitutionType.Credit][monthIndex] += (t.Type === TransactionType.Expense) ? t.Amount : 0;
           }
         });
       });
@@ -228,7 +217,7 @@ export class AccountsSummaryService{
     this.periodExpenseSource.next(this.periodExpense);
     this.periodBalanceSource.next(this.periodBalance);
     this.totalBalanceSource.next(this.totalBalance);
-    this.monthlyBalanceSource.next({income:this.incomeMonthly[0], expense:this.expenseMonthly[0]});
+    this.monthlyBalanceSource.next({income:this.incomeMonthly[InstitutionType.Bank], expense:this.expenseMonthly[InstitutionType.Bank]});
   }
 
   getAllAccounts(){

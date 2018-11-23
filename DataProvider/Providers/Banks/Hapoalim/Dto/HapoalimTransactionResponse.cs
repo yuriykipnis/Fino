@@ -13,9 +13,9 @@ namespace DataProvider.Providers.Banks.Hapoalim.Dto
         public long ReferenceNumber { get; set; }
         public long ValueDate { get; set; }
         public string FormattedValueDate { get; set; }
-        public Double EventAmount { get; set; }
+        public Decimal EventAmount { get; set; }
         public int EventActivityTypeCode { get; set; }
-        public Double CurrentBalance { get; set; }
+        public Decimal CurrentBalance { get; set; }
         public int InternalLinkCode { get; set; }
         public long OriginalEventCreateDate { get; set; }
         public string FormattedOriginalEventCreateDate { get; set; }

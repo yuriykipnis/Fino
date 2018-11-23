@@ -16,9 +16,11 @@ namespace GoldMountainShared.Storage.Documents
         public Guid Id { get; set; } = Guid.Empty;
 
         public String UserId { get; set; } = String.Empty;
-        public string Message { get; set; } = string.Empty;
-        public Double Email { get; set; } = Double.NaN;
-        public Double PhoneNumber { get; set; } = Double.NaN;
+        public String Username { get; set; } = String.Empty;
+        public String Email { get; set; } = String.Empty;
+        public String Phone { get; set; } = String.Empty;
+        public String Subject { get; set; } = String.Empty;
+        public String Message { get; set; } = String.Empty;
 
         public DateTime UpdatedOn { get; set; } = DateTime.Now;
         public DateTime CreatedOn { get; set; } = DateTime.Now;

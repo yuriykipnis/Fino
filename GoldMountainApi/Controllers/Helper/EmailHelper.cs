@@ -12,14 +12,16 @@ namespace GoldMountainApi.Controllers.Helper
 {
     public class EmailHelper : IEmailHelper
     {
-        public void SendMessage(ContactMessage message)
+        const string FinoEmail = "yuriy.kipnis@gmail.com";
+        const string SmtpUser = "bewise.demo@gmail.com";
+        const string SmtpPassword = "!Q2w3e4r";
+
+        public async Task SendMessage(ContactMessage message)
         {
             try
             {
-                MailMessage msg = new MailMessage();
-                msg.From = new MailAddress("fromAddr");
-                msg.To.Add("toAddr");
-                msg.Subject = "Subj";
+                MailMessage msg = new MailMessage(message.Email, FinoEmail);
+                msg.Subject = message.Subject;
                 msg.IsBodyHtml = true;
                 msg.BodyEncoding = Encoding.ASCII;
                 msg.Body = "Body";
@@ -33,14 +35,15 @@ namespace GoldMountainApi.Controllers.Helper
 
         private void SendMail(MailMessage msg)
         {
-            string username = "username";  //email address or domain user for exchange authentication
-            string password = "password";  //password
-            SmtpClient mClient = new SmtpClient();
-            mClient.Host = "mailex.company.us";
-            mClient.Credentials = new NetworkCredential(username, password);
-            mClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-            mClient.Timeout = 100000;
-            mClient.Send(msg);
+            SmtpClient client = new SmtpClient();
+            client.Port = 587;
+            client.Host = "smtp.gmail.com";
+            client.EnableSsl = true;
+            client.Timeout = 10000;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.UseDefaultCredentials = false;
+            client.Credentials = new NetworkCredential(SmtpUser, SmtpPassword);
+            client.Send(msg);
         }
     }
 }

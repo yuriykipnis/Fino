@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using DataProvider.Providers.Banks.Hapoalim.Dto;
+using DataProvider.Providers.Models;
 using GoldMountainShared.Storage.Documents;
 using Newtonsoft.Json;
 
@@ -137,6 +138,21 @@ namespace DataProvider.Providers.Banks.Hapoalim
             }
 
             return JsonConvert.DeserializeObject<HapoalimBalanceResponse>(json);
+        }
+
+        public HapoalimLoansResponse GetLoans(HapoalimAccountResponse account)
+        {
+            throw new NotImplementedException();
+        }
+
+        public HapoalimLoanDetailsResponse GetDetailsForLoan(HapoalimAccountResponse account, HapoalimLoansResponse.LoanData loan)
+        {
+            throw new NotImplementedException();
+        }
+
+        public HapoalimMortgageAssetResponse GetAssetForMortgage(HapoalimAccountResponse account, string loanId)
+        {
+            throw new NotImplementedException();
         }
 
         public void Dispose()

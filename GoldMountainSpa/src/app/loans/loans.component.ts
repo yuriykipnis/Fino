@@ -8,9 +8,8 @@ import {CreditService} from "../services/credit.service";
 import {UserProfileService} from "../services/user-profile.service";
 import * as fromLoanActions from "./store/actions/loan.action";
 import {LoanViewModel} from "./models/loan-view.model";
-import {Loan} from '../models/loan';
+import {Mortgage} from '../models/mortgage';
 import {BankAccount} from "../accounts/models/bank-account";
-import {SubLoan} from "../models/subLoan";
 
 @Component({
   selector: 'app-loans',
@@ -39,15 +38,13 @@ export class LoansComponent implements OnInit, OnDestroy {
 
       this.bankService.getAccounts$(up.Id)
         .subscribe(res => {
+            let loans = new Array<LoanViewModel>();
             res.forEach(r => {
-              let loans = new Array<LoanViewModel>();
-              r.Loans.forEach(loan => {
+              r.Mortgages.forEach(loan => {
                 loans.push(this.generateLoanViewModel(r, loan));
               })
-
-              this.store.dispatch(new fromLoanActions.FetchLoans(loans));
             });
-
+            this.store.dispatch(new fromLoanActions.FetchLoans(loans));
             this.isLoansLoading = false;
           },
           err => {
@@ -60,7 +57,7 @@ export class LoansComponent implements OnInit, OnDestroy {
     this.userProfileSubscription.unsubscribe();
   }
 
-  private generateLoanViewModel(account: BankAccount, loan: Loan) : LoanViewModel{
+  private generateLoanViewModel(account: BankAccount, loan: Mortgage) : LoanViewModel{
     let loanView = new LoanViewModel({
       Id: loan.Id,
       BankLabel: account.Label,
@@ -69,18 +66,19 @@ export class LoansComponent implements OnInit, OnDestroy {
       BankBranchNumber: account.BranchNumber,
       BankAccountNumber: account.AccountNumber,
 
+      CityName: loan.AssetCity,
+      StreetName: loan.AssetStreet,
+      BuildingNumber: loan.AssetBuildingNumber,
+
       StartDate: loan.StartDate,
       PayoffDate: loan.EndDate,
       NextPaymentDate: loan.NextPaymentDate,
       OriginalAmount: loan.OriginalAmount,
       DeptAmount: loan.DeptAmount,
-      LastPaymentAmount:loan.LastPaymentAmount,
       PrepaymentCommission: loan.PrepaymentCommission,
       InterestType: loan.InterestType,
       LinkageType: loan.LinkageType,
       InsuranceCompany: loan.InsuranceCompany,
-
-      SubLoans: loan.SubLoans
     });
 
     return loanView;

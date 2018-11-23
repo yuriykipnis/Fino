@@ -1,0 +1,28 @@
+@import "../../sass/styles";
+
+.overview-outline{
+  background-color: $at-ocean;
+  height: 2px;
+  width: 100%;
+}
+
+.overview-container{
+  padding: 2em 4em 2em 4em;
+
+}
+
+.overview-sub-container{
+  padding: 1em 2em 1em 2em;
+
+}
+
+.overview-caption{
+  @include light-font-sm;
+  font-size: 2em;
+
+  color: $at-ligth-blue;
+}
+
+.right {
+  float: right;
+}

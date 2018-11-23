@@ -61,6 +61,12 @@ namespace DataProvider.Providers.Banks.Hapoalim
             return GetAccountTransactions( account, startTime, endTime);
         }
 
+        public IEnumerable<Mortgage> GetMortgages(BankAccountDescriptor accountDescriptor)
+        {
+            var account = GenerateAccountByAccountId(accountDescriptor);
+            return GetAccountMortgages(account);
+        }
+
         public IEnumerable<Loan> GetLoans(BankAccountDescriptor accountDescriptor)
         {
             var account = GenerateAccountByAccountId(accountDescriptor);
@@ -103,69 +109,115 @@ namespace DataProvider.Providers.Banks.Hapoalim
             return result;
         }
 
-        private IList<Loan> GetAccountLoans(HapoalimAccountResponse accountDto)
+        private IList<Mortgage> GetAccountMortgages(HapoalimAccountResponse accountDto)
         {
-            var loans = _api.GetMortgages(accountDto);
-            var result = new List<Loan>();
-            foreach (var loan in loans.Data)
+            var mortgages = _api.GetMortgages(accountDto);
+            var result = new List<Mortgage>();
+            if (mortgages.Data == null)
             {
-                var startDate = (loan.ExecutingDate == 0) ? DateTime.MinValue : new DateTime((int)(loan.ExecutingDate / 10000), (int)(loan.ExecutingDate / 100 % 100),
-                    (int)(loan.ExecutingDate % 100)).AddMinutes((int)(loan.ExecutingDate % 100));
+                return result;
+            }
 
-                var endDate = (loan.CalculatedEndDate == 0) ? DateTime.MinValue : new DateTime((int)(loan.CalculatedEndDate / 10000), (int)(loan.CalculatedEndDate / 100 % 100),
-                    (int)(loan.CalculatedEndDate % 100)).AddMinutes((int)(loan.CalculatedEndDate % 100));
-                
-
-                var newLoan = new Loan
+            foreach (var mortgage in mortgages.Data)
+            {
+                if (!(accountDto.AccountNumber == mortgage.AccountNumber &&
+                      accountDto.BranchNumber == mortgage.BranchNumber))
                 {
-                    LoanId = loan.MortgageLoanSerialId,
+                    continue;
+                }
 
-                    StartDate = startDate,
-                    EndDate = endDate,
+                var asset = _api.GetAssetForMortgage(accountDto, mortgage.MortgageLoanSerialId);
 
-                    DeptAmount = loan.RevaluedBalance,
-                    LastPaymentAmount = loan.PaymentAmount,
-                    PrepaymentCommission = loan.PrepaymentCommissionTotalAmount,
-
-                    InsuranceCompany = loan.LifeInsuranceCompanyName,
-                    InterestType = loan.InterestTypeDescription,
-                    LinkageType = loan.LinkageTypeDescription,
-                };
-
-                Double origAmount = 0;
-                foreach (var subLoan in loan.SubLoanData)
+                foreach (var subLoan in mortgage.SubLoanData)
                 {
-                    var sd = (subLoan.ExecutingDate == 0) ? DateTime.MinValue : new DateTime((int)(subLoan.ExecutingDate / 10000), (int)(subLoan.ExecutingDate / 100 % 100),
+                    var startDate = (subLoan.ExecutingDate == 0) ? DateTime.MinValue : new DateTime((int)(subLoan.ExecutingDate / 10000), (int)(subLoan.ExecutingDate / 100 % 100),
                         (int)(subLoan.ExecutingDate % 100)).AddMinutes((int)(subLoan.ExecutingDate % 100));
 
-                    var ed = (subLoan.CalculatedEndDate == 0) ? DateTime.MinValue : new DateTime((int)(subLoan.CalculatedEndDate / 10000), (int)(subLoan.CalculatedEndDate / 100 % 100),
+                    var endDate = (subLoan.CalculatedEndDate == 0) ? DateTime.MinValue : new DateTime((int)(subLoan.CalculatedEndDate / 10000), (int)(subLoan.CalculatedEndDate / 100 % 100),
                         (int)(subLoan.CalculatedEndDate % 100)).AddMinutes((int)(subLoan.CalculatedEndDate % 100));
 
                     var ned = (subLoan.NextExitDate == 0) ? DateTime.MinValue : new DateTime((int)(subLoan.NextExitDate / 10000), (int)(subLoan.NextExitDate / 100 % 100),
                         (int)(subLoan.NextExitDate % 100)).AddMinutes((int)(subLoan.NextExitDate % 100));
 
-                    origAmount += subLoan.SubLoansPrincipalAmount;
-                    newLoan.SubLoans.Add(new Loan.SubLoan
+                    var newMortgage = new Mortgage
                     {
-                        Id = subLoan.SubLoansSerialId.ToString(),
+                        LoanId = string.Format("{0}/{1}", mortgage.MortgageLoanSerialId, subLoan.SubLoansSerialId),
+                        StartDate = startDate,
+                        EndDate = endDate,
+                        DeptAmount = subLoan.PrincipalBalanceAmount,
                         OriginalAmount = subLoan.SubLoansPrincipalAmount,
-                        StartDate = sd,
-                        EndDate = ed,
-                        NextExitDate = ned,
-                        PrincipalAmount = subLoan.PrincipalBalanceAmount,
-                        InterestAmount = subLoan.InterestAndLinkageTotalAmount,
-                        DebtAmount = subLoan.PrincipalAndInterestAndInterestDeferredTotalAmount,
-                        InterestRate = subLoan.ValidityInterestRate
-                    });
-                }
 
-                newLoan.OriginalAmount = origAmount;
-                result.Add(newLoan);
+                        InsuranceCompany = mortgage.LifeInsuranceCompanyName,
+                        InterestType = mortgage.InterestTypeDescription,
+                        LinkageType = mortgage.LinkageTypeDescription,
+
+                        InterestRate = subLoan.ValidityInterestRate,
+                        NextExitDate = ned,
+
+                        Asset = new MortgageAsset
+                        {
+                            BuildingNumber = asset.BuildingNumber,
+                            StreetName = asset.StreetName,
+                            CityName = asset.CityName,
+                            PartyFirstName = asset.PartyInMortgage.FirstOrDefault()?.PartyFirstName,
+                            PartyLastName = asset.PartyInMortgage.FirstOrDefault()?.PartyLastName,
+                        },
+                    };
+
+                    result.Add(newMortgage);
+                }
             }
 
             return result;
         }
 
+        private IList<Loan> GetAccountLoans(HapoalimAccountResponse accountDto)
+        {
+            var loans = _api.GetLoans(accountDto);
+            var result = new List<Loan>();
+            if (loans.Data == null)
+            {
+                return result;
+            }
+
+            foreach (var loan in loans.Data)
+            {
+                if (!(accountDto.AccountNumber == loans.AccountNumber &&
+                      accountDto.BranchNumber == loans.BranchNumber))
+                {
+                    continue;
+                }
+
+                var details = _api.GetDetailsForLoan(accountDto, loan);
+                var startDate = (details.ValueDate == 0) ? DateTime.MinValue : new DateTime((int)(details.ValueDate / 10000), (int)(details.ValueDate / 100 % 100),
+                    (int)(details.ValueDate % 100)).AddMinutes((int)(details.ValueDate % 100));
+                var endDate = (details.LoanEndDate == 0) ? DateTime.MinValue : new DateTime((int)(details.LoanEndDate / 10000), (int)(details.LoanEndDate / 100 % 100),
+                    (int)(details.LoanEndDate % 100)).AddMinutes((int)(details.LoanEndDate % 100));
+                var nextPaymentDate = (loan.NextPaymentDate == 0) ? DateTime.MinValue : new DateTime((int)(loan.NextPaymentDate / 10000), (int)(loan.NextPaymentDate / 100 % 100),
+                    (int)(loan.NextPaymentDate % 100)).AddMinutes((int)(loan.NextPaymentDate % 100));
+
+                result.Add(new Loan
+                {
+                    LoanId = loan.CreditSerialNumber.ToString(),
+                    StartDate = startDate,
+                    EndDate = endDate,
+
+                    OriginalAmount = loan.OriginalLoanPrincipalAmount,
+                    DeptAmount = details.LoanBalanceAmount,
+                    InterestRate = details.CurrentInterestPercent,
+                    
+                    NumberOfInterestPayments = details.OriginalPrincipalPaymentsNumber,
+                    NumberOfPrincipalPayments = details.OriginalInterestPaymentsNumber,
+                    NextInterestPayment = details.InterestNextPaymentNumber,
+                    NextPrincipalPayment = details.PrincipalNextPaymentNumber,
+
+                    NextPrepayment = loan.NextPaymentAmount,
+                    NextPaymentDate = nextPaymentDate,
+                });
+            }
+
+            return result;
+        }
 
         private BankAccount GetAccountInfo(HapoalimAccountResponse account)
         {

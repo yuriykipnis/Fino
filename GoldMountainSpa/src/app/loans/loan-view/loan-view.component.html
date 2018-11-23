@@ -9,7 +9,7 @@
   </div>
 
   <div class="p-grid loan-summary">
-    <div class="p-col-4">
+    <div class="p-col-6">
       <div class="">
         <span>Account</span>
         <span class="right light">{{loan?.BankNumber}}-{{loan?.BankBranchNumber}}-{{loan?.BankAccountNumber}}</span>
@@ -18,83 +18,67 @@
         <span class="ui-g-12 ui-g-nopad bank-name" >{{loan?.BankName}}</span>
       </div>
       <div class="">
-        <span class="light">Secured by</span>
-        <span class="right regular">{{loan?.InsuranceCompany}}</span>
+        <span class="light">Start Date</span>
+        <span class="right regular">{{loan?.StartDate | utcToLocalTime |  date:'dd/MM/yy'}}</span>
       </div>
       <div class="">
-        <span class="light">Start date</span>
-        <span class="right regular">{{loan?.StartDate | utcToLocalTime |  date:'dd/MM/yy'}}</span>
+        <span class="light">Payoff Date</span>
+        <span class="right regular">{{loan?.PayoffDate | utcToLocalTime |  date:'dd/MM/yy'}}</span>
       </div>
       <div class="">
         <span class="light">Original Amount</span>
         <span class="right regular">{{loan?.OriginalAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
       </div>
+
+      <!--<div class="">-->
+        <!--<span class="light">Secured by</span>-->
+        <!--<span class="right regular">{{loan?.InsuranceCompany}}</span>-->
+      <!--</div>-->
+      <!--<div class="">-->
+        <!--<span class="light">Current Dept</span>-->
+        <!--<span class="right regular">{{loan?.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>-->
+      <!--</div>-->
+    </div>
+
+    <div class="p-col-6">
       <div class="">
-        <span class="light">Current Dept</span>
+        <span>Payment</span>
+      </div>
+      <div class="">
+        <span class="light">Principal Amount</span>
         <span class="right regular">{{loan?.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
       </div>
+      <div class="">
+        <span class="light">Interest</span>
+        <span class="right regular">{{loan?.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+      </div>
+      <div class="">
+        <span class="light">Linkage Rate</span>
+        <span class="right regular">{{loan?.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+      </div>
+      <div class="">
+        <span class="light">Total</span>
+        <span class="right regular">{{loan?.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+      </div>
+      <!--<div>Next Payment</div>-->
+      <!--<div class="regular">{{loan?.LastPaymentAmount | currency:'ILS':'symbol':'1.0-0'}}</div>-->
+      <!--<div class="light">{{loan?.NextPaymentDate | utcToLocalTime |  date:'dd/MM/yy'}}</div>-->
     </div>
 
-    <div class="p-col-2 p-offset-2">
-      <div>Next Payment</div>
-      <div class="regular">{{loan?.LastPaymentAmount | currency:'ILS':'symbol':'1.0-0'}}</div>
-      <div class="light">{{loan?.NextPaymentDate | utcToLocalTime |  date:'dd/MM/yy'}}</div>
-    </div>
+    <!--<div class="p-col-2">-->
+      <!--<div class="">Interest Rate</div>-->
+    <!--</div>-->
 
-    <div class="p-col-2">
-      <div class="">Interest Rate</div>
-    </div>
-
-    <div class="p-col-2">
-      <div>Payoff Date</div>
-      <span class="ui-g-4" class="regular">{{loan?.PayoffDate | utcToLocalTime |  date:'dd/MM/yy'}}</span>
-    </div>
+    <!--<div class="p-col-2">-->
+      <!--<div>Payoff Date</div>-->
+      <!--<span class="ui-g-4" class="regular">{{loan?.PayoffDate | utcToLocalTime |  date:'dd/MM/yy'}}</span>-->
+    <!--</div>-->
   </div>
 
   <div class="p-grid">
-    <div class="ui-g-6" >
-      <div style="padding: 8px 0 40px 0;">
-        <span >Sub Loans</span>
-      </div>
-      <div *ngFor="let subLoan of loan?.SubLoans" style="padding-bottom: 30px;">
-        <p-card class="ui-g">
-          <div class="ui-g-12">
-            <div class="ui-g-12 ui-g-nopad">
-              <span class="ui-g-6 label-text">Original Sub Dept: </span>
-              <span class="ui-g-6">{{subLoan?.OriginalAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
-            </div>
-            <div class="ui-g-12 ui-g-nopad">
-              <span class="ui-g-4 ui-g-nopad light-label-text">Loan Part</span>
-              <span class="ui-g-3 ui-g-nopad light-label-text">Amount</span>
-              <span class="ui-g-2 ui-g-nopad light-label-text">Linkage</span>
-              <span class="ui-g-3 ui-g-nopad light-label-text">Total</span>
-            </div>
-            <div class="ui-g-12 ui-g-nopad">
-              <span class="ui-g-4 ui-g-nopad light-font">Principal</span>
-              <span class="ui-g-3 ui-g-nopad light-font">{{subLoan?.PrincipalAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
-              <span class="ui-g-2 ui-g-nopad light-font">0</span>
-              <span class="ui-g-3 ui-g-nopad light-font">{{subLoan?.PrincipalAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
-            </div>
-            <div class="ui-g-12 ui-g-nopad">
-              <span class="ui-g-4 ui-g-nopad light-font">Interest ({{subLoan?.InterestRate}}%)</span>
-              <span class="ui-g-3 ui-g-nopad light-font">{{subLoan?.InterestAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
-              <span class="ui-g-2 ui-g-nopad light-font">0</span>
-              <span class="ui-g-3 ui-g-nopad light-font">{{subLoan?.InterestAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
-            </div>
-            <div class="ui-g-12 ui-g-nopad">
-              <span class="ui-g-4 ui-g-nopad light-font">Total</span>
-              <span class="ui-g-3 ui-g-nopad light-font">{{subLoan?.PrincipalAmount + subLoan?.InterestAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
-              <span class="ui-g-2 ui-g-nopad light-font">0</span>
-              <span class="ui-g-3 ui-g-nopad light-font">{{subLoan?.PrincipalAmount + subLoan?.InterestAmount| currency:'ILS':'symbol':'1.0-0'}}</span>
-            </div>
-          </div>
-        </p-card>
-      </div>
-    </div>
-
     <div class="ui-g-6">
       <div class="ui-g-12 ui-g-nopad">
-        <span class="ui-g-8 accounts-status-sub-panel">Loan Amortization</span>
+        <span class="ui-g-8 accounts-status-sub-panel">Mortgage Amortization</span>
         <p-chart type="bar"[data]="loanAmortisation"></p-chart>
       </div>
     </div>

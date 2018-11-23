@@ -11,6 +11,7 @@ using RawBankAccount = DataProvider.Providers.Models.BankAccount;
 using CreditAccount = GoldMountainShared.Storage.Documents.CreditAccount;
 using RawCreditAccount = DataProvider.Providers.Models.CreditAccount;
 using Transaction = GoldMountainShared.Storage.Documents.Transaction;
+using Mortgage = GoldMountainShared.Storage.Documents.Mortgage;
 using Loan = GoldMountainShared.Storage.Documents.Loan;
 
 namespace DataProvider.Services
@@ -107,11 +108,18 @@ namespace DataProvider.Services
             var endTime = DateTime.Now;
 
             var transactions = ((IBankAccountProvider)dataProvider).GetTransactions(accountDescriptor, startTime, endTime);
+            var mortgages = ((IBankAccountProvider)dataProvider).GetMortgages(accountDescriptor);
             var loans = ((IBankAccountProvider)dataProvider).GetLoans(accountDescriptor);
 
             accountToUpdate.Transactions = AutoMapper.Mapper.Map<IEnumerable<Transaction>>(transactions);
+            accountToUpdate.Mortgages = AutoMapper.Mapper.Map<IEnumerable<Mortgage>>(mortgages);
             accountToUpdate.Loans = AutoMapper.Mapper.Map<IEnumerable<Loan>>(loans);
             accountToUpdate.Balance = updatedAccount.Balance;
+
+            foreach (var loan in accountToUpdate.Mortgages)
+            {
+                loan.UserId = accountToUpdate.UserId;
+            }
 
             foreach (var loan in accountToUpdate.Loans)
             {

@@ -8,6 +8,7 @@ namespace DataProvider.Providers.Interfaces
     {
         BankAccount GetAccount(BankAccountDescriptor accountDescriptor);
         IEnumerable<Transaction> GetTransactions(BankAccountDescriptor accountDescriptor, DateTime startTime, DateTime endTime);
+        IEnumerable<Mortgage> GetMortgages(BankAccountDescriptor accountDescriptor);
         IEnumerable<Loan> GetLoans(BankAccountDescriptor accountDescriptor);
         IEnumerable<BankAccount> GetAccounts();
     }

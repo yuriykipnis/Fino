@@ -15,40 +15,22 @@ namespace GoldMountainShared.Storage.Documents
         public ObjectId InternalId { get; set; }
 
         public Guid Id { get; set; } = Guid.NewGuid();
-        public String LoanId { get; set; } = String.Empty;
         public String UserId { get; set; } = String.Empty;
 
+        public String LoanId { get; set; }
         public DateTime StartDate { get; set; } = DateTime.MinValue;
         public DateTime EndDate { get; set; } = DateTime.MinValue;
+
+        public Decimal OriginalAmount { get; set; } = 0;
+        public Decimal DeptAmount { get; set; } = 0;
+        public Decimal InterestRate { get; set; } = 0;
+
+        public int NumberOfPrincipalPayments { get; set; } = 0;
+        public int NumberOfInterestPayments { get; set; } = 0;
+        public int NextPrincipalPayment { get; set; } = 0;
+        public int NextInterestPayment { get; set; } = 0;
+
+        public Decimal NextPrepayment { get; set; } = 0;
         public DateTime NextPaymentDate { get; set; } = DateTime.MinValue;
-
-        public Double OriginalAmount { get; set; } = 0;
-        public Double DeptAmount { get; set; } = 0;
-        public Double LastPaymentAmount { get; set; } = 0;
-        public Double PrepaymentCommission { get; set; } = 0;
-
-        public String InterestType { get; set; } = String.Empty;
-        public String LinkageType { get; set; } = String.Empty;
-        public String InsuranceCompany { get; set; } = String.Empty;
-
-        public IList<SubLoan> SubLoans { get; set; } = new List<SubLoan>();
-        
-        public DateTime UpdatedOn { get; set; } = DateTime.Now;
-        public DateTime CreatedOn { get; set; } = DateTime.Now;
-
-        public class SubLoan
-        {
-            public String Id { get; set; }
-
-            public Double OriginalAmount { get; set; } = 0;
-            public Double PrincipalAmount { get; set; } = 0;
-            public Double InterestAmount { get; set; } = 0;
-            public Double DebtAmount { get; set; } = 0;
-            public DateTime NextExitDate { get; set; } = DateTime.MinValue;
-
-            public DateTime StartDate { get; set; } = DateTime.MinValue;
-            public DateTime EndDate { get; set; } = DateTime.MinValue;
-            public Double InterestRate { get; set; } = 0;
-        }
     }
 }

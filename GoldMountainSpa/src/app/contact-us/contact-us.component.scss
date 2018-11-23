@@ -21,7 +21,12 @@ input{
   @include regular-font-xxxl;
   color: $at-ligth-blue;
   line-height: $at-line-height-6;
+}
 
+.contact-us-sub-caption{
+  @include regular-font-xxl;
+  color: $at-ligth-blue;
+  line-height: $at-line-height-2;
 }
 
 .connect-with-us-container{

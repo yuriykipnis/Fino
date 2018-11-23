@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { Store } from '@ngrx/store';
 import 'rxjs/add/operator/switchMap';
-import {Loan} from '../../models/loan';
+import {Mortgage} from '../../models/mortgage';
 import {UserProfileService} from "../../services/user-profile.service";
 import {AppState} from "../../shared/store/app.states";
 import * as fromLoanActions from "../store/actions/loan.action";
@@ -39,7 +39,7 @@ export class LoanViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loanSelectedSubscription = this.loanControlService.selectedLoanChanged$.subscribe(loan => {
-      //Loan new loan into this view
+      //Mortgage new loan into this view
       this.loan = loan;
       this.updateLoanAmortisation();
     });

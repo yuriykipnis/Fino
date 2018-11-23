@@ -22,8 +22,8 @@ namespace GoldMountainShared.Storage.Documents
         public DateTime PaymentDate { get; set; } = DateTime.MinValue;
         public String Description { get; set; } = String.Empty;
         public String ProviderName { get; set; } = String.Empty;
-        public Double Amount { get; set; }
-        public Double CurrentBalance { get; set; }
+        public Decimal Amount { get; set; }
+        public Decimal CurrentBalance { get; set; }
 
 
         public DateTime UpdatedOn { get; set; } = DateTime.Now;

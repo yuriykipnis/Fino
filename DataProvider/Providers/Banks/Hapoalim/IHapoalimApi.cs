@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using DataProvider.Providers.Banks.Hapoalim.Dto;
+using DataProvider.Providers.Models;
 
 
 namespace DataProvider.Providers.Banks.Hapoalim
@@ -11,6 +11,9 @@ namespace DataProvider.Providers.Banks.Hapoalim
         IEnumerable<HapoalimAccountResponse> GetAccountsData();
         HapoalimTransactionsResponse GetTransactions(HapoalimAccountResponse account, DateTime startTime, DateTime endTime);
         HapoalimMortgagesResponse GetMortgages(HapoalimAccountResponse account);
+        HapoalimMortgageAssetResponse GetAssetForMortgage(HapoalimAccountResponse account, string loanId);
         HapoalimBalanceResponse GetBalance(HapoalimAccountResponse account);
+        HapoalimLoansResponse GetLoans(HapoalimAccountResponse account);
+        HapoalimLoanDetailsResponse GetDetailsForLoan(HapoalimAccountResponse account, HapoalimLoansResponse.LoanData loan);
     }
 }

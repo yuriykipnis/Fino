@@ -5,8 +5,10 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using DataProvider.Providers.Banks.Hapoalim.Dto;
+using DataProvider.Providers.Models;
 using GoldMountainShared.Storage.Documents;
 using Newtonsoft.Json;
+using Mortgage = DataProvider.Providers.Models.Mortgage;
 
 namespace DataProvider.Providers.Banks.Hapoalim
 {
@@ -52,7 +54,7 @@ namespace DataProvider.Providers.Banks.Hapoalim
             cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
             cookieContainer.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
             cookieContainer.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
-            var api = "/ServerServices/general/accounts";
+            var api = "/ssb/general/accounts";
 
             IList<HapoalimAccountResponse> content = null;
             var accountsResponse = CallGetRequest(baseAddress, api, cookieContainer);
@@ -72,7 +74,7 @@ namespace DataProvider.Providers.Banks.Hapoalim
             cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
             cookieContainer.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
             cookieContainer.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
-            var api = $@"/ServerServices/current-account/transactions?accountId={account.BankNumber}-{account.BranchNumber}-{account.AccountNumber}&retrievalEndDate={date2}&retrievalStartDate={date1}";
+            var api = $@"/ssb/current-account/transactions?accountId={account.BankNumber}-{account.BranchNumber}-{account.AccountNumber}&retrievalEndDate={date2}&retrievalStartDate={date1}";
 
             var accountsResponse = CallGetRequest(baseAddress, api, cookieContainer);
             if (string.IsNullOrEmpty(accountsResponse)) 
@@ -93,7 +95,7 @@ namespace DataProvider.Providers.Banks.Hapoalim
             cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
             cookieContainer.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
             cookieContainer.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
-            var api = $@"/ServerServices/credit-and-mortgage/mortgages?accountId={account.BankNumber}-{account.BranchNumber}-{account.AccountNumber}";
+            var api = $@"/ssb/credit-and-mortgage/mortgages?accountId={account.BankNumber}-{account.BranchNumber}-{account.AccountNumber}";
 
             var accountsResponse = CallGetRequest(baseAddress, api, cookieContainer);
             if (string.IsNullOrEmpty(accountsResponse))
@@ -102,6 +104,69 @@ namespace DataProvider.Providers.Banks.Hapoalim
             }
 
             var content = JsonConvert.DeserializeObject<HapoalimMortgagesResponse>(accountsResponse);
+            return content;
+        }
+
+        public HapoalimMortgageAssetResponse GetAssetForMortgage(HapoalimAccountResponse account, string loanId)
+        {
+            var baseAddress = new Uri(LoginDomain);
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
+            cookieContainer.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
+            cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
+            cookieContainer.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
+            cookieContainer.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
+            var api = $@"/ssb/credit-and-mortgage/mortgages/{loanId}?accountId={account.BankNumber}-{account.BranchNumber}-{account.AccountNumber}&accountNumber={account.AccountNumber}&bankNumber={account.BankNumber}&branchNumber={account.BranchNumber}";
+
+            var accountsResponse = CallGetRequest(baseAddress, api, cookieContainer);
+            if (string.IsNullOrEmpty(accountsResponse))
+            {
+                return new HapoalimMortgageAssetResponse();
+            }
+
+            var content = JsonConvert.DeserializeObject<HapoalimMortgageAssetResponse>(accountsResponse);
+            return content;
+        }
+
+        public HapoalimLoansResponse GetLoans(HapoalimAccountResponse account)
+        {
+            var baseAddress = new Uri(LoginDomain);
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
+            cookieContainer.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
+            cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
+            cookieContainer.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
+            cookieContainer.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
+            var api = $@"/ssb/credit-and-mortgage/loans?accountId={account.BankNumber}-{account.BranchNumber}-{account.AccountNumber}";
+
+            var accountsResponse = CallGetRequest(baseAddress, api, cookieContainer);
+            if (string.IsNullOrEmpty(accountsResponse))
+            {
+                return new HapoalimLoansResponse();
+            }
+
+            var content = JsonConvert.DeserializeObject<HapoalimLoansResponse>(accountsResponse);
+            return content;
+        }
+
+        public HapoalimLoanDetailsResponse GetDetailsForLoan(HapoalimAccountResponse account, HapoalimLoansResponse.LoanData loan)
+        {
+            var baseAddress = new Uri(LoginDomain);
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
+            cookieContainer.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
+            cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
+            cookieContainer.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
+            cookieContainer.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
+            var api = $@"/ssb/credit-and-mortgage/loans/{loan.CreditSerialNumber}?accountId={account.BankNumber}-{account.BranchNumber}-{account.AccountNumber}&unitedCreditTypeCode={loan.UnitedCreditTypeCode}";
+
+            var accountsResponse = CallGetRequest(baseAddress, api, cookieContainer);
+            if (string.IsNullOrEmpty(accountsResponse))
+            {
+                return new HapoalimLoanDetailsResponse();
+            }
+
+            var content = JsonConvert.DeserializeObject<HapoalimLoanDetailsResponse>(accountsResponse);
             return content;
         }
 
@@ -115,7 +180,7 @@ namespace DataProvider.Providers.Banks.Hapoalim
             cookieContainer.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
             cookieContainer.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
 
-            var api = string.Format(@"/ServerServices/current-account/composite/balanceAndCreditLimit?accountId={0}-{1}-{2}",
+            var api = string.Format(@"/ssb/current-account/composite/balanceAndCreditLimit?accountId={0}-{1}-{2}",
                 account.BankNumber, account.BranchNumber, account.AccountNumber);
 
             var balanceResponse = CallGetRequest(baseAddress, api, cookieContainer);

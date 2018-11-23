@@ -11,7 +11,7 @@ namespace GoldMountainShared.Models.Shared
         public DateTime PaymentDate { get; set; } = DateTime.MinValue;
         public String Description { get; set; } = String.Empty;
         public String ProviderName { get; set; } = String.Empty;
-        public Double Amount { get; set; } = 0;
-        public Double CurrentBalance { get; set; } = 0;
+        public Decimal Amount { get; set; } = 0;
+        public Decimal CurrentBalance { get; set; } = 0;
     }    
 }

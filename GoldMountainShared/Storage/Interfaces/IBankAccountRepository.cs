@@ -22,7 +22,7 @@ namespace GoldMountainShared.Storage.Interfaces
 
         Task<bool> RemoveAccount(Guid id);
 
-        Task<bool> UpdateAccountBalance(Guid id, double balance);
+        Task<bool> UpdateAccountBalance(Guid id, Decimal balance);
 
         Task<bool> UpdateAccount(Guid id, BankAccount account);
 

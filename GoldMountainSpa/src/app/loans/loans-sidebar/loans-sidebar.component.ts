@@ -17,6 +17,7 @@ import {AccountControlService} from "../../accounts/services/account-control.ser
 })
 export class LoansSidebarComponent implements OnInit {
   loans$: Observable<LoanViewModel[]>;
+  mortgages: Array<{key: string, loans: LoanViewModel[]}>;
   loansSubscription: Subscription;
   loadingStateSubscription: Subscription;
   isLoading: boolean;
@@ -35,6 +36,18 @@ export class LoansSidebarComponent implements OnInit {
     });
 
     this.loansSubscription = this.loans$.subscribe(res =>{
+      this.mortgages = new Array<{key: string, loans: LoanViewModel[]}>();
+      res.forEach(l => {
+        let key : string = l.CityName + "-" + l.StreetName + "-" + l.BuildingNumber;
+        let loans = this.mortgages.find(el => { return el.key === key });
+        if(!loans) {
+          this.mortgages.push({key: key, loans: new Array<LoanViewModel>()});
+          loans = this.mortgages.find(el => { return el.key === key });
+        }
+
+        loans.loans.push(l);
+      });
+
       if (res.length > 0 && !this.loanControlService.getSelectedLoan()) {
         this.loanControlService.changeSelectedLoan(res[0]);
       }

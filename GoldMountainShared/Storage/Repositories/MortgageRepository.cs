@@ -14,20 +14,20 @@ using UpdateOptions = MongoDB.Driver.UpdateOptions;
 
 namespace GoldMountainShared.Storage.Repositories
 {
-    public class LoanRepository : ILoanRepository
+    public class MortgageRepository : IMortgageRepository
     {
         private readonly DbContext _context = null;
 
-        public LoanRepository(IOptions<DbSettings> settings)
+        public MortgageRepository(IOptions<DbSettings> settings)
         {
             _context = new DbContext(settings);
         }
 
-        public async Task<IEnumerable<Loan>> GetAllLoans()
+        public async Task<IEnumerable<Mortgage>> GetAllLoans()
         {
             try
             {
-                return await _context.Loans.Find(_ => true).ToListAsync();
+                return await _context.Mortgages.Find(_ => true).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -36,11 +36,11 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<Loan> GetLoan(Guid id)
+        public async Task<Mortgage> GetLoan(Guid id)
         {
             try
             {
-                return await _context.Loans.Find(loan => loan.Id.Equals(id)).FirstOrDefaultAsync();
+                return await _context.Mortgages.Find(loan => loan.Id.Equals(id)).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -49,11 +49,11 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddLoan(Loan item)
+        public async Task AddLoan(Mortgage item)
         {
             try
             {
-                await _context.Loans.InsertOneAsync(item);
+                await _context.Mortgages.InsertOneAsync(item);
             }
             catch (Exception ex)
             {
@@ -62,11 +62,11 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddLoans(IEnumerable<Loan> items)
+        public async Task AddLoans(IEnumerable<Mortgage> items)
         {
             try
             {
-                await _context.Loans.InsertManyAsync(items);
+                await _context.Mortgages.InsertManyAsync(items);
             }
             catch (Exception ex)
             {
@@ -75,11 +75,11 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<IEnumerable<Loan>> GetLoansByUserId(string id)
+        public async Task<IEnumerable<Mortgage>> GetLoansByUserId(string id)
         {
             try
             {
-                return await _context.Loans.Find(loan => loan.UserId.Equals(id)).ToListAsync();
+                return await _context.Mortgages.Find(loan => loan.UserId.Equals(id)).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -93,7 +93,7 @@ namespace GoldMountainShared.Storage.Repositories
             try
             {
                 DeleteResult actionResult
-                    = await _context.Loans.DeleteOneAsync(Builders<Loan>.Filter.Eq("Id", id));
+                    = await _context.Mortgages.DeleteOneAsync(Builders<Mortgage>.Filter.Eq("Id", id));
 
                 return actionResult.IsAcknowledged && actionResult.DeletedCount > 0;
             }
@@ -104,12 +104,12 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<bool> UpdateLoan(Guid id, Loan account)
+        public async Task<bool> UpdateLoan(Guid id, Mortgage account)
         {
             try
             {
                 account.UpdatedOn = DateTime.Now;
-                ReplaceOneResult actionResult = await _context.Loans.ReplaceOneAsync(a => a.Id.Equals(id),
+                ReplaceOneResult actionResult = await _context.Mortgages.ReplaceOneAsync(a => a.Id.Equals(id),
                     account, new UpdateOptions { IsUpsert = true });
                 return actionResult.IsAcknowledged && actionResult.ModifiedCount > 0;
             }
@@ -125,7 +125,7 @@ namespace GoldMountainShared.Storage.Repositories
             try
             {
                 DeleteResult actionResult
-                    = await _context.Loans.DeleteManyAsync(_ => true);
+                    = await _context.Mortgages.DeleteManyAsync(_ => true);
 
                 return actionResult.IsAcknowledged && actionResult.DeletedCount > 0;
             }
@@ -136,11 +136,11 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<Loan> FindLoanByCriteria(Expression<Func<Loan, bool>> filter)
+        public async Task<Mortgage> FindLoanByCriteria(Expression<Func<Mortgage, bool>> filter)
         {
             try
             {
-                return await _context.Loans.Find(filter).FirstOrDefaultAsync();
+                return await _context.Mortgages.Find(filter).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

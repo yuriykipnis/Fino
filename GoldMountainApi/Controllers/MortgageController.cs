@@ -17,49 +17,49 @@ namespace GoldMountainApi.Controllers
     [Produces("application/json")]
     [Route("api")]
     [Authorize]
-    public class LoanController : Controller
+    public class MortgageController : Controller
     {
         //private readonly IBankAccountRepository _accountRepository;
-        private readonly ILoanRepository _loanRepository;
+        private readonly IMortgageRepository _mortgageRepository;
         private readonly IDataService _dataService;
         private readonly IValidationHelper _validationHelper;
 
-        public LoanController(ILoanRepository loanRepository, IDataService dataService,
+        public MortgageController(IMortgageRepository mortgageRepository, IDataService dataService,
             IValidationHelper validationHelper)
         {
-            _loanRepository = loanRepository;
+            _mortgageRepository = mortgageRepository;
             _dataService = dataService;
             _validationHelper = validationHelper;
         }
 
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-        [HttpGet("Loans")]
-        public async Task<IEnumerable<LoanDto>> Get()
+        [HttpGet("mortgages")]
+        public async Task<IEnumerable<MortgageDto>> Get()
         {
-            var accounts = await _loanRepository.GetAllLoans();
-            var result = AutoMapper.Mapper.Map<IEnumerable<LoanDto>>(accounts);
+            var accounts = await _mortgageRepository.GetAllLoans();
+            var result = AutoMapper.Mapper.Map<IEnumerable<MortgageDto>>(accounts);
             return result;
         }
 
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-        [HttpGet("Loans/{id}")]
-        public async Task<LoanDto> Get(Guid id)
+        [HttpGet("mortgages/{id}")]
+        public async Task<MortgageDto> Get(Guid id)
         {
-            var loan = await _loanRepository.GetLoan(id) ?? new Loan();
-            var result = AutoMapper.Mapper.Map<LoanDto>(loan);
+            var loan = await _mortgageRepository.GetLoan(id) ?? new Mortgage();
+            var result = AutoMapper.Mapper.Map<MortgageDto>(loan);
             return result;
         }
 
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-        [HttpGet("User/{userId}/Loans")]
-        public async Task<IEnumerable<LoanDto>> GetUpdatedAccountsForUser(String userId)
+        [HttpGet("user/{userId}/mortgages")]
+        public async Task<IEnumerable<MortgageDto>> GetUpdatedAccountsForUser(String userId)
         {
             if (!_validationHelper.ValidateUserPermissions(User, userId))
             {
                 throw new AuthenticationException();
             }
 
-            var loans = await _loanRepository.GetLoansByUserId(userId) ?? new List<Loan>();
+            var loans = await _mortgageRepository.GetLoansByUserId(userId) ?? new List<Mortgage>();
             var needToUpdate = loans.Any(a => DateTime.Compare(a.UpdatedOn.ToLocalTime().AddHours(28), DateTime.Now) < 0);
 
             if (needToUpdate)
@@ -73,19 +73,19 @@ namespace GoldMountainApi.Controllers
                     Console.WriteLine(e);
                 }
 
-                loans = await _loanRepository.GetLoansByUserId(userId) ?? new List<Loan>();
+                loans = await _mortgageRepository.GetLoansByUserId(userId) ?? new List<Mortgage>();
             }
 
-            return AutoMapper.Mapper.Map<IEnumerable<LoanDto>>(loans);
+            return AutoMapper.Mapper.Map<IEnumerable<MortgageDto>>(loans);
         }
         
-        [HttpPut("BankAccounts/{id}/Loans")]
-        public void Put(Guid id, [FromBody]double balance)
+        [HttpPut("bankAccounts/{id}/mortgages")]
+        public void Put(Guid id, [FromBody]Decimal balance)
         {
-            //_loanRepository.UpdateLoan(id, 0);
+            //_mortgageRepository.UpdateLoan(id, 0);
         }
 
-        private async Task<IEnumerable<BankAccount>> UpdateLoans(string userId, IEnumerable<Loan> loans)
+        private async Task<IEnumerable<BankAccount>> UpdateLoans(string userId, IEnumerable<Mortgage> loans)
         {
             var updatedLoans = await _dataService.GetBankAccountsForUserId(userId);
             foreach (var ua in updatedLoans)

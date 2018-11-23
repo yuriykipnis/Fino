@@ -6,14 +6,15 @@ import 'rxjs/add/operator/map';
 import {CreditAccount} from "../accounts/models/credit-account";
 import {Transaction} from "../models/transaction";
 import {environment} from "../../environments/environment";
+import {AccountService} from './account.service';
 
 @Injectable()
-export class CreditService {
+export class CreditService implements AccountService{
 
   constructor(private http: HttpClient) {  }
 
   getAccounts$(userId : string): Observable<CreditAccount[]> {
-    let url = environment.api.clientApiUrl + '/user/' + userId + '/CreditAccounts';
+    let url = environment.api.clientApiUrl + '/user/' + userId + '/creditAccounts';
     let headers = new HttpHeaders()
       .set('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
 
@@ -51,6 +52,39 @@ export class CreditService {
         });
         result.push(newAccount);
       });
+      return result;
+    });
+
+    return response;
+  }
+
+  getExistingAccounts$(userId : string,
+               institutionName: string,
+               credentials: Array<[string, string]>): Observable<CreditAccount[]> {
+    let body = {
+      UserId: userId,
+      Name: institutionName,
+      Credentials: credentials
+    };
+
+    var response = this.http.post<CreditAccount[]>(environment.api.dataProviderUrl + '/CreditAccount', body).map((res: any[]) => {
+      let result = new Array<CreditAccount>();
+      res.forEach(ca => result.push(
+        new CreditAccount({
+          Id: ca.id,
+          Name: ca.name,
+          Label: ca.name + "-" + ca.cardNumber,
+          Club: ca.club,
+          UserName: ca.userName,
+          CardNumber: ca.cardNumber,
+          ExpirationDate: ca.expirationDate,
+          BankAccount: ca.bankAccount,
+          BankName: ca.bankName,
+          ProviderName: ca.providerName,
+          IsActive: true,
+          LastUpdate: ca.updatedOn,
+          Transactions: []
+        })));
       return result;
     });
 

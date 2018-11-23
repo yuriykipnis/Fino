@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using DataProvider.ErrorHandling;
 using DataProvider.Providers;
 using DataProvider.Providers.Interfaces;
 using DataProvider.Services;
@@ -18,16 +13,13 @@ using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
 using GoldMountainShared.Storage.Repositories;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.EntityFrameworkCore.Design.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
+using RawMortgage = DataProvider.Providers.Models.Mortgage;
+using Mortgage = GoldMountainShared.Storage.Documents.Mortgage;
 using RawLoan = DataProvider.Providers.Models.Loan;
 using Loan = GoldMountainShared.Storage.Documents.Loan;
 using RawTransaction = DataProvider.Providers.Models.Transaction;
@@ -122,6 +114,9 @@ namespace DataProvider
                 cfg.CreateMap<RawTransaction, Transaction>()
                     .ForSourceMember(src => src.Id, opt => opt.Ignore())
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(o => Guid.NewGuid()));
+
+                cfg.CreateMap<RawMortgage, MortgageDto>();
+                cfg.CreateMap<RawMortgage, Mortgage>();
 
                 cfg.CreateMap<RawLoan, LoanDto>();
                 cfg.CreateMap<RawLoan, Loan>();

@@ -1,0 +1,18 @@
+﻿<Window x:Class="LeumiWebScraper.TransactionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Loaded="OnWindowLoaded"
+        Name="_transactionsWindow"  
+        Visibility="Visible">
+    
+    <Grid>
+        <StackPanel >
+            <WebBrowser Name="_transactionsBrowser"  
+                        Margin="0"
+                        Height="1200" Width="1400"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+            />
+        </StackPanel>
+    </Grid>
+</Window>

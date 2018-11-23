@@ -156,7 +156,7 @@ namespace DataProvider.Providers.Cards.Amex
             return new ExpensesInfo
             {
                 Transactions = transactions ?? new List<CardTransaction>(),
-                NextCharge = Convert.ToDouble(charge)
+                NextCharge = Convert.ToDecimal(charge)
             };
         }
 

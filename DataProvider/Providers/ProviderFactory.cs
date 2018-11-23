@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using DataProvider.Providers.Banks.Hapoalim;
+using DataProvider.Providers.Banks.Leumi;
 using DataProvider.Providers.Cards.Amex;
 using DataProvider.Providers.Interfaces;
 using GoldMountainShared;
@@ -19,6 +20,9 @@ namespace DataProvider.Providers
                 case "Bank Hapoalim":
                     //accountProvider = new HapoalimAccountProvider(provider, new HapoalimFileApi(provider));
                     accountProvider = new HapoalimAccountProvider(new HapoalimApi(provider));
+                    break;
+                case "Bank Leumi":
+                    accountProvider = new LeumiAccountProvider(new LeumiApi(provider));
                     break;
                 case "Amex":
                     //accountProvider = new AmexAccountProvider(provider, new AmexFileApi(provider));

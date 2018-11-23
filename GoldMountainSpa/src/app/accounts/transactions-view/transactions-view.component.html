@@ -8,7 +8,8 @@
         <div class="p-grid p-nogutter">
           <img *ngIf="file['ProviderName'] === 'Hapoalim'" src="../../../assets/hapoalim.png" width="20" height="15" alt="">
           <img *ngIf="file['ProviderName'] === 'Amex'" src="../../../assets/amex.png" width="20" height="15" alt="">
-          <img *ngIf="file['ProviderName'] !== 'Hapoalim' && file['ProviderName'] !== 'Amex'" src="../../../assets/brand/gm-icon.ico" width="20" height="15" alt="">
+          <img *ngIf="file['ProviderName'] === 'Leumi'" src="../../../assets/leumi.png" width="20" height="15" alt="">
+          <img *ngIf="file['ProviderName'] !== 'Hapoalim' && file['ProviderName'] !== 'Amex' && file['ProviderName'] !== 'Leumi'" src="../../../assets/brand/gm-icon.ico" width="20" height="15" alt="">
           <p class="p-col" style="padding-left:1em">
             {{file[col.field].toLocaleString() | utcToLocalTime |  date:'dd/MM/yy'}}</p>
         </div>

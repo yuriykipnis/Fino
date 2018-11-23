@@ -1,19 +1,19 @@
-import { SubLoan } from "./subLoan";
 
 export class Loan {
   Id: string;
   StartDate: string;
   EndDate: string;
-  NextPaymentDate: string;
-  OriginalAmount:number;
-  DeptAmount:number;
-  LastPaymentAmount:number;
-  PrepaymentCommission:number;
-  InterestType: string;
-  LinkageType: string;
-  InsuranceCompany: string;
+  OriginalAmount: number;
+  DeptAmount: number;
+  InterestRate: number;
 
-  SubLoans: SubLoan[];
+  NumberOfPrincipalPayments: number;
+  NumberOfInterestPayments: number;
+  NextPrincipalPayment: number;
+  NextInterestPayment: number;
+
+  NextPayment: number;
+  NextPaymentDate: string;
 
   public constructor(init?:Partial<Loan>) {
     Object.assign(this, init);

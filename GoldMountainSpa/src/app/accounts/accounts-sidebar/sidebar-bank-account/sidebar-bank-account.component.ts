@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import {BankAccount} from "../../models/bank-account";
+import {AccountControlService} from "../../services/account-control.service";
 
 @Component({
   selector: 'app-sidebar-bank-account',
@@ -9,9 +10,13 @@ import {BankAccount} from "../../models/bank-account";
 })
 export class SidebarBankAccountComponent implements OnInit {
   @Input() account: BankAccount;
-  constructor() { }
+  constructor(private accountControlService: AccountControlService) {
+  }
 
   ngOnInit() {
   }
 
+  isSelected() {
+    return this.account.Id == this.accountControlService.getSelectedAccount().Id;
+  }
 }

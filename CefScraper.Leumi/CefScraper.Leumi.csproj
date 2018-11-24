@@ -17,6 +17,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -63,6 +64,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -71,10 +73,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountScraper.cs" />
+    <Compile Include="CommonScraper.cs" />
     <Compile Include="Model\AccountBasic.cs" />
+    <Compile Include="Model\Converters\DecimalConverter.cs" />
+    <Compile Include="Model\Converters\DateConverter.cs" />
+    <Compile Include="Model\Converters\StringBitConverter.cs" />
     <Compile Include="Model\TransactionBasic.cs" />
+    <Compile Include="Model\Converters\TransactionTypeConverter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TransactionScraper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

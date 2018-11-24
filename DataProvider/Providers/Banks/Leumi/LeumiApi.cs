@@ -5,7 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security;
+using System.Text;
 using System.Threading.Tasks;
+using DataProvider.Providers.Banks.Leumi.Dto;
 using DataProvider.Providers.Models;
 using GoldMountainShared.Storage.Documents;
 using Newtonsoft.Json;
@@ -22,8 +24,6 @@ namespace DataProvider.Providers.Banks.Leumi
         String _account;
         private readonly String _userName;
         private readonly String _userPassword;
-        private const int LeumiBankId = 10;
-        private const string ProviderName = "Leumi";
 
         public LeumiApi(Provider providerDescriptor)
         {
@@ -37,19 +37,20 @@ namespace DataProvider.Providers.Banks.Leumi
             _userPassword = crentialValues[1];
         }
 
-        public IEnumerable<BankAccount> GetAccounts()
+        public IEnumerable<LeumiAccountResponse> GetAccounts()
         {
-            var result = new List<BankAccount>();
+            var result = new List<LeumiAccountResponse>();
 
-            RunScraper("accounts");
+            var data = RunScraper("accounts");
+            
+            //assumes no errors :)
 
-            var accounts = _accounts.Split("\r\n");
+            var accounts = data.Split("\r\n");
             foreach (var account in accounts)
             {
                 if (!string.IsNullOrEmpty(account))
                 {
-                    BankAccount newAccount = JsonConvert.DeserializeObject<BankAccount>(account);
-                    newAccount.BankNumber = LeumiBankId;
+                    LeumiAccountResponse newAccount = JsonConvert.DeserializeObject<LeumiAccountResponse>(account);
                     result.Add(newAccount);
                 }
             }
@@ -57,25 +58,18 @@ namespace DataProvider.Providers.Banks.Leumi
             return result;
         }
 
-        public IEnumerable<Transaction> GetTransactions(string accountId, DateTime startTime, DateTime endTime)
+        public IEnumerable<LeumiTransactionResponse> GetTransactions(string accountId, DateTime startTime, DateTime endTime)
         {
-            var result = new List<Transaction>();
+            var result = new List<LeumiTransactionResponse>();
             _account = accountId;
 
-            RunScraper("transactions");
+            var data = RunScraper("transactions");
 
-            var accounts = _accounts.Split("\r\n");
-            foreach (var account in accounts)
+            //assumes no errors :)
+
+            if (!string.IsNullOrEmpty(data))
             {
-                if (!string.IsNullOrEmpty(account))
-                {
-                    BankAccount newAccount = JsonConvert.DeserializeObject<BankAccount>(account);
-                    result.AddRange(newAccount.Transactions);
-                    foreach (var transaction in newAccount.Transactions)
-                    {
-                        transaction.ProviderName = ProviderName;
-                    }
-                }
+                result = JsonConvert.DeserializeObject<List<LeumiTransactionResponse>>(data);
             }
 
             return result;
@@ -100,10 +94,10 @@ namespace DataProvider.Providers.Banks.Leumi
         {
         }
 
-        private void RunScraper(string action)
+        private String RunScraper(string action)
         {
             string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string webScraperPath = Path.Combine(assemblyFolder, "WebScraper", "LeumiWebScraper.exe");
+            string webScraperPath = Path.Combine(assemblyFolder, "WebScraper", "CefScraper.Leumi.exe");
 
             ProcessStartInfo startInfo = new ProcessStartInfo(webScraperPath);
             startInfo.ArgumentList.Add(_userName);
@@ -114,18 +108,18 @@ namespace DataProvider.Providers.Banks.Leumi
                 startInfo.ArgumentList.Add(_account);
             }
 
-            //startInfo.UseShellExecute = false;
+            startInfo.UseShellExecute = false;
             startInfo.RedirectStandardInput = true;
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardError = true;
-            //startInfo.UserName = dialog.User;
-            //startInfo.Password = dialog.Password;
             
             using (Process process = Process.Start(startInfo))
             {
-                _accounts = process?.StandardOutput.ReadToEnd();
+                var output = process?.StandardOutput.ReadToEnd();
                 string err = process?.StandardError.ReadToEnd();
                 process?.WaitForExit();
+
+                return output;
             }
         }
 

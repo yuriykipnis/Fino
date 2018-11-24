@@ -91,3 +91,9 @@ p{
 .balance{
   text-align: right;
 }
+
+.selected-account{
+  width: 6px;
+  background-color: $at-azure;
+  margin-bottom: 1px;
+}

@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import {CreditAccount} from "../../models/credit-account";
 import {TransactionType} from "../../../models/transaction";
+import {AccountControlService} from "../../services/account-control.service";
 
 @Component({
   selector: 'app-sidebar-credit-account',
@@ -10,9 +11,14 @@ import {TransactionType} from "../../../models/transaction";
 })
 export class SidebarCreditAccountComponent implements OnInit {
   @Input() account: CreditAccount;
-  constructor() { }
+  constructor(private accountControlService: AccountControlService) {
+  }
 
   ngOnInit() {
+  }
+
+  isSelected() {
+    return this.account.Id == this.accountControlService.getSelectedAccount().Id;
   }
 
   getTotalCharge(account){

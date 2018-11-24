@@ -1,10 +1,13 @@
-<p-card class="bw-sidebar-item">
-  <div>
-    <span>{{account.Label}}</span>
-    <span class="balance">{{account.Balance | currency:'ILS':'symbol':'1.0-0'}}</span>
-  </div>
-  <div>
-    <span>{{account.ProviderName}}</span>
-    <span class="date-of-update">{{account.LastUpdate | utcToLocalTime | date:'short'}}</span>
-  </div>
-</p-card>
+<div class="p-grid p-nogutter">
+  <div *ngIf="isSelected()" class="p-col-fixed selected-account"></div>
+  <p-card class="p-col bw-sidebar-item">
+    <div >
+      <span>{{account.Label}}</span>
+      <span class="balance">{{account.Balance | currency:'ILS':'symbol':'1.0-0'}}</span>
+    </div>
+    <div>
+      <span>{{account.ProviderName}}</span>
+      <span class="date-of-update">{{account.LastUpdate | utcToLocalTime | date:'short'}}</span>
+    </div>
+  </p-card>
+</div>

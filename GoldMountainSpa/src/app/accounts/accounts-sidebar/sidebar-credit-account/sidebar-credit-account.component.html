@@ -1,12 +1,13 @@
-<p-card class="bw-sidebar-item">
-  <div>
-    <span>{{account.Name}}</span>
-    <span class="balance">{{getTotalCharge(account) | currency:'ILS':'symbol':'1.0-0'}}</span>
-  </div>
-  <div>
-    <span>{{account.CardNumber}}</span>
-    <span class="date-of-update">{{account.LastUpdate | utcToLocalTime | date:'dd/MM/yy'}}</span>
-  </div>
-</p-card>
-
-
+<div class="p-grid p-nogutter">
+  <div *ngIf="isSelected()" class="p-col-fixed selected-account"></div>
+  <p-card class="p-col bw-sidebar-item">
+    <div>
+      <span>{{account.Name}}</span>
+      <span class="balance">{{getTotalCharge(account) | currency:'ILS':'symbol':'1.0-0'}}</span>
+    </div>
+    <div>
+      <span>{{account.CardNumber}}</span>
+      <span class="date-of-update">{{account.LastUpdate | utcToLocalTime | date:'dd/MM/yy'}}</span>
+    </div>
+  </p-card>
+</div>

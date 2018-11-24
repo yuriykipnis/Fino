@@ -108,7 +108,6 @@ namespace LeumiWebScraper
                                 transaction.PaymentDate = new DateTime(2000+Convert.ToInt32(date[2]), Convert.ToInt32(date[1]), Convert.ToInt32(date[0]));
                                 break;
                             case 2:
-                                
                                 Encoding wind1252 = Encoding.GetEncoding(1255);
                                 Encoding utf8 = Encoding.UTF8;
 
@@ -116,7 +115,6 @@ namespace LeumiWebScraper
                                 byte[] utf8Bytes = Encoding.Convert(wind1252, utf8, wind1252Bytes);
                                 string utf8String = Encoding.UTF8.GetString(utf8Bytes);
                                 transaction.Description = utf8String;
-
                                 break;
                             case 3:
                                 transaction.SupplierId = cell.innerText;

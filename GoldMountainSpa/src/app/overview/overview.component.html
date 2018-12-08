@@ -1,5 +1,5 @@
 <div class="p-grid overview-container">
-  <div class="p-col-12">
+  <div class="p-col-12" style="margin-bottom: 4em">
 
     <div class="p-grid">
       <div class="p-col-6 p-nogutter overview-sub-container">
@@ -9,6 +9,10 @@
             {{overviewData?.NetWorth | currency:'ILS':'symbol':'1.2-2'}}</span>
         </div>
         <div class="overview-outline"></div>
+
+        <div>
+          <span class="ie-text" >Starting this month</span>
+        </div>
         <div class="p-grid p-nogutter" style="padding-top: 2em">
           <div class="p-col-6" >
             <p-chart type="doughnut" [data]="netWorthIncomeData" [options]="netWorthIncomeOptions"></p-chart>
@@ -22,18 +26,35 @@
 
       <div class="p-col-6 p-nogutter overview-sub-container">
         <div class="p-col-12">
-          <span class="overview-caption">Mortgages</span>
-          <span class="overview-caption right" [ngStyle]="{'color': '#d22a77'}">
+          <span class="overview-caption">Mortgages ({{overviewData?.NumberOfMortgages}})</span>
+          <span class="overview-caption right" [ngStyle]="{'color': getBalanceColor(0 - overviewData?.MortgageOverview?.Principal)}">
             {{overviewData?.MortgageOverview?.Principal | currency:'ILS':'symbol':'1.2-2'}}</span>
         </div>
 
         <div class="overview-outline"></div>
-        <div class="p-grid p-nogutter" style="padding-top: 2em">
-          <div class="p-col-6">
-            <div class="overview-caption">Number of Loans</div>
-            <div class="overview-caption">{{overviewData?.NumberOfMortgages}}</div>
+        <div>
+          <span class="ie-text" >Summary of all mortgages</span>
+        </div>
+
+        <div class="p-grid p-nogutter" style="padding: 2em 1em 1em 1em">
+          <div class="p-col-4">
+            <div class="">
+              <div class="p-grid p-nogutter">
+                <div class="p-col-6 loan-text">Principal</div>
+                <div class="p-col-6 loan-number right">{{overviewData?.MortgageOverview?.Principal | currency:'ILS':'symbol':'1.2-2'}}</div>
+              </div>
+              <div class="p-grid p-nogutter" style="margin-bottom: 0.4em">
+                <div class="p-col-6 loan-text">Interest</div>
+                <div class="p-col-6 loan-number right">{{overviewData?.MortgageOverview?.Interest | currency:'ILS':'symbol':'1.2-2'}}</div>
+              </div>
+              <div class="loan-outline"></div>
+              <div class="p-grid p-nogutter" style="margin-top: 0.4em">
+                <div class="p-col-6 loan-text">Total Dept</div>
+                <div class="p-col-6 loan-number-total right">{{overviewData?.MortgageOverview?.Principal + overviewData?.MortgageOverview?.Interest | currency:'ILS':'symbol':'1.2-2'}}</div>
+              </div>
+            </div>
           </div>
-          <div class="p-col-6">
+          <div class="p-col-6 p-offset-2">
             <p-chart type="pie" [data]="mortgagesData" [options]="mortgagesOptions" ></p-chart>
           </div>
         </div>
@@ -42,7 +63,7 @@
 
   </div>
 
-  <div class="p-col-12">
+  <div class="p-col-12" >
 
     <div class="p-grid">
       <div class="p-col-6 overview-sub-container">
@@ -53,17 +74,33 @@
 
       <div class="p-col-6 p-nogutter overview-sub-container">
         <div class="p-col-12 ">
-          <span class="overview-caption">Loans</span>
-          <span class="overview-caption right" [ngStyle]="{'color': '#d22a77'}">
+          <span class="overview-caption">Loans ({{overviewData?.NumberOfLoans}})</span>
+          <span class="overview-caption right" [ngStyle]="{'color': getBalanceColor(0 - overviewData?.MortgageOverview?.Principal)}">
             {{overviewData?.LoanOverview?.Principal | currency:'ILS':'symbol':'1.2-2'}}</span>
         </div>
         <div class="overview-outline"></div>
-        <div class="p-grid p-nogutter" style="padding-top: 2em">
-          <div class="p-col-6">
-            <div class="overview-caption">Number of Loans</div>
-            <div class="overview-caption">{{overviewData?.NumberOfLoans}}</div>
+        <div>
+          <span class="ie-text" >Summary of all loans</span>
+        </div>
+        <div class="p-grid p-nogutter" style="padding: 2em 1em 1em 1em">
+          <div class="p-col-4">
+            <div class="">
+              <div class="p-grid p-nogutter">
+                <div class="p-col-6 loan-text">Principal</div>
+                <div class="p-col-6 loan-number right">{{overviewData?.LoanOverview?.Principal | currency:'ILS':'symbol':'1.2-2'}}</div>
+              </div>
+              <div class="p-grid p-nogutter" style="margin-bottom: 0.4em">
+                <div class="p-col-6 loan-text">Interest</div>
+                <div class="p-col-6 loan-number right">{{overviewData?.LoanOverview?.Interest | currency:'ILS':'symbol':'1.2-2'}}</div>
+              </div>
+              <div class="loan-outline"></div>
+              <div class="p-grid p-nogutter" style="margin-top: 0.4em">
+                <div class="p-col-6 loan-text">Total Dept</div>
+                <div class="p-col-6 loan-number-total right">{{overviewData?.LoanOverview?.Principal + overviewData?.LoanOverview?.Interest | currency:'ILS':'symbol':'1.2-2'}}</div>
+              </div>
+            </div>
           </div>
-          <div class="p-col-6">
+          <div class="p-col-6 p-offset-2">
             <p-chart type="pie" [data]="loansData" [options]="loansOptions" ></p-chart>
           </div>
         </div>

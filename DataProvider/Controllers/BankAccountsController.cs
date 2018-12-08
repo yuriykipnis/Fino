@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using DataProvider.ErrorHandling;
 using DataProvider.Providers.Interfaces;
@@ -56,31 +57,47 @@ namespace DataProvider.Controllers
         [HttpGet("users/{userId}/BankAccounts")]
         public async Task<IActionResult> GetUpdatedAccountsForUser(String userId)
         {
+            IActionResult errorResult = null;
             var result = new List<BankAccount>();
             var providers = await _providerRepository.GetProviders(p => p.UserId.Equals(userId));
             var bankProviders = providers.Where(p => p.Type.Equals(InstitutionType.Bank));
-                
+
+            Barrier barrier = new Barrier(bankProviders.Count() + 1);
+            List<Task<IActionResult>> tasks = new List<Task<IActionResult>>();
             foreach (var provider in bankProviders)
             {
-                try
+                tasks.Add(Task<IActionResult>.Factory.StartNew(() =>
                 {
-                    var accounts = await _accountService.UpdateBankAccountsForProvider(provider);
-                    result.AddRange(accounts);
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    Log.Error(ex, "UnauthorizedAction in GetUpdatedAccountsForUser - \n");
-                    return new UnauthorizedActionResult(ex.Message);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "InternalServerError in GetUpdatedAccountsForUser - \n");
-                    return new InternalServerErrorResult(ex.Message);
-                    
-                }
+                    try
+                    {
+                        var accounts = _accountService.UpdateBankAccountsForProvider(provider);
+                        result.AddRange(accounts.Result);
+                    }
+                    catch (UnauthorizedAccessException ex)
+                    {
+                        Log.Error(ex, "UnauthorizedAction in GetUpdatedAccountsForUser - \n");
+                        return new UnauthorizedActionResult(ex.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "InternalServerError in GetUpdatedAccountsForUser - \n");
+                        return new InternalServerErrorResult(ex.Message);
+                    }
+                    finally
+                    {
+                        barrier.SignalAndWait();
+                    }
+
+                    return Ok();
+                }));
             }
 
-            return Ok(result);
+            barrier.SignalAndWait();
+            if (tasks.Any(t => !(t.Result is OkResult)))
+            {
+                errorResult = tasks.FirstOrDefault(t => !(t.Result is OkResult))?.Result;
+            }
+            return errorResult ?? Ok(result);
         }
         
         //Retrive accounts based on the user credentials. We use Post insted of get in order to pass credintials in the body 

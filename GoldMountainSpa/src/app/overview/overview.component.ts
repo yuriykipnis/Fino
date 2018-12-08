@@ -8,7 +8,7 @@ import {OnDestroy} from '@angular/core';
 import {Months} from '../models/months';
 import {UserProfileService} from "../services/user-profile.service";
 import {OverviewService} from '../services/overview.service';
-import {Overview} from "../models/overview";
+import {Overview, LoanOverview} from "../models/overview";
 
 @Component({
   selector: 'app-overview',
@@ -77,8 +77,8 @@ export class OverviewComponent implements OnInit, OnDestroy {
             this.generateNetWorthExpenseData();
             this.generateNetWorthIncomeData();
             this.generateCashFlowData(res.CashFlowIncomes, res.CashFlowExpenses);
-            this.generateMortgageData();
-            this.generateLoansData();
+            this.generateMortgageData(res.MortgageOverview);
+            this.generateLoansData(res.LoanOverview);
             this.isLoading = false;
           },
           err => {
@@ -155,7 +155,10 @@ export class OverviewComponent implements OnInit, OnDestroy {
               color: '#d22a77'
             }
           ]
-        }
+        },
+        datalabels: {
+          display: false
+        },
       }
     };
 
@@ -218,7 +221,10 @@ export class OverviewComponent implements OnInit, OnDestroy {
               color: '#8fac67'
             }
           ]
-        }
+        },
+        datalabels: {
+          display: false
+        },
       }
     };
   }
@@ -235,8 +241,8 @@ export class OverviewComponent implements OnInit, OnDestroy {
       datasets: [
         {
           label: 'Income',
-          backgroundColor: '#8fac67',
-          borderColor: '#8fac67',
+          backgroundColor: '#20B2AA',
+          borderColor: '#20B2AA',
           data: [
             income[Months[this.getIndexOfMonthsAgo(5)]],
             income[Months[this.getIndexOfMonthsAgo(4)]],
@@ -248,8 +254,8 @@ export class OverviewComponent implements OnInit, OnDestroy {
         },
         {
           label: 'Expense',
-          backgroundColor: '#d22a77',
-          borderColor: '#d22a77',
+          backgroundColor: '#FF7F50',
+          borderColor: '#FF7F50',
           data: [
             expense[Months[this.getIndexOfMonthsAgo(5)]],
             expense[Months[this.getIndexOfMonthsAgo(4)]],
@@ -272,20 +278,25 @@ export class OverviewComponent implements OnInit, OnDestroy {
         yAxes: [{
           ticks: { min: 0 }
         }]
+      },
+      plugins:{
+        datalabels: {
+          display: false
+        },
       }
     };
   }
 
-  private generateMortgageData() {
+  private generateMortgageData(mortgage: LoanOverview) {
     this.mortgagesData = {
-      labels: ['Principal','Interest','Indexing'],
+      labels: ['Principal','Interest'],
       datasets: [
         {
-          data: [300, 150, 70],
+          data: [mortgage.Principal, mortgage.Interest],
           backgroundColor: [
-            "#00CED1",
-            "#FA8072",
-            "#FFD700"
+            "#20B2AA",
+            "#FF7F50",
+            "#FF6347"
           ],
           borderColor: [
             "#cccccc",
@@ -302,20 +313,29 @@ export class OverviewComponent implements OnInit, OnDestroy {
       legend: {
         display: true,
         position: 'right'
+      },
+      plugins:{
+        datalabels: {
+          display: false,
+          color: '#eeeeee',
+          anchor: 'center',
+          clamp: false,
+          formatter: Math.ceil,
+        },
       }
     };
   }
 
-  private generateLoansData() {
+  private generateLoansData(loans: LoanOverview) {
     this.loansData = {
-      labels: ['Principal','Interest','Indexing'],
+      labels: ['Principal','Interest'],
       datasets: [
         {
-          data: [300, 150, 70],
+          data: [loans.Principal, loans.Interest],
           backgroundColor: [
-            "#00CED1",
-            "#FA8072",
-            "#FFD700"
+            "#20B2AA",
+            "#FF7F50",
+            "#FF6347"
           ],
           borderColor: [
             "#cccccc",
@@ -332,13 +352,22 @@ export class OverviewComponent implements OnInit, OnDestroy {
       legend: {
         display: true,
         position: 'right'
+      },
+      plugins:{
+        datalabels: {
+          display: false,
+          color: '#eeeeee',
+          anchor: 'center',
+          clamp: false,
+          formatter: Math.ceil,
+        },
       }
     };
   }
 
   private getIndexOfMonthsAgo(monthsPast:number): number {
     let nowMonth = new Date().getMonth();
-    let rel = nowMonth-monthsPast + 1;
+    let rel = nowMonth-monthsPast;
     if (rel > 0) {
       return rel;
     }
@@ -348,9 +377,9 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
   private getBalanceColor(balance : number)  {
     if (balance === NaN){
-      return "#8fac67";
+      return "#20B2AA";
     }
-    return balance >= 0 ? "#8fac67" : "#d22a77";
+    return balance >= 0 ? "#20B2AA" : "#FF6347";
   }
 
 }

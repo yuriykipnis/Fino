@@ -25,7 +25,7 @@ namespace LeumiWebScraper
         private readonly String _account;
         private readonly List<AccountBasic> _accounts = new List<AccountBasic>();
         private DispatcherTimer _dispatcherTimer;
-        private const int ScrapingTimeoutInMins = 2;
+        private const int Timeout = 80;
 
         public TransactionsWindow()
         {
@@ -144,7 +144,6 @@ namespace LeumiWebScraper
                 }
             }
         }
-
        
         private void SetupDates()
         {
@@ -320,7 +319,7 @@ namespace LeumiWebScraper
         {
             _dispatcherTimer = new DispatcherTimer();
             _dispatcherTimer.Tick += DispatcherTimerTick;
-            _dispatcherTimer.Interval = new TimeSpan(0, ScrapingTimeoutInMins, 0);
+            _dispatcherTimer.Interval = new TimeSpan(0, 0, Timeout);
             _dispatcherTimer.Start();
         }
 

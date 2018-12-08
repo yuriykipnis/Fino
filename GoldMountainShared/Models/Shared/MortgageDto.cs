@@ -15,6 +15,7 @@ namespace GoldMountainShared.Models.Shared
 
         public Decimal OriginalAmount { get; set; } = 0;
         public Decimal DeptAmount { get; set; } = 0;
+        public Decimal InterestAmount { get; set; } = 0;
 
         public Decimal PrepaymentCommission { get; set; } = 0;
         public DateTime NextExitDate { get; set; } = DateTime.MinValue;

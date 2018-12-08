@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using DataProvider.Providers;
 using DataProvider.Providers.Interfaces;
 using DataProvider.Services;
@@ -116,7 +117,8 @@ namespace DataProvider
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(o => Guid.NewGuid()));
 
                 cfg.CreateMap<RawMortgage, MortgageDto>();
-                cfg.CreateMap<RawMortgage, Mortgage>();
+                cfg.CreateMap<RawMortgage, Mortgage>()
+                    .ForMember(dest => dest.InterestAmount, opt => opt.MapFrom(src => CalculateInterest(src)));
 
                 cfg.CreateMap<RawLoan, LoanDto>();
                 cfg.CreateMap<RawLoan, Loan>();
@@ -129,7 +131,19 @@ namespace DataProvider
             });
             app.UseMvc();
         }
-    }
 
-   
+        public static Decimal CalculateInterest(RawMortgage mortgage)
+        {
+            var monthes = ConvertDaysToMonthes((int)(mortgage.EndDate - mortgage.StartDate).TotalDays);
+            var interest = mortgage.DeptAmount * mortgage.InterestRate / 100 * monthes / 12;
+            return Decimal.Round(interest, 2, MidpointRounding.AwayFromZero);
+        }
+
+        private static int ConvertDaysToMonthes(int days)
+        {
+            const double daysToMonths = 30.4368499;
+            int months = (int)(days / daysToMonths);
+            return months;
+        }
+    }
 }

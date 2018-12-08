@@ -1,6 +1,6 @@
 <div id="loan-view" class="loan-view">
   <div class="loan-caption">
-    <span *ngIf="loan" class="ui-g light-font">{{loan?.Id}} - {{loan?.InterestType}} | {{loan?.LinkageType}}</span>
+    <span *ngIf="loan" class="ui-g light-font">{{loan?.Id}} - {{loan?.InterestType}} | {{loan?.IndexType}}</span>
     <span *ngIf="!loan" class="ui-g light-font">Please select the loan from the list on left</span>
   </div>
 
@@ -44,21 +44,17 @@
       <div class="">
         <span>Payment</span>
       </div>
-      <div class="">
+      <div class="" style="margin-top: 1.6em">
         <span class="light">Principal Amount</span>
         <span class="right regular">{{loan?.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
       </div>
       <div class="">
         <span class="light">Interest</span>
-        <span class="right regular">{{loan?.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
-      </div>
-      <div class="">
-        <span class="light">Linkage Rate</span>
-        <span class="right regular">{{loan?.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+        <span class="right regular">{{loan?.InterestAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
       </div>
       <div class="">
         <span class="light">Total</span>
-        <span class="right regular">{{loan?.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+        <span class="right regular">{{loan?.DeptAmount + loan?.InterestAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
       </div>
       <!--<div>Next Payment</div>-->
       <!--<div class="regular">{{loan?.LastPaymentAmount | currency:'ILS':'symbol':'1.0-0'}}</div>-->

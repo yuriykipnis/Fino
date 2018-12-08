@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/timeout';
 import { RequestOptions, RequestMethod, Headers, ResponseContentType } from '@angular/http';
 import { BankAccount } from "../accounts/models/bank-account";
 import { Transaction } from "../models/transaction";
@@ -20,7 +21,9 @@ export class BankService implements AccountService{
     let headers = new HttpHeaders()
       .set('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
 
-    var response = this.http.get<BankAccount[]>(url, {headers: headers}).map((res: any[]) => {
+    var response = this.http.get<BankAccount[]>(url, {headers: headers})
+      .timeout(120000)
+      .map((res: any[]) => {
       let result = new Array<BankAccount>();
       res.forEach(r => {
         let newAccount = new BankAccount({
@@ -60,9 +63,11 @@ export class BankService implements AccountService{
             NextPaymentDate: l.nextPaymentDate,
             OriginalAmount: l.originalAmount,
             DeptAmount: l.deptAmount,
+            InterestAmount: l.interestAmount,
             PrepaymentCommission: l.prepaymentCommission,
+            InterestRate: l.interestRate,
             InterestType: l.interestType,
-            LinkageType: l.linkageType,
+            IndexType: l.linkageType,
             InsuranceCompany: l.insuranceCompany,
             AssetCity: l.asset.cityName,
             AssetStreet: l.asset.streetName,

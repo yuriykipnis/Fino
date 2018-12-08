@@ -1,5 +1,3 @@
-import { SubLoan } from "./subLoan";
-
 export class Mortgage {
   Id: string;
   StartDate: string;
@@ -7,9 +5,11 @@ export class Mortgage {
   NextPaymentDate: string;
   OriginalAmount:number;
   DeptAmount:number;
+  InterestAmount:number;
   PrepaymentCommission:number;
+  InterestRate: number;
   InterestType: string;
-  LinkageType: string;
+  IndexType: string;
   InsuranceCompany: string;
 
   AssetCity: string;

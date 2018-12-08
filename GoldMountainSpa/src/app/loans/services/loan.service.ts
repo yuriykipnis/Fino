@@ -27,8 +27,9 @@ export class LoanService {
         OriginalAmount: l.originalAmount,
         DeptAmount: l.deptAmount,
         PrepaymentCommission: l.prepaymentCommission,
+        InterestRate: l.interestRate,
         InterestType: l.interestType,
-        LinkageType: l.linkageType,
+        IndexType: l.linkageType,
         InsuranceCompany: l.insuranceCompany,
       });
 

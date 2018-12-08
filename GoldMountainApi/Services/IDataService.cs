@@ -15,6 +15,7 @@ namespace GoldMountainApi.Services
         Task<CreditAccountDto> GetCreditAccount(Guid accountId);
         Task<IEnumerable<TransactionDto>> GetTransactionsForAccount(Guid accountId, DateTime month);
         Task<IEnumerable<BankAccount>> GetBankAccountsForUserId(string userId);
+        Task<IEnumerable<BankAccount>> GetBankAccounts(IEnumerable<Guid> accounts);
         Task<IEnumerable<CreditAccount>> GetCreditAccountsForUserId(string userId);
     }
 }

@@ -109,24 +109,37 @@ namespace GoldMountainApi.Controllers
         private int GenerateMortgageFromBank(BankAccount account, LoanOverviewDto mortgageOverview)
         {
             decimal principal = 0;
+            decimal interest = 0;
+            decimal commission = 0;
+
             foreach (var mortgage in account.Mortgages)
             {
                 principal += mortgage.DeptAmount;
+                interest += mortgage.InterestAmount; 
+                commission += mortgage.PrepaymentCommission;
             }
 
             mortgageOverview.Principal += principal;
+            mortgageOverview.Interest += interest;
+            mortgageOverview.Commission += commission;
+
             return account.Mortgages.Count();
         }
 
         private int GenerateLoanFromBank(BankAccount account, LoanOverviewDto loanOverview)
         {
             decimal principal = 0;
+            decimal interest = 0;
+
             foreach (var loan in account.Loans)
             {
                 principal += loan.DeptAmount;
+                interest += loan.DeptAmount * loan.InterestRate / 100 *
+                            (loan.NumberOfInterestPayments - loan.NextInterestPayment + 1)/12;
             }
 
             loanOverview.Principal += principal;
+            loanOverview.Interest += interest;
             return account.Loans.Count();
         }
 

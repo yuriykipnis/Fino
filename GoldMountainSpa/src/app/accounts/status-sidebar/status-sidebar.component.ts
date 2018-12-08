@@ -22,7 +22,9 @@ export class StatusSidebarComponent implements OnInit, OnDestroy {
   periodBalance:number;
   totalBalance:number;
   bankFee:number;
+
   monthlyBalance: any;
+  monthlyBalanceOptions:any;
 
   constructor(private accountSummaryService: AccountsSummaryService) {
 
@@ -75,8 +77,8 @@ export class StatusSidebarComponent implements OnInit, OnDestroy {
       datasets: [
         {
           label: 'Income',
-          backgroundColor: '#8fac67',
-          borderColor: '#8fac67',
+          backgroundColor: '#20B2AA',
+          borderColor: '#20B2AA',
           data: [
             income[6],
             income[7],
@@ -88,8 +90,8 @@ export class StatusSidebarComponent implements OnInit, OnDestroy {
         },
         {
           label: 'Expense',
-          backgroundColor: '#d22a77',
-          borderColor: '#d22a77',
+          backgroundColor: '#FF6347',
+          borderColor: '#FF6347',
           data: [
             expense[6],
             expense[7],
@@ -101,6 +103,13 @@ export class StatusSidebarComponent implements OnInit, OnDestroy {
         }
       ]
     }
+    this.monthlyBalanceOptions = {
+      plugins:{
+        datalabels: {
+          display: false,
+        },
+      }
+    };
   }
 
   getBalanceColor(balance : number)

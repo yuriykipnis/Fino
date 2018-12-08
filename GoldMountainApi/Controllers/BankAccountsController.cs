@@ -65,13 +65,15 @@ namespace GoldMountainApi.Controllers
             }
             
             var accounts = await _accountRepository.GetAccountsByUserId(userId) ?? new List<BankAccount>();
-            var needToUpdate = accounts.Any(a => DateTime.Compare(a.UpdatedOn.ToLocalTime().AddHours(28), DateTime.Now) < 0);
+            var accountsToUpdate = accounts
+                .Where(a => DateTime.Compare(a.UpdatedOn.ToLocalTime().AddHours(28), DateTime.Now) < 0)
+                .Select(account => account.Id);
             
-            if (needToUpdate)
+            if (accountsToUpdate.Any())
             {
                 try
                 {
-                    await UpdateAccounts(userId, accounts);
+                    await UpdateAccounts(userId, accountsToUpdate);
                 }
                 catch (Exception e)
                 {
@@ -126,12 +128,12 @@ namespace GoldMountainApi.Controllers
             _accountRepository.RemoveAccount(id);
         }
 
-        private async Task<IEnumerable<BankAccount>> UpdateAccounts(string userId, IEnumerable<BankAccount> accounts)
+        private async Task<IEnumerable<BankAccount>> UpdateAccounts(string userId, IEnumerable<Guid> accounts)
         {
             var updatedAccounts = await _dataService.GetBankAccountsForUserId(userId);
             foreach (var ua in updatedAccounts)
             {
-                var accountToUpdate = accounts.FirstOrDefault(a => a.Id.Equals(ua.Id));
+                var accountToUpdate = await _accountRepository.GetAccount(ua.Id);
                 if (accountToUpdate != null)
                 {
                     accountToUpdate.Transactions = ua.Transactions;

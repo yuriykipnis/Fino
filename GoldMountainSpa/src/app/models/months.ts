@@ -1,5 +1,4 @@
 export enum Months{
-  Dec,
   Jan,
   Feb,
   Mar,
@@ -10,5 +9,6 @@ export enum Months{
   Aug,
   Sep,
   Oct,
-  Nob
+  Nov,
+  Dec
 }

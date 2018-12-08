@@ -9,6 +9,6 @@ namespace GoldMountainApi.Models
     {
         public Decimal Principal { get; set; }
         public Decimal Interest { get; set; }
-        public Decimal Linkage { get; set; }
+        public Decimal Commission { get; set; }
     }
 }

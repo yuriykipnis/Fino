@@ -110,6 +110,11 @@ namespace GoldMountainApi.Services
             return result;
         }
 
+        public async Task<IEnumerable<BankAccount>> GetBankAccounts(IEnumerable<Guid> accounts)
+        {
+            return new List<BankAccount>();
+        }
+
         public async Task<IEnumerable<CreditAccount>> GetCreditAccountsForUserId(String userId)
         {
             var hostName = _configuration.GetSection("Host:Name").Value;

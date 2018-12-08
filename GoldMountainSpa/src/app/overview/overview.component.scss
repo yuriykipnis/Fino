@@ -6,6 +6,12 @@
   width: 100%;
 }
 
+.loan-outline{
+  background-color: #666666;
+  height: 0.5px;
+  width: 100%;
+}
+
 .overview-container{
   padding: 2em 4em 2em 4em;
 
@@ -23,6 +29,33 @@
   color: $at-ligth-blue;
 }
 
+.loan-text{
+  @include regular-font-md;
+  font-size: 1.2em;
+  color: #666666;
+}
+
+.ie-text{
+  @include light-font-md;
+  font-size: 1em;
+  color: #666666;
+}
+
+.loan-number{
+  @include light-font-md;
+  font-size: 1em;
+  line-height: 1.8em;
+  color: #FF7F50;
+}
+
+.loan-number-total{
+  @include light-font-md;
+  font-size: 1em;
+  line-height: 1.8em;
+  color: #FF6347;
+}
+
 .right {
   float: right;
+  text-align: right;
 }

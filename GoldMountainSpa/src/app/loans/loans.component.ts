@@ -75,9 +75,11 @@ export class LoansComponent implements OnInit, OnDestroy {
       NextPaymentDate: loan.NextPaymentDate,
       OriginalAmount: loan.OriginalAmount,
       DeptAmount: loan.DeptAmount,
+      InterestAmount: loan.InterestAmount,
+      InterestRate: loan.InterestRate,
       PrepaymentCommission: loan.PrepaymentCommission,
       InterestType: loan.InterestType,
-      LinkageType: loan.LinkageType,
+      IndexType: loan.IndexType,
       InsuranceCompany: loan.InsuranceCompany,
     });
 

@@ -23,6 +23,8 @@ namespace GoldMountainShared.Storage.Documents
 
         public Decimal OriginalAmount { get; set; } = 0;
         public Decimal DeptAmount { get; set; } = 0;
+        public Decimal InterestAmount { get; set; } = 0;
+
         public Decimal LastPaymentAmount { get; set; } = 0;
 
         public Decimal PrepaymentCommission { get; set; } = 0;

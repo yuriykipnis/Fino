@@ -55,7 +55,8 @@
             ],
             "scripts": [
               "node_modules/chart.js/dist/Chart.js",
-              "node_modules/chartjs-plugin-doughnutlabel/dist/chartjs-plugin-doughnutlabel.js"
+              "node_modules/chartjs-plugin-doughnutlabel/dist/chartjs-plugin-doughnutlabel.js",
+              "node_modules/chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.js"
             ]
           },
           "configurations": {
@@ -102,7 +103,8 @@
             "tsConfig": "src/tsconfig.spec.json",
             "scripts": [
               "node_modules/chart.js/dist/Chart.js",
-              "node_modules/chartjs-plugin-doughnutlabel/dist/chartjs-plugin-doughnutlabel.js"
+              "node_modules/chartjs-plugin-doughnutlabel/dist/chartjs-plugin-doughnutlabel.js",
+              "node_modules/chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.js"
             ],
             "styles": [
               "src/sass/styles.scss",

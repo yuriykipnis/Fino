@@ -23,7 +23,7 @@ export class LoansSummaryComponent implements OnInit {
       PrepaymentCommission: 426.53,
       InsuranceCompany: "כלל חברה לביטוח בעמ",
       InterestType: "פריים",
-      LinkageType: "לא צמוד",
+      IndexType: "לא צמוד",
     });
   }
 }

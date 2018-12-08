@@ -103,6 +103,11 @@ namespace DataProvider.Services
             var updatedAccount = RetriveBankAccount(accounts, accountToUpdate);
             var accountDescriptor = AutoMapper.Mapper.Map<BankAccountDescriptor>(accountToUpdate);
 
+            if (updatedAccount == null)
+            {
+                return accountToUpdate;
+            }
+
             var startOfThisMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             var startTime = isFirstTime ? startOfThisMonth.AddYears(-1) : startOfThisMonth;
             var endTime = DateTime.Now;

@@ -20,13 +20,11 @@ export class OverviewService {
         InstitutionOverviews: [],
         MortgageOverview: new LoanOverview({
           Principal: res.mortgageOverview.principal,
-          Interest: res.mortgageOverview.interest,
-          Linkage: res.mortgageOverview.linkage
+          Interest: res.mortgageOverview.interest
         }),
         LoanOverview: new LoanOverview({
           Principal: res.loanOverview.principal,
-          Interest: res.loanOverview.interest,
-          Linkage: res.loanOverview.linkage
+          Interest: res.loanOverview.interest
         }),
         NetWorthExpenses: res.netWorthExpenses,
         NetWorthIncomes:  res.netWorthIncomes,

@@ -21,7 +21,6 @@ namespace DataProvider.Providers.Banks.Leumi
     public class LeumiApi : ILeumiApi
     {
         String _accounts;
-        String _account;
         private readonly String _userName;
         private readonly String _userPassword;
 
@@ -61,9 +60,8 @@ namespace DataProvider.Providers.Banks.Leumi
         public IEnumerable<LeumiTransactionResponse> GetTransactions(string accountId, DateTime startTime, DateTime endTime)
         {
             var result = new List<LeumiTransactionResponse>();
-            _account = accountId;
 
-            var data = RunScraper("transactions");
+            var data = RunScraper("transactions", accountId);
 
             //assumes no errors :)
 
@@ -87,14 +85,23 @@ namespace DataProvider.Providers.Banks.Leumi
 
         public IEnumerable<Loan> GetLoans(string accountId)
         {
-            return new List<Loan>();
+            var result = new List<Loan>();
+            var data = RunScraper("loans", accountId);
+            //assumes no errors :)
+
+            if (!string.IsNullOrEmpty(data))
+            {
+                result = JsonConvert.DeserializeObject<List<Loan>>(data);
+            }
+
+            return result;
         }
 
         public void Dispose()
         {
         }
 
-        private String RunScraper(string action)
+        private String RunScraper(string action, string accountId = "")
         {
             string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string webScraperPath = Path.Combine(assemblyFolder, "WebScraper", "CefScraper.Leumi.exe");
@@ -103,9 +110,9 @@ namespace DataProvider.Providers.Banks.Leumi
             startInfo.ArgumentList.Add(_userName);
             startInfo.ArgumentList.Add(_userPassword);
             startInfo.ArgumentList.Add(action);
-            if (!String.IsNullOrEmpty(_account))
+            if (!String.IsNullOrEmpty(accountId))
             {
-                startInfo.ArgumentList.Add(_account);
+                startInfo.ArgumentList.Add(accountId);
             }
 
             startInfo.UseShellExecute = false;

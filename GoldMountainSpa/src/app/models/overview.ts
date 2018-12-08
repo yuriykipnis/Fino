@@ -32,7 +32,6 @@ export class InstitutionOverview {
 export class LoanOverview {
   Principal: number;
   Interest: number;
-  Linkage: number;
 
   public constructor(init?:Partial<LoanOverview>) {
     Object.assign(this, init);

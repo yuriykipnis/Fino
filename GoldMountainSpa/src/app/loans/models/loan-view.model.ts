@@ -15,11 +15,15 @@ export class LoanViewModel {
   NextPaymentDate: string;
   OriginalAmount:number;
   DeptAmount:number;
+  InterestAmount:number;
   LastPaymentAmount:number;
   PrepaymentCommission:number;
+  InterestRate: number;
+
   InterestType: string;
-  LinkageType: string;
+  IndexType: string;
   InsuranceCompany: string;
+
 
   public constructor(init?:Partial<LoanViewModel>) {
     Object.assign(this, init);

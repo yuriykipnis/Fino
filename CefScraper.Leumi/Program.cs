@@ -17,10 +17,12 @@ namespace CefScraper.Leumi
     {
 
         static readonly ManualResetEvent ResetEvent = new ManualResetEvent(false);
+        private static int timeout = 60000;
 
         public static void Main(string[] args)
         {
-            //while (!Debugger.IsAttached) {
+            //while (!Debugger.IsAttached)
+            //{
             //    Thread.Sleep(100);
             //}
 
@@ -39,8 +41,12 @@ namespace CefScraper.Leumi
                 var scraper = new TransactionScraper(username, password, ResetEvent);
                 scraper.Start(accountNumber);
             }
+            else if (method == "loans")
+            {
+                ResetEvent.Set();
+            }
 
-            ResetEvent.WaitOne(120000); // Blocks until "set"
+            ResetEvent.WaitOne(timeout); // Blocks until "set"
         }
     }
 }

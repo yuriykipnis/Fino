@@ -82,4 +82,5 @@ export class LoanViewComponent implements OnInit, OnDestroy {
       ]
     }
   }
+
 }

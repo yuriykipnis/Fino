@@ -23,6 +23,7 @@ namespace LeumiWebScraper
         private readonly String _password;
         private readonly List<AccountBasic> _accounts = new List<AccountBasic>();
         private DispatcherTimer _dispatcherTimer;
+        private const int Timeout = 50;
 
         public AccountsWindow()
         {
@@ -42,7 +43,7 @@ namespace LeumiWebScraper
         {
             _dispatcherTimer = new DispatcherTimer();
             _dispatcherTimer.Tick += DispatcherTimerTick;
-            _dispatcherTimer.Interval = new TimeSpan(0, 0, 50);
+            _dispatcherTimer.Interval = new TimeSpan(0, 0, Timeout);
             _dispatcherTimer.Start();
         }
 

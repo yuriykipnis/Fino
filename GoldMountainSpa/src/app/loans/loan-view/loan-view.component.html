@@ -12,10 +12,14 @@
     <div class="p-col-6">
       <div class="">
         <span>Account</span>
-        <span class="right light">{{loan?.BankNumber}}-{{loan?.BankBranchNumber}}-{{loan?.BankAccountNumber}}</span>
+        <!--<span class="right light">{{loan?.BankNumber}}-{{loan?.BankBranchNumber}}-{{loan?.BankAccountNumber}}</span>-->
       </div>
-      <div class="ui-g ui-g-nopad">
-        <span class="ui-g-12 ui-g-nopad bank-name" >{{loan?.BankName}}</span>
+      <!--<div class="p-grid p-nogutter">-->
+        <!--<span class="p-col-12 bank-name" >{{loan?.BankName}}</span>-->
+      <!--</div>-->
+      <div class="">
+        <span class="light">{{loan?.BankName}}</span>
+        <span class="right regular">{{loan?.BankNumber}}-{{loan?.BankBranchNumber}}-{{loan?.BankAccountNumber}}</span>
       </div>
       <div class="">
         <span class="light">Start Date</span>
@@ -26,57 +30,42 @@
         <span class="right regular">{{loan?.PayoffDate | utcToLocalTime |  date:'dd/MM/yy'}}</span>
       </div>
       <div class="">
-        <span class="light">Original Amount</span>
+        <span class="light">Original Loan</span>
         <span class="right regular">{{loan?.OriginalAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
       </div>
-
       <!--<div class="">-->
         <!--<span class="light">Secured by</span>-->
         <!--<span class="right regular">{{loan?.InsuranceCompany}}</span>-->
       <!--</div>-->
-      <!--<div class="">-->
-        <!--<span class="light">Current Dept</span>-->
-        <!--<span class="right regular">{{loan?.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>-->
-      <!--</div>-->
     </div>
 
-    <div class="p-col-6">
+    <div class="p-col-5 p-offset-1">
       <div class="">
-        <span>Payment</span>
+        <span>Payments</span>
       </div>
-      <div class="" style="margin-top: 1.6em">
-        <span class="light">Principal Amount</span>
+      <div class="" style="margin-top: 1.7em">
+        <span class="light">Principal</span>
         <span class="right regular">{{loan?.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
       </div>
-      <div class="">
-        <span class="light">Interest</span>
+      <div class="" >
+        <span class="light">Interest ({{loan?.InterestRate}}%)</span>
         <span class="right regular">{{loan?.InterestAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
       </div>
+      <div class="total-outline"></div>
       <div class="">
-        <span class="light">Total</span>
+        <span class="light">Total Payment</span>
         <span class="right regular">{{loan?.DeptAmount + loan?.InterestAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
       </div>
       <!--<div>Next Payment</div>-->
       <!--<div class="regular">{{loan?.LastPaymentAmount | currency:'ILS':'symbol':'1.0-0'}}</div>-->
       <!--<div class="light">{{loan?.NextPaymentDate | utcToLocalTime |  date:'dd/MM/yy'}}</div>-->
     </div>
-
-    <!--<div class="p-col-2">-->
-      <!--<div class="">Interest Rate</div>-->
-    <!--</div>-->
-
-    <!--<div class="p-col-2">-->
-      <!--<div>Payoff Date</div>-->
-      <!--<span class="ui-g-4" class="regular">{{loan?.PayoffDate | utcToLocalTime |  date:'dd/MM/yy'}}</span>-->
-    <!--</div>-->
   </div>
 
-  <div class="p-grid">
-    <div class="ui-g-6">
-      <div class="ui-g-12 ui-g-nopad">
-        <span class="ui-g-8 accounts-status-sub-panel">Mortgage Amortization</span>
-        <p-chart type="bar"[data]="loanAmortisation"></p-chart>
-      </div>
+  <div class="p-grid p-nogutter" style="margin: 0 10px">
+    <span class="loan-sub-label">Mortgage Amortization</span>
+    <div class="p-col-12">
+      <p-chart type="bar" [data]="loanAmortisationData" [options]="loanAmortisationOptions"></p-chart>
     </div>
   </div>
 </div>

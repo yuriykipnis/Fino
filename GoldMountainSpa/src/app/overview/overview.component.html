@@ -47,7 +47,7 @@
                 <div class="p-col-6 loan-text">Interest</div>
                 <div class="p-col-6 loan-number right">{{overviewData?.MortgageOverview?.Interest | currency:'ILS':'symbol':'1.2-2'}}</div>
               </div>
-              <div class="loan-outline"></div>
+              <div class="total-outline"></div>
               <div class="p-grid p-nogutter" style="margin-top: 0.4em">
                 <div class="p-col-6 loan-text">Total Dept</div>
                 <div class="p-col-6 loan-number-total right">{{overviewData?.MortgageOverview?.Principal + overviewData?.MortgageOverview?.Interest | currency:'ILS':'symbol':'1.2-2'}}</div>
@@ -93,7 +93,7 @@
                 <div class="p-col-6 loan-text">Interest</div>
                 <div class="p-col-6 loan-number right">{{overviewData?.LoanOverview?.Interest | currency:'ILS':'symbol':'1.2-2'}}</div>
               </div>
-              <div class="loan-outline"></div>
+              <div class="total-outline"></div>
               <div class="p-grid p-nogutter" style="margin-top: 0.4em">
                 <div class="p-col-6 loan-text">Total Dept</div>
                 <div class="p-col-6 loan-number-total right">{{overviewData?.LoanOverview?.Principal + overviewData?.LoanOverview?.Interest | currency:'ILS':'symbol':'1.2-2'}}</div>

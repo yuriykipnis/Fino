@@ -85,6 +85,7 @@ export class LoansComponent implements OnInit, OnDestroy {
 
     return loanView;
   }
+
   isLoading() {
     return this.isLoansLoading;
   }

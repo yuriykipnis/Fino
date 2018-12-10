@@ -27,6 +27,7 @@ export class LoansSidebarComponent implements OnInit {
               private loanControlService: LoanControlService,
               private accountControlService: AccountControlService) {
     this.loans$ = store.select(loanReducer.getLoans);
+
   }
 
   ngOnInit() {
@@ -44,11 +45,10 @@ export class LoansSidebarComponent implements OnInit {
           this.mortgages.push({key: key, loans: new Array<LoanViewModel>()});
           loans = this.mortgages.find(el => { return el.key === key });
         }
-
         loans.loans.push(l);
       });
 
-      if (res.length > 0 && !this.loanControlService.getSelectedLoan()) {
+      if (res.length > 0 && this.loanControlService.getSelectedLoan() === null) {
         this.loanControlService.changeSelectedLoan(res[0]);
       }
     });
@@ -59,7 +59,12 @@ export class LoansSidebarComponent implements OnInit {
     this.loadingStateSubscription.unsubscribe();
   }
 
-  openLoanView(loan: any) {
+  private openLoanView(loan: any) {
     this.loanControlService.changeSelectedLoan(loan);
   }
+
+  private isSelected(loan: LoanViewModel) {
+    return loan.Id == this.loanControlService.getSelectedLoan().Id;
+  }
+
 }

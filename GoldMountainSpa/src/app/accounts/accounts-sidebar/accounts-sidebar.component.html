@@ -1,17 +1,15 @@
 <div class="accounts-sidebar">
   <p-accordion class="bw-accordion" [multiple]="true" [expandIcon]="fa" [collapseIcon]="fa" activeIndex="[0,1]">
-
     <p-accordionTab>
       <p-header>
         <div>
           <span>Cash</span>
-          <span style="float: right">{{accountsSummaryService?.totalInBanks | currency:'ILS':'symbol':'1.0-0'}}</span>
+          <span class="right">{{accountsSummaryService?.totalInBanks | currency:'ILS':'symbol':'1.0-0'}}</span>
         </div>
       </p-header>
       <p-progressBar *ngIf="isLoading" mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
 
-      <div *ngFor="let account of bankAccounts$ | async"
-           (click)="openBankAccountView(account)">
+      <div *ngFor="let account of bankAccounts$ | async" (click)="openBankAccountView(account)">
         <app-sidebar-bank-account [account]="account"></app-sidebar-bank-account>
       </div>
     </p-accordionTab>
@@ -25,8 +23,7 @@
       </p-header>
       <p-progressBar *ngIf="isLoading" mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
 
-      <div *ngFor="let account of creditAccounts$ | async" class=""
-           (click)="openCreditAccountView(account)">
+      <div *ngFor="let account of creditAccounts$ | async" (click)="openCreditAccountView(account)">
         <app-sidebar-credit-account [account]="account"></app-sidebar-credit-account>
       </div>
     </p-accordionTab>

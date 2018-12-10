@@ -2,54 +2,67 @@
   <div class="p-grid p-justify-end p-nogutter command-bar-container">
     <p-button class="bw-button" label="Add Account" routerLink="add" style="flex-direction: row-reverse"></p-button>
   </div>
+
   <div class="nav-outline">
     <div *ngIf="false" class="animate-moving-rec"></div>
   </div>
 
-  <div class="p-grid p-nogutter accounts-status-sub-panel">
+  <div>
+    <div class="p-grid loan-summary">
+      <div class="p-col-12">
+        <div class="">
+          <span>Total Mortgage Payments</span>
+        </div>
+        <div class="">
+          <span class="light">Original Mortgage</span>
+          <span class="right regular">{{originalPrincipal | currency:'ILS':'symbol':'1.2-2'}}</span>
+        </div>
+        <div class="">
+          <span class="light">Total Principal Payment</span>
+          <span class="right regular">{{currentPrincipal | currency:'ILS':'symbol':'1.2-2'}}</span>
+        </div>
+
+        <div class="">
+          <span class="light">Total Interest Payment</span>
+          <span class="right regular">{{currentInterest | currency:'ILS':'symbol':'1.2-2'}}</span>
+        </div>
+
+        <div class="total-outline"></div>
+
+        <div class="">
+          <span class="light">Total Payment</span>
+          <span class="right regular">{{currentPrincipal + currentInterest | currency:'ILS':'symbol':'1.2-2'}}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-grid p-nogutter" style="margin: 0 10px">
+    <span class="loan-sub-label">Recommended Mortgage Amortization</span>
     <div class="p-col-12">
-        <span class="">Total Mortgage</span>
-        <span class="right">{{1865300.00 | currency:'ILS':'symbol':'1.2-2'}}</span>
+        <p-chart type="line" [data]="loanAmortisationData" [options]="loanAmortisationOptions"></p-chart>
+    </div>
+
+    <div class="p-col-12 loan-sub-label">
+      <span class="light">Current Total Principal</span>
+      <span class="right regular" style="color:#FF6347">{{currentPrincipal | currency:'ILS':'symbol':'1.2-2'}}</span>
     </div>
 
     <div class="p-col-12">
-        <span class="">Total Interest (7%)</span>
-        <span class="right">{{900300.00 | currency:'ILS':'symbol':'1.2-2'}}</span>
+      <span class="light">Recommended Total Principal</span>
+      <span class="right regular" style="color:#20B2AA">{{currentPrincipal | currency:'ILS':'symbol':'1.2-2'}}</span>
     </div>
 
-    <div class="p-col-12">
-        <span class="">Total Payoff</span>
-        <span class="right">{{2340200.00 | currency:'ILS':'symbol':'1.2-2'}}</span>
+    <div class="p-col-12 loan-sub-label">
+      <p-button class="" style="padding-bottom: 30px" label="Get More Info" ></p-button>
     </div>
-
-    <div class="p-col-12">
-      <span class="">Remaining</span>
-      <span class="right">{{1600415.00 | currency:'ILS':'symbol':'1.2-2'}}</span>
-    </div>
+    <!--<div class="nav-outline p-col-12"></div>-->
   </div>
-
-  <div class="p-grid p-nogutter accounts-status-sub-panel" style="padding-top: 2em">
-    <div class="p-col-12">
-        <span class="ui-g-12 accounts-status-sub-panel">Recommended Mortgage Amortization</span>
-        <p-chart type="line" [data]="recomendedLoanAmortisation"></p-chart>
-    </div>
-
-    <div class="p-col-12">
-      <span class="ui-g-6">Remaining</span>
-      <span class="ui-g-6 right">{{1370310.00 | currency:'ILS':'symbol':'1.2-2'}}</span>
-    </div>
-
-    <p-button class="p-col-12 right" style="padding-bottom: 30px" label="Raise Request" ></p-button>
-
-    <div class="nav-outline p-col-12"></div>
   </div>
+  <!--<div class="p-grid p-nogutter accounts-status-sub-panel" style="padding-top: 2em">-->
+    <!--<div class="p-col-12">-->
+      <!--<span>Based on the analysis of your finance profile we suggest you on the following products...</span>-->
+    <!--</div>-->
 
-  <div class="p-grid p-nogutter accounts-status-sub-panel" style="padding-top: 2em">
-    <div class="p-col-12">
-      <span>Based on the analysis of your finance profile we suggest you on the following products...</span>
-    </div>
-
-    <p-button class="p-col-12 right" label="Raise Request"></p-button>
-  </div>
-
+    <!--<p-button class="p-col-12 right" label="Raise Request"></p-button>-->
+  <!--</div>-->
 </div>

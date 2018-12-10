@@ -134,9 +134,30 @@ namespace DataProvider
 
         public static Decimal CalculateInterest(RawMortgage mortgage)
         {
-            var monthes = ConvertDaysToMonthes((int)(mortgage.EndDate - mortgage.StartDate).TotalDays);
-            var interest = mortgage.DeptAmount * mortgage.InterestRate / 100 * monthes / 12;
-            return Decimal.Round(interest, 2, MidpointRounding.AwayFromZero);
+            var rEff = Math.Pow((double) (1 + mortgage.InterestRate / (100 * 12)), 12) - 1;
+            var rEffMonthly = Math.Pow(1 + rEff, (double)1/12) - 1;
+            var n = CalculateNumberOfPayments(mortgage);
+            var pMonthly = (mortgage.DeptAmount * (decimal) rEffMonthly) / (decimal) (1 - Math.Pow(1 / (1 + rEffMonthly), n));
+
+            var result = Decimal.Round(pMonthly * n - mortgage.DeptAmount, 2, MidpointRounding.AwayFromZero);
+            
+            //var monthes = ConvertDaysToMonthes((int)(mortgage.EndDate - mortgage.StartDate).TotalDays);
+            //var interest = mortgage.DeptAmount * mortgage.InterestRate / 100 * monthes / 12;
+            //return Decimal.Round(interest, 2, MidpointRounding.AwayFromZero);
+            return result;
+        }
+
+        private static int CalculateNumberOfPayments(RawMortgage mortgage)
+        {
+            var payoffYear = mortgage.EndDate.Year;
+            var payoffMonth = mortgage.EndDate.Month;
+
+            var now = DateTime.Now;
+            var months = (payoffYear - now.Year) * 12;
+            months -= now.Month + 1;
+            months += payoffMonth;
+
+            return months <= 0 ? 0 : months;
         }
 
         private static int ConvertDaysToMonthes(int days)

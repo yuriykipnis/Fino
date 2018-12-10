@@ -4,7 +4,7 @@
 
 .main-container{
   height:100%;
-  padding:0;
+  padding:1px 0 0 0;
   min-width: 60em;
 }
 
@@ -57,3 +57,33 @@
     width: 40em;
   }
 }
+
+.selected-loan{
+  width: 6px;
+  background-color: $at-azure;
+  margin-bottom: 1px;
+}
+
+.loan-summary{
+  @include regular-font-lg;
+
+  width: 100%;
+  //background: $at-pale-grey-three;
+  margin: 20px 10px 10px 0px;
+  color: $at-ligth-blue;
+  line-height: 26px;
+}
+
+.total-outline{
+  background-color: #666666;
+  margin: 0.75em 0 0.2em 0;
+  height: 0.05em;
+  width: 100%;
+}
+
+.loan-sub-label{
+  @include light-font-lg;
+  color: $at-purplish-grey;
+  margin: 2em 0 1em 0;
+}
+

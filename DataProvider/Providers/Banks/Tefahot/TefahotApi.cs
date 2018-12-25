@@ -5,10 +5,10 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using DataProvider.Providers.Banks.Tefahot.Dto;
+using DataProvider.Providers.Models;
 using GoldMountainShared.Storage.Documents;
+using HtmlAgilityPack;
 using Newtonsoft.Json;
-using BankAccount = DataProvider.Providers.Models.BankAccount;
-using Mortgage = DataProvider.Providers.Models.Mortgage;
 using Transaction = DataProvider.Providers.Models.Transaction;
 
 namespace DataProvider.Providers.Banks.Tefahot
@@ -20,6 +20,8 @@ namespace DataProvider.Providers.Banks.Tefahot
 
         private const string ViewState = "__VIEWSTATE";
         private const string ViewStateGenerator = "__VIEWSTATEGENERATOR";
+        private const string EventValidation = "__EVENTVALIDATION";
+        
         private const string MizSession = "MizSESSION";
         private const string AspSession = "ASP.NET_SessionId";
 
@@ -37,12 +39,13 @@ namespace DataProvider.Providers.Banks.Tefahot
             var crentialValues = providerDescriptor.Credentials.Values.ToArray();
             _userName = crentialValues[0];
             _userPassword = crentialValues[1];
+
+            var viewstate = Login();
+            RetriveSession(viewstate);
         }
 
         public IEnumerable<TefahotProfileResponse.AccountProfile> GetAccounts()
         {
-            var viewstate = Login();
-            RetriveSession(viewstate);
             if (String.IsNullOrEmpty(_sessionInfo.MizSession))
             {
                 return new List<TefahotProfileResponse.AccountProfile>();
@@ -50,8 +53,103 @@ namespace DataProvider.Providers.Banks.Tefahot
 
             var profileResponse = Logon();
             var accountsProfile = JsonConvert.DeserializeObject<TefahotProfileResponse>(profileResponse);
+            var accounts = accountsProfile.Body.User.Accounts;
+            _sessionInfo.XsrfToken = accountsProfile.Body.XsrfToken;
 
-            return accountsProfile.Body.User.Accounts;
+            return accounts;
+        }
+
+        public IEnumerable<Transaction> GetTransactions(string accountId, DateTime startTime, DateTime endTime)
+        {
+            if (String.IsNullOrEmpty(_sessionInfo.MizSession))
+            {
+                return new List<Transaction>();
+            }
+
+            LoadOshPage();
+
+            var result = LoadOshTransactions();
+            var transacations = GetTransactionsData(result).ToList();
+            while (result.Contains("javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder2$uc428Grid$grvP428G2$ctl00$ctl02$ctl00$ctl04"))
+            {
+                result = LoadOshNextTransactions();
+                transacations.AddRange(GetTransactionsData(result));
+            }
+
+            return transacations;
+        }
+
+        private static IEnumerable<Transaction> GetTransactionsData(string data)
+        {
+            var result = new List<Transaction>();
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(data);
+
+            var table = doc.DocumentNode.Descendants("table").FirstOrDefault(a =>
+                a.Attributes.Contains("id") &&
+                a.Attributes["id"].Value.Equals("ctl00_ContentPlaceHolder2_uc428Grid_grvP428G2_ctl00"));
+
+            foreach (var row in table.SelectNodes("tbody").Nodes())
+            {
+                if (row.ChildNodes.Count <5) { continue; }
+                
+                var date = row.SelectNodes("td")[0].InnerText.Split("/");
+                var amount = Convert.ToDecimal(row.SelectNodes("td")[4].InnerText);
+                var balance = row.SelectNodes("td")[5].InnerText;
+
+                var tr = new Transaction();
+                tr.PaymentDate = new DateTime(2000 + Convert.ToInt32(date[2]), Convert.ToInt32(date[1]), Convert.ToInt32(date[0]));
+                tr.PurchaseDate = tr.PaymentDate;
+                tr.Type = amount > 0 ? TransactionType.Income : TransactionType.Expense;
+                tr.Amount = Math.Abs(amount);
+                tr.Description = row.SelectNodes("td")[3].InnerText;
+                tr.CurrentBalance = String.IsNullOrEmpty(balance) ? Decimal.MinValue : Convert.ToDecimal(balance);
+                tr.Id = (long)(Math.Round(tr.Amount) + Math.Round(tr.CurrentBalance.Equals(Decimal.MinValue) ? 0 : tr.CurrentBalance));
+                
+                result.Add(tr);
+            }
+
+            return result;
+        }
+
+        public IEnumerable<TefahotMortgagesResponse.TefahotMortgage> GetMortgages(string accountId)
+        {
+            var headers = new List<Tuple<string, string>>
+            {
+                new Tuple<string, string>("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"),
+                new Tuple<string, string>("Referer", "https://mto.mizrahi-tefahot.co.il/ngOnline/index.html"),
+                new Tuple<string, string>("mizrahixsrftoken", _sessionInfo.XsrfToken),
+            };
+
+            var cookies = new CookieContainer();
+            cookies.Add(_mtoAddress, new Cookie(AspSession, _sessionInfo.AspSession));
+            cookies.Add(_mtoAddress, new Cookie(MizSession, _sessionInfo.MizSession));
+
+            var result = CallGetRequest(_mtoAddress, "/Online/api/mashkanta/profile", cookies, headers);
+            var mortgages = JsonConvert.DeserializeObject<TefahotMortgagesResponse>(result);
+
+            foreach (var mortgage in mortgages.Mashkantaot)
+            {
+                var loans = GetMortgageLoans(mortgage.Id);
+                mortgage.Maslolim = loans.Maslolim;
+            }
+
+            return mortgages.Mashkantaot;
+        }
+
+        public IEnumerable<string> GetBalance(string accountId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<object> GetLoans(string accountId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            Logout();
         }
 
         private Tuple<String, String> Login()
@@ -121,6 +219,7 @@ namespace DataProvider.Providers.Banks.Tefahot
             var cookies = new CookieContainer();
             cookies.Add(_mtoAddress, new Cookie(MizSession, _sessionInfo.MizSession));
 
+            
             return CallGetRequest(_baseAddress, redirectUri, cookies, headers);
         }
 
@@ -137,36 +236,170 @@ namespace DataProvider.Providers.Banks.Tefahot
             cookieContainer.Add(_mtoAddress, new Cookie(AspSession, _sessionInfo.AspSession));
             cookieContainer.Add(_mtoAddress, new Cookie(MizSession, _sessionInfo.MizSession));
 
-            var result = CallPostRequest(_mtoAddress, "/Online/api/SkyBL/logon", 
-                new StringContent(body, Encoding.UTF8, "application/json"), 
+            var result = CallPostRequest(_mtoAddress, "/Online/api/SkyBL/logon",
+                new StringContent(body, Encoding.UTF8, "application/json"),
                 cookieContainer, headers);
 
             return result;
         }
 
-        public IEnumerable<object> GetTransactions(string accountId, DateTime startTime, DateTime endTime)
+        private void Logout()
         {
-            throw new NotImplementedException();
+            String body = "{\"fromExitLink\":true}";
+
+            var headers = new List<Tuple<string, string>>
+            {
+                new Tuple<string, string>("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"),
+                new Tuple<string, string>("Referer", "https://mto.mizrahi-tefahot.co.il/ngOnline/index.html"),
+            };
+
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(_mtoAddress, new Cookie(AspSession, _sessionInfo.AspSession));
+            cookieContainer.Add(_mtoAddress, new Cookie(MizSession, _sessionInfo.MizSession));
+
+            CallPostRequest(_mtoAddress, "/Online/api/newGE/endSession ",
+                new StringContent(body, Encoding.UTF8, "application/json"),
+                cookieContainer, headers);
         }
 
-        public IEnumerable<object> GetMortgages(string accountId)
+        private TefahotMortgageLoansResponse GetMortgageLoans(string mortgageId)
         {
-            throw new NotImplementedException();
+            var headers = new List<Tuple<string, string>>
+            {
+                new Tuple<string, string>("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"),
+                new Tuple<string, string>("Referer", "https://mto.mizrahi-tefahot.co.il/ngOnline/index.html"),
+                new Tuple<string, string>("mizrahixsrftoken", _sessionInfo.XsrfToken),
+            };
+
+            var cookies = new CookieContainer();
+            cookies.Add(_mtoAddress, new Cookie(AspSession, _sessionInfo.AspSession));
+            cookies.Add(_mtoAddress, new Cookie(MizSession, _sessionInfo.MizSession));
+
+            var result = CallGetRequest(_mtoAddress, "/Online/api/mashkantaot/details/" + mortgageId + "/maslolim", cookies, headers);
+            var mortgages = JsonConvert.DeserializeObject<TefahotMortgageLoansResponse>(result);
+            return mortgages;
         }
 
-        public IEnumerable<string> GetBalance(string accountId)
+        private String LoadOshTransactions()
         {
-            throw new NotImplementedException();
+            var body = GetFirstOshRequestBody();
+
+            var headers = new List<Tuple<string, string>>
+            {
+                new Tuple<string, string>("User-Agent",
+                    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"),
+                new Tuple<string, string>("Referer", "https://mto.mizrahi-tefahot.co.il/Online/Osh/P428.aspx"),
+            };
+
+            var cookies = new CookieContainer();
+            cookies.Add(_mtoAddress, new Cookie(AspSession, _sessionInfo.AspSession));
+            cookies.Add(_mtoAddress, new Cookie(MizSession, _sessionInfo.MizSession));
+
+            var responseBody =  CallPostRequest(_mtoAddress, "/Online/Osh/P428.aspx", new FormUrlEncodedContent(body), cookies, headers);
+
+            _sessionInfo.ViewState = ExtractAspEntity(responseBody, ViewState);
+            _sessionInfo.ViewStateGenerator = ExtractAspEntity(responseBody, ViewStateGenerator);
+            _sessionInfo.EventValidation = ExtractAspEntity(responseBody, EventValidation);
+
+            return responseBody;
         }
 
-        public IEnumerable<object> GetLoans(string accountId)
+        private String LoadOshNextTransactions()
         {
-            throw new NotImplementedException();
+            var body = GetNextOshRequestBody();
+            var headers = new List<Tuple<string, string>>
+            {
+                new Tuple<string, string>("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"),
+            };
+
+            var cookies = new CookieContainer();
+            cookies.Add(_mtoAddress, new Cookie(AspSession, _sessionInfo.AspSession));
+            cookies.Add(_mtoAddress, new Cookie(MizSession, _sessionInfo.MizSession));
+
+            var responseBody = CallPostRequest(_mtoAddress, "/Online/Osh/P428.aspx", new FormUrlEncodedContent(body), cookies, headers);
+
+            _sessionInfo.ViewState = ExtractAspEntity(responseBody, ViewState);
+            _sessionInfo.ViewStateGenerator = ExtractAspEntity(responseBody, ViewStateGenerator);
+            _sessionInfo.EventValidation = ExtractAspEntity(responseBody, EventValidation);
+
+            return responseBody;
         }
 
-        public void Dispose()
+        private void LoadOshPage()
         {
+            var headers = new List<Tuple<string, string>>
+            {
+                new Tuple<string, string>("User-Agent",
+                    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"),
+            };
+
+            var cookies = new CookieContainer();
+            cookies.Add(_mtoAddress, new Cookie(AspSession, _sessionInfo.AspSession));
+            cookies.Add(_mtoAddress, new Cookie(MizSession, _sessionInfo.MizSession));
+
+            var responseBody = CallGetRequest(_mtoAddress, "/Online/Osh/P428.aspx", cookies, headers);
+
+            _sessionInfo.ViewState = ExtractAspEntity(responseBody, ViewState);
+            _sessionInfo.ViewStateGenerator = ExtractAspEntity(responseBody, ViewStateGenerator);
+            _sessionInfo.EventValidation = ExtractAspEntity(responseBody, EventValidation);
+        }
+
+        private IEnumerable<KeyValuePair<string, string>> GetFirstOshRequestBody()
+        {
+            var body = GetBodyForOshRequest().ToList();
+            body.Add(new KeyValuePair<string, string>("__VIEWSTATE", _sessionInfo.ViewState));
+            body.Add(new KeyValuePair<string, string>("__VIEWSTATEGENERATOR", _sessionInfo.ViewStateGenerator));
+            body.Add(new KeyValuePair<string, string>("__EVENTVALIDATION", _sessionInfo.EventValidation));
+            body.Add(new KeyValuePair<string, string>("__EVENTTARGET", ""));
+            body.Add(new KeyValuePair<string, string>("ctl00$ContentPlaceHolder2$btShow", "הצג"));
+
+            return body;
+        }
+
+        private IEnumerable<KeyValuePair<string, string>> GetNextOshRequestBody()
+        {
+            var body = GetBodyForOshRequest().ToList();
+            body.Add(new KeyValuePair<string, string>("__VIEWSTATE", _sessionInfo.ViewState));
+            body.Add(new KeyValuePair<string, string>("__VIEWSTATEGENERATOR", _sessionInfo.ViewStateGenerator));
+            body.Add(new KeyValuePair<string, string>("__EVENTVALIDATION", _sessionInfo.EventValidation));
+            body.Add(new KeyValuePair<string, string>("__EVENTTARGET", "ctl00$ContentPlaceHolder2$uc428Grid$grvP428G2$ctl00$ctl02$ctl00$ctl04"));
+            body.Add(new KeyValuePair<string, string>("__ASYNCPOST", "true"));
+            body.Add(new KeyValuePair<string, string>("ctl00$radScriptManager", "ctl00$ContentPlaceHolder2$ctl00$ContentPlaceHolder2$uc428Grid$grvP428G2Panel|ctl00$ContentPlaceHolder2$uc428Grid$grvP428G2$ctl00$ctl02$ctl00$ctl04"));
+            body.Add(new KeyValuePair<string, string>("RadAJAXControlID", "ctl00_ContentPlaceHolder2_uc428Grid_PageAjaxPanel"));
+            body.Add(new KeyValuePair<string, string>("RadAJAXControlID", "ctl00_ContentPlaceHolder2_PageAjaxManager"));
             
+
+            return body;
+        }
+
+        private IEnumerable<KeyValuePair<string, string>> GetBodyForOshRequest()
+        {
+            IEnumerable<KeyValuePair<string, string>> body = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("ctl00_radScriptManager_TSM", ";;Telerik.Web.UI, Version=2013.2.717.45, Culture=neutral, PublicKeyToken=121fae78165ba3d4:en-US:4401a8f1-5215-4b97-a426-3601ce0fa0ff:16e4e7cd:ed16cbdc:365331c3:7c926187:8674cba1:b7778d6c:c08e9f8a:59462f1:a51ee93e:58366029"),
+                new KeyValuePair<string, string>("ctl00_RadStyleSheetManager_TSSM", ""),
+                
+                new KeyValuePair<string, string>("__EVENTARGUMENT", ""),
+                new KeyValuePair<string, string>("__LASTFOCUS", ""),
+                new KeyValuePair<string, string>("__VIEWSTATEENCRYPTED", ""),
+                new KeyValuePair<string, string>("ctl00$ContentPlaceHolder2$ddlRules", "0"),
+                new KeyValuePair<string, string>("ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker1ID$radDatePickerID", "2017-12-25"),
+                new KeyValuePair<string, string>("ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker1ID$radDatePickerID$dateInput", "25/12/2017"),
+                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_dateInput_ClientState", "{\"enabled\":true,\"emptyMessage\":\"\",\"validationText\":\"2017-12-25-00-00-00\",\"valueAsString\":\"2017-12-25-00-00-00\",\"minDateStr\":\"2017-12-25-00-00-00\",\"maxDateStr\":\"2018-12-25-00-00-00\",\"lastSetTextBoxValue\":\"25/12/2017\"}"),
+                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_calendar_SD", "[[2017,12,25]]"),
+                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_calendar_AD", "[[2017,12,25],[2018,12,25],[2017,12,25]]"),
+                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_ClientState", "{\"minDateStr\":\"2017-12-25-00-00-00\",\"maxDateStr\":\"2018-12-25-00-00-00\"}"),
+                new KeyValuePair<string, string>("ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker2ID$radDatePickerID", "2018-12-25"),
+                new KeyValuePair<string, string>("ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker2ID$radDatePickerID$dateInput", "25/12/2018"),
+                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_dateInput_ClientState", "{\"enabled\":true,\"emptyMessage\":\"\",\"validationText\":\"2018-12-25-00-00-00\",\"valueAsString\":\"2018-12-25-00-00-00\",\"minDateStr\":\"2017-12-25-00-00-00\",\"maxDateStr\":\"2018-12-25-00-00-00\",\"lastSetTextBoxValue\":\"25/12/2018\"}"),
+                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_calendar_SD", "[]"),
+                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_calendar_AD", "[[2017,12,25],[2018,12,25],[2018,12,25]]"),
+                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_ClientState", "{\"minDateStr\":\"2017-12-25-00-00-00\",\"maxDateStr\":\"2018-12-25-00-00-00\"}"),
+                new KeyValuePair<string, string>("ctl00$ContentPlaceHolder2$ddlSug", "00"),
+                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_uc428Grid_grvP428G2_ClientState", ""),
+                new KeyValuePair<string, string>("ctl00$hdnLinkToExternalSite", "קישור לאתר חיצוני")
+            };
+            return body;
         }
 
         private string CallGetRequest(Uri domainUri, string api, CookieContainer cookies, IEnumerable<Tuple<string, string>> headers = null)
@@ -292,17 +525,27 @@ namespace DataProvider.Providers.Banks.Tefahot
         private static string ExtractAspEntity(string data, string entity)
         {
             const string valueDelimiter = "value=\"";
+            const string hiddenDelimiter = "|";
             try
             {
+                int viewStateStartPosition, viewStateEndPosition;
                 int viewStateNamePosition = data.IndexOf(entity, StringComparison.Ordinal);
                 if (viewStateNamePosition == -1)
                 {
                     return string.Empty;
                 }
 
-                int viewStateValuePosition = data.IndexOf(valueDelimiter, viewStateNamePosition, StringComparison.Ordinal);
-                int viewStateStartPosition = viewStateValuePosition + valueDelimiter.Length;
-                int viewStateEndPosition = data.IndexOf("\"", viewStateStartPosition, StringComparison.Ordinal);
+                var viewStateValuePosition = data.IndexOf(valueDelimiter, viewStateNamePosition, StringComparison.Ordinal);
+                if (viewStateValuePosition == -1)
+                {
+                    viewStateValuePosition = data.IndexOf(hiddenDelimiter, viewStateNamePosition, StringComparison.Ordinal);
+                    viewStateStartPosition = viewStateValuePosition + hiddenDelimiter.Length;
+                    viewStateEndPosition = data.IndexOf(hiddenDelimiter, viewStateStartPosition, StringComparison.Ordinal);
+                    return data.Substring(viewStateStartPosition, viewStateEndPosition - viewStateStartPosition);
+                }
+
+                viewStateStartPosition = viewStateValuePosition + valueDelimiter.Length;
+                viewStateEndPosition = data.IndexOf("\"", viewStateStartPosition, StringComparison.Ordinal);
                 return data.Substring(viewStateStartPosition, viewStateEndPosition - viewStateStartPosition);
             }
             catch (Exception exp)
@@ -316,6 +559,41 @@ namespace DataProvider.Providers.Banks.Tefahot
         {
             public string MizSession { get; set; }
             public string AspSession { get; set; }
+            public string XsrfToken { get; set; }
+
+            public string ViewState { get; set; }
+            public string ViewStateGenerator { get; set; }
+            public string EventValidation { get; set; }
         }
     }
 }
+
+//var body = String.Format(
+//            "ctl00_radScriptManager_TSM=&" +
+//            "ctl00_RadStyleSheetManager_TSSM=&" +
+//            "__EVENTTARGET=&" +
+//            "__EVENTARGUMENT=&" +
+//            "__LASTFOCUS=&" +
+//            "__VIEWSTATE=&" +
+//            "__VIEWSTATEGENERATOR={0}&" +
+//            "__VIEWSTATEENCRYPTED=&" +
+//            "__EVENTVALIDATION=&" +
+//            "ctl00$ContentPlaceHolder2$ddlRules=0&" +
+//            "ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker1ID$radDatePickerID=2017-12-25&" +
+//            "ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker1ID$radDatePickerID$dateInput=25%2F12%2F2017&" +
+//            "ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_dateInput_ClientState=&" +
+//            "ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_calendar_SD=%5B%5B2017%2C12%2C25%5D%5D&" +
+//            "ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_calendar_AD=%5B%5B2017%2C12%2C25%5D%2C%5B2018%2C12%2C25%5D%2C%5B2017%2C12%2C1%5D%5D&" +
+//            "ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_ClientState=2018-12-25&" +
+//            "ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker2ID$radDatePickerID=25%2F12%2F2018&" +
+//            "ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker2ID$radDatePickerID$dateInput=&" +
+//            "ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_dateInput_ClientState=&" +
+//            "ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_calendar_SD=&" +
+//            "ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_calendar_AD=&" +
+//            "ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_ClientState=&" +
+//            "ctl00$ContentPlaceHolder2$btShow=הצג&" +
+//            "ctl00$ContentPlaceHolder2$ddlSug=00&",
+//            "ctl00_ContentPlaceHolder2_uc428Grid_grvP428G2_ClientState=&",
+//            "ctl00$hdnLinkToExternalSite=&",
+//            _sessionInfo.ViewStateGenerator);
+

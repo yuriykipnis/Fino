@@ -189,7 +189,7 @@ export class BankService implements AccountService{
           Description: t.description,
           ProviderName: t.providerName,
           Amount: t.amount,
-          CurrentBalance: t.currentBalance,
+          CurrentBalance: t.currentBalance === -7.922816251426434e+28 ? NaN : t.currentBalance,
           Type: t.type
         })));
       return result;
@@ -219,7 +219,7 @@ export class BankService implements AccountService{
           Description: t.description,
           ProviderName: t.providerName,
           Amount: t.amount,
-          CurrentBalance: t.currentBalance,
+          CurrentBalance: t.currentBalance === -7.922816251426434e+28 ? NaN : t.currentBalance,
           Type: t.type
         })));
       return result;

@@ -31,34 +31,67 @@ namespace DataProvider.Providers.Banks.Tefahot
                     AccountNumber = account.Number,
                     BranchNumber = Convert.ToInt32(account.Branch),
                     Balance = account.Remain,
-                    Label = account.Name,
-                    Mortgages = new List<Mortgage>(),
-                    Transactions = new List<Transaction>()
+                    Label = account.Name
                 });
             }
 
             return result;
         }
-
-
+        
         public BankAccount GetAccount(BankAccountDescriptor accountDescriptor)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public IEnumerable<Transaction> GetTransactions(BankAccountDescriptor accountDescriptor, DateTime startTime, DateTime endTime)
         {
-            throw new NotImplementedException();
+            IList<Transaction> result = new List<Transaction>();
+            var transactions = _api.GetTransactions(accountDescriptor.AccountNumber, startTime, endTime);
+            foreach (var transaction in transactions)
+            {
+                transaction.ProviderName = ProviderName;
+            }
+            return transactions;
         }
 
         public IEnumerable<Mortgage> GetMortgages(BankAccountDescriptor accountDescriptor)
         {
-            throw new NotImplementedException();
+            IList<Mortgage> result = new List<Mortgage>();
+            var mortgages = _api.GetMortgages(accountDescriptor.AccountNumber);
+            foreach (var mortgage in mortgages)
+            {
+                foreach (var loan in mortgage.Maslolim)
+                {
+                    var sd = loan.TaarihHiuvRishon.Split('-', 'T');
+                    var ed = loan.TaarihHiuvAharon.Split('-', 'T');
+                    var address = mortgage.KtovetNehes.Split(',');
+
+                    result.Add(new Mortgage
+                    {
+                        LoanId = $"{loan.MisparTik}/{loan.MisparMaslul}",
+                        StartDate = new DateTime(Convert.ToInt32(sd[0]), Convert.ToInt32(sd[1]), Convert.ToInt32(sd[2])),
+                        EndDate = new DateTime(Convert.ToInt32(ed[0]), Convert.ToInt32(ed[1]), Convert.ToInt32(ed[2])),
+                        OriginalAmount = loan.SchumBitzua,
+                        DeptAmount = loan.ItratKrnSiluk,
+                        PrepaymentCommission = loan.SachAmlot,
+                        InterestRate = loan.AhuzRbtMetuemet,
+                        InterestType = loan.TeurSugRbt,
+                        LinkageType = loan.TeurSugHatzmada,
+                        Asset = new MortgageAsset
+                        {
+                            CityName  = address[0],
+                            StreetName = address[1]
+                        }
+                    });
+                }
+            }
+
+            return result;
         }
 
         public IEnumerable<Loan> GetLoans(BankAccountDescriptor accountDescriptor)
         {
-            throw new NotImplementedException();
+            return new List<Loan>();
         }
 
        

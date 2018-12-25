@@ -12,6 +12,7 @@ namespace DataProvider.Providers.Banks.Tefahot.Dto
         public class TefahotProfileBody
         {
             public TefahotProfileUser User { get; set; }
+            public String XsrfToken { get; set; }
         }
 
         public class TefahotProfileUser
@@ -19,6 +20,7 @@ namespace DataProvider.Providers.Banks.Tefahot.Dto
             public string FirstName { get; set; }
             public string LastName { get; set; }
             public string UserId { get; set; }
+            public string LandingPageUrl { get; set; }
 
             public IList<AccountProfile> Accounts { get; set; } = new List<AccountProfile>();
         }

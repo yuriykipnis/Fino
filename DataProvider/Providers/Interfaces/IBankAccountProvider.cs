@@ -11,5 +11,6 @@ namespace DataProvider.Providers.Interfaces
         IEnumerable<Mortgage> GetMortgages(BankAccountDescriptor accountDescriptor);
         IEnumerable<Loan> GetLoans(BankAccountDescriptor accountDescriptor);
         IEnumerable<BankAccount> GetAccounts();
+        
     }
 }

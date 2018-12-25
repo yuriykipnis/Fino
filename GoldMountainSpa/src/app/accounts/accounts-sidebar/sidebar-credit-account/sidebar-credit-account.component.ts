@@ -18,7 +18,7 @@ export class SidebarCreditAccountComponent implements OnInit {
   }
 
   isSelected() {
-    return this.account.Id == this.accountControlService.getSelectedAccount().Id;
+    return this.account.Name == this.accountControlService.getSelectedAccount().Id;
   }
 
   getTotalCharge(account){

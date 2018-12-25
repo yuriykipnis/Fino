@@ -6,46 +6,46 @@
   <div class="nav-outline" style="margin-top: -1px;"></div>
 
   <div class="accounts-status-panel ui-g-12 ui-g-nopad" style="margin-top: 16px">
-  <div class="accounts-status-sub-panel ui-g-12 ui-g-nopad">
+  <div class="ui-g-12 ui-g-nopad">
     <div class="ui-g">
-      <span class="ui-g-6">Period Income</span>
+      <span class="ui-g-6 light">Period Income</span>
       <span class="ui-g-6 balance" [ngStyle]="{'color': getBalanceColor(periodIncome)}">
               {{periodIncome | currency:'ILS':'symbol':'1.2-2'}}</span>
     </div>
     <div class="ui-g">
-      <span class="ui-g-6">Period Expense</span>
+      <span class="ui-g-6 light">Period Expense</span>
       <span class="ui-g-6 balance" [ngStyle]="{'color': getBalanceColor(-1)}">
               -{{periodExpense | currency:'ILS':'symbol':'1.2-2'}}</span>
     </div>
     <div class="ui-g">
-      <span class="ui-g-6">Period Balance</span>
+      <span class="ui-g-6 light">Period Balance</span>
       <span class="ui-g-6 balance" [ngStyle]="{'color': getBalanceColor(periodBalance)}">
               {{periodBalance | currency:'ILS':'symbol':'1.2-2'}}</span>
     </div>
   </div>
-  <div class="accounts-status-sub-panel ui-g-12 ui-g-nopad">
+  <div class="ui-g-12 ui-g-nopad">
     <div class="ui-g">
-      <span class="ui-g-6">Total Balance</span>
+      <span class="ui-g-6 light">Total Balance</span>
       <span class="ui-g-6 balance" [ngStyle]="{'color': getBalanceColor(totalBalance)}">
               {{totalBalance | currency:'ILS':'symbol':'1.2-2'}}</span>
     </div>
   </div>
 
-  <div class="accounts-status-sub-panel ui-g-12 ui-g-nopad">
+  <div class="ui-g-12 ui-g-nopad">
     <div class="ui-g">
-      <span class="ui-g-6">Period Bank Fees</span>
+      <span class="ui-g-6 light">Period Bank Fees</span>
       <span class="ui-g-6 balance" [ngStyle]="{'color': getBalanceColor(bankFee)}">
               {{bankFee | currency:'ILS':'symbol':'1.2-2'}}</span>
     </div>
     <div class="ui-g">
-      <span class="ui-g-6">Period Credit Fees</span>
-      <span class="ui-g-6 balance" [ngStyle]="{'color': getBalanceColor(0)}">
+      <span class="ui-g-7 light">Period Credit Fees</span>
+      <span class="ui-g-5 balance" [ngStyle]="{'color': getBalanceColor(0)}">
               {{0 | currency:'ILS':'symbol':'1.2-2'}}</span>
     </div>
   </div>
 
-  <div class="ui-g-12 ui-g-nopad">
-    <span class="ui-g-8 accounts-status-sub-panel">Income VS Expenses</span>
+  <div class="ui-g-12 ui-g-nopad" style="padding-top: 1em">
+    <span class="ui-g-8 light">Income VS Expenses</span>
     <p-chart type="bar"[data]="monthlyBalance" [options]="monthlyBalanceOptions" ></p-chart>
   </div>
 </div>

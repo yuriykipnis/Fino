@@ -15,7 +15,6 @@ namespace CefScraper.Leumi
 {
     public class AccountScraper : CommonScraper
     {
-
         private readonly List<AccountBasic> _accounts = new List<AccountBasic>();
 
         public AccountScraper(string username, string password, ManualResetEvent resetEvent) 
@@ -62,7 +61,7 @@ namespace CefScraper.Leumi
                     var setAccount = _accounts.FirstOrDefault(a => a.Balance == Decimal.Zero);
                     if (setAccount != null)
                     {
-                        await SelectAccount(setAccount);
+                        await SelectAccount(setAccount, "ddlAccounts_m_ddl");
                         await RefreshAccountView();
                     }
                     else
@@ -91,9 +90,10 @@ namespace CefScraper.Leumi
                         var accountNumber = CommonScraper.ToUtf8((String)res.Result.Result);
                         var ac = accountNumber.Split('-', '/');
 
-                        if (ac.Length >= 2)
+                        if (ac.Length == 3)
                         {
-                            result = _accounts.Find(a => a.AccountNumber.Equals(ac[1]));
+                            var searchFor = $"{CommonScraper.IntParseSafe(ac[1])}/{CommonScraper.IntParseSafe(ac[2])}";
+                            result = _accounts.Find(a => a.AccountNumber.Equals(searchFor));
                         }
                     }
                 }, TaskScheduler.Default);
@@ -126,9 +126,9 @@ namespace CefScraper.Leumi
                             var ac = account.Split('-', '/');
                             _accounts.Add(new AccountBasic
                             {
-                                Label = $"{CommonScraper.IntParseSafe(ac[0])}-{CommonScraper.IntParseSafe(ac[1])}",
+                                Label = $"{CommonScraper.IntParseSafe(ac[0])} {CommonScraper.IntParseSafe(ac[1])}/{CommonScraper.IntParseSafe(ac[2])}",
                                 BranchNumber = CommonScraper.IntParseSafe(ac[0]),
-                                AccountNumber = ac[1]
+                                AccountNumber = $"{CommonScraper.IntParseSafe(ac[1])}/{CommonScraper.IntParseSafe(ac[2])}"
                             });
                         }
                     }

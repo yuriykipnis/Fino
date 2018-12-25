@@ -10,6 +10,7 @@ import * as fromLoanActions from "./store/actions/loan.action";
 import {LoanViewModel} from "./models/loan-view.model";
 import {Mortgage} from '../models/mortgage';
 import {BankAccount} from "../accounts/models/bank-account";
+import * as loanReducer from "./store/reducers/loan.reducer";
 
 @Component({
   selector: 'app-loans',
@@ -18,14 +19,15 @@ import {BankAccount} from "../accounts/models/bank-account";
   encapsulation: ViewEncapsulation.None
 })
 export class LoansComponent implements OnInit, OnDestroy {
-
   private userProfileSubscription: Subscription;
+  loans$: Observable<LoanViewModel[]>;
   isLoansLoading: boolean = false;
 
   constructor(private store: Store<AppState>,
               private bankService: BankService,
               private creditService: CreditService,
               private userProfileService: UserProfileService) {
+    this.loans$ = store.select(loanReducer.getLoans);
   }
 
   ngOnInit() {

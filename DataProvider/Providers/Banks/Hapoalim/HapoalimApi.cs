@@ -306,8 +306,17 @@ namespace DataProvider.Providers.Banks.Hapoalim
             }
 
             ExtractCookies(response);
-
-            return JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
+            T result;
+            try
+            {
+                result = JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return default(T);
+            }
+            return result;
         }
 
         private void ExtractCookies(HttpResponseMessage response)

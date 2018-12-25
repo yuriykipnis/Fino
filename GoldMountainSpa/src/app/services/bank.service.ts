@@ -69,9 +69,9 @@ export class BankService implements AccountService{
             InterestType: l.interestType,
             IndexType: l.linkageType,
             InsuranceCompany: l.insuranceCompany,
-            AssetCity: l.asset.cityName,
-            AssetStreet: l.asset.streetName,
-            AssetBuildingNumber: l.asset.buildingNumber,
+            AssetCity: (l.asset !== null) ? l.asset.cityName : '',
+            AssetStreet: (l.asset !== null) ? l.asset.streetName : '',
+            AssetBuildingNumber: (l.asset !== null) ? l.asset.buildingNumber : '',
           });
           newAccount.Mortgages.push(newMortgage);
         });

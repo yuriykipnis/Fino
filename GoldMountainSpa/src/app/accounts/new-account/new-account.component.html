@@ -32,9 +32,15 @@
                       [disabled]="!credentialsForm.valid"></p-button>
           </form>
         </div>
-        <div *ngIf="isLoading" class="form-group" >
-          <span class="slider-body wait-message">Please wait... We are loading your accounts</span>
-          <p-progressSpinner class="ui-g-2 ui-g-offset-5"
+        <div *ngIf="isLoading" class="form-group p-grid p-nogutter" >
+          <div class="p-col-12 center">
+            <span class="update-notification">Please wait...</span>
+          </div>
+          <div class="p-col-12 center">
+            <span class="update-notification">We are loading your accounts</span>
+          </div>
+
+          <p-progressSpinner class="p-col-12 center"
                              [style]="{width: '60px', height: '60px',top: '30%'}"
                              strokeWidth="2"
                              animationDuration="1.0s"
@@ -75,9 +81,18 @@
 
       </p-button>
     </div>
-    <div *ngIf="isSaving" class="ui-g ui-g-nopad">
-      <span class="slider-body wait-message">Please wait... We are updating your profile</span>
-      <p-progressSpinner class="ui-g-2 ui-g-offset-5"
+    <div *ngIf="isSaving" class="p-grid p-nogutter">
+      <div class="p-col-12 center">
+        <span class="update-notification">Please wait... </span>
+      </div>
+      <div class="p-col-12 center">
+        <span class="update-notification">We are updating your profile</span>
+      </div>
+      <div class="p-col-12 center">
+        <span class="update-notification">It may take up to 2 minutes</span>
+      </div>
+
+      <p-progressSpinner class="p-col-12 center"
                          [style]="{width: '100px', height: '60px',top: '50%'}"
                          strokeWidth="2"
                          animationDuration="1.0s"

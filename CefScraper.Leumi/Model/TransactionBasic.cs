@@ -13,6 +13,7 @@ namespace CefScraper.Leumi.Model
         [JsonConverter(typeof(TransactionTypeConverter))]
         public TransactionType Type { get; set; }
 
+        [JsonConverter(typeof(DateConverter))]
         public DateTime PurchaseDate { get; set; }
 
         [JsonConverter(typeof(DateConverter))]

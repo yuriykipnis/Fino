@@ -57,7 +57,7 @@ namespace CefScraper.Leumi
                             AccountNumber = _accountName
                         };
 
-                        await SelectAccount(_account);
+                        await SelectAccount(_account, "ddlAccounts_m_ddl");
                         await SelectPeriod();
                         await SelectDates();
                         await RefreshAccountView();

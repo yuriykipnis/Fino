@@ -1,7 +1,6 @@
 @import "../../../sass/styles";
 @import "../../../sass/button";
 
-
 .balance{
   font-size: 14px;
   float: right;
@@ -9,4 +8,9 @@
 
 .status-side-bar {
   padding: 0 1em 1em 1em;
+}
+
+.light {
+  @include light-font-lg;
+  color:$at-text-sub-headline;
 }

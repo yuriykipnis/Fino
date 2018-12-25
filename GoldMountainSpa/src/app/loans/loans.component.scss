@@ -31,10 +31,16 @@
 
 .right{
   float: right;
+  text-align: right;
+}
+
+.center{
+  text-align: center;
 }
 
 .left{
   float: left;
+  text-align: left;
 }
 
 .nav-outline {
@@ -85,5 +91,11 @@
   @include light-font-lg;
   color: $at-purplish-grey;
   margin: 2em 0 1em 0;
+}
+
+.empty-page{
+  @include regular-font-xxxl;
+  color: $at-ligth-blue;
+  line-height: $at-line-height-6;
 }
 

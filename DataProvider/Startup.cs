@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using DataProvider.Providers;
+using DataProvider.Providers.Banks.Leumi.Dto;
 using DataProvider.Providers.Interfaces;
 using DataProvider.Services;
 using GoldMountainShared.Models;
@@ -128,6 +129,9 @@ namespace DataProvider
                 cfg.CreateMap<ProviderCreatingDto, Provider>();
 
                 cfg.CreateMap<Provider, ProviderDto>();
+
+                cfg.CreateMap<LeumiMortgageResponse, RawMortgage>();
+                cfg.CreateMap<LeumiLoanResponse, RawLoan>();
             });
             app.UseMvc();
         }

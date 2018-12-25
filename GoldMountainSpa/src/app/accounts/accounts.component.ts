@@ -28,7 +28,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
               private accountControlService: AccountControlService) {
   }
 
-  sleep= function pause(numberMillis) {
+  sleep = function pause(numberMillis) {
     var now = new Date();
     var exitTime = now.getTime() + numberMillis;
     while (true) {

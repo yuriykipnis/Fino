@@ -137,7 +137,8 @@ export class AccountsSummaryService{
       });
     }
   }
-
+o
+  // Add format for fixed x.2
   private countStatus() {
     this.totalBalance = 0;
     this.periodIncome = 0;
@@ -161,8 +162,8 @@ export class AccountsSummaryService{
           if (monthIndex >= 0 && monthIndex < 12) {
             if (isNaN(this.incomeMonthly[InstitutionType.Bank][monthIndex])) this.incomeMonthly[InstitutionType.Bank][monthIndex] = 0;
             if (isNaN(this.expenseMonthly[InstitutionType.Bank][monthIndex])) this.expenseMonthly[InstitutionType.Bank][monthIndex] = 0;
-            this.incomeMonthly[InstitutionType.Bank][monthIndex] += (t.Type === TransactionType.Income) ? t.Amount : 0;
-            this.expenseMonthly[InstitutionType.Bank][monthIndex] += (t.Type === TransactionType.Expense) ? t.Amount : 0;
+            this.incomeMonthly[InstitutionType.Bank][monthIndex] += (t.Type === TransactionType.Income) ? Number(t.Amount.toFixed(2)) : 0;
+            this.expenseMonthly[InstitutionType.Bank][monthIndex] += (t.Type === TransactionType.Expense) ? Number(t.Amount.toFixed(2)) : 0;
           }
         });
 
@@ -191,8 +192,8 @@ export class AccountsSummaryService{
           if (monthIndex >= 0 && monthIndex < 12) {
             if (isNaN(this.incomeMonthly[InstitutionType.Credit][monthIndex])) this.incomeMonthly[InstitutionType.Credit][monthIndex] = 0;
             if (isNaN(this.expenseMonthly[InstitutionType.Credit][monthIndex])) this.expenseMonthly[InstitutionType.Credit][monthIndex] = 0;
-            this.incomeMonthly[InstitutionType.Credit][monthIndex] += (t.Type === TransactionType.Income) ? t.Amount : 0;
-            this.expenseMonthly[InstitutionType.Credit][monthIndex] += (t.Type === TransactionType.Expense) ? t.Amount : 0;
+            this.incomeMonthly[InstitutionType.Credit][monthIndex] += (t.Type === TransactionType.Income) ? Number(t.Amount.toFixed(2)) : 0;
+            this.expenseMonthly[InstitutionType.Credit][monthIndex] += (t.Type === TransactionType.Expense) ? Number(t.Amount.toFixed(2)) : 0;
           }
         });
       });

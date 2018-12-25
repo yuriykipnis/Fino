@@ -61,10 +61,19 @@ namespace DataProvider.Controllers
                 IsSupported = false,
             });
 
+            //_institutionRepository.AddInstitution(new Institution
+            //{
+            //    Id = Guid.NewGuid(),
+            //    Name = "Bank Discount",
+            //    Credentials = new List<string> { "Username", "Password" },
+            //    Type = InstitutionType.Bank,
+            //    IsSupported = false,
+            //});
+
             _institutionRepository.AddInstitution(new Institution
             {
                 Id = Guid.NewGuid(),
-                Name = "Bank Discount",
+                Name = "Bank Mizrahi-Tefahot",
                 Credentials = new List<string> { "Username", "Password" },
                 Type = InstitutionType.Bank,
                 IsSupported = false,

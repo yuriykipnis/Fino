@@ -17,7 +17,11 @@ import {LoansComponent} from "./loans/loans.component";
 import {ContactUsComponent} from "./contact-us/contact-us.component";
 
 export const routes: Routes = [
-  { path: 'overview', component: OverviewComponent, canActivate: [AuthGuard]},
+  { path: 'overview', component: OverviewComponent, canActivate: [AuthGuard],
+    children: [
+      {path: 'add', component: NewAccountComponent},
+    ]
+  },
   { path: 'accounts', component: AccountsComponent, canActivate: [AuthGuard],
     children: [
       {path: 'add', component: NewAccountComponent},

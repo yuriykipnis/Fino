@@ -73,9 +73,18 @@ namespace DataProvider.Providers.Banks.Leumi
             return result;
         }
 
-        public IEnumerable<Mortgage> GetMortgages(string accountId)
+        public IEnumerable<LeumiMortgageResponse> GetMortgages(string accountId)
         {
-            return new List<Mortgage>();
+            var result = new List<LeumiMortgageResponse>();
+            var data = RunScraper("mortgages", accountId);
+            //assumes no errors :)
+
+            if (!string.IsNullOrEmpty(data))
+            {
+                result = JsonConvert.DeserializeObject<List<LeumiMortgageResponse>>(data);
+            }
+
+            return result;
         }
 
         public IEnumerable<string> GetBalance(string accountId)
@@ -83,15 +92,15 @@ namespace DataProvider.Providers.Banks.Leumi
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Loan> GetLoans(string accountId)
+        public IEnumerable<LeumiLoanResponse> GetLoans(string accountId)
         {
-            var result = new List<Loan>();
+            var result = new List<LeumiLoanResponse>();
             var data = RunScraper("loans", accountId);
             //assumes no errors :)
 
             if (!string.IsNullOrEmpty(data))
             {
-                result = JsonConvert.DeserializeObject<List<Loan>>(data);
+                result = JsonConvert.DeserializeObject<List<LeumiLoanResponse>>(data);
             }
 
             return result;

@@ -1,9 +1,10 @@
-<div class="p-grid p-nogutter main-container">
-  <div class="p-col-fixed" style="width:20em">
+<p-progressBar *ngIf="isLoansLoading" mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+<div *ngIf="!isLoansLoading" class="p-grid p-nogutter main-container">
+  <div *ngIf="(loans$|async)?.length > 0" class="p-col-fixed" style="width:20em">
     <app-loans-sidebar class="main-container"></app-loans-sidebar>
   </div>
 
-  <div class="p-col">
+  <div *ngIf="(loans$|async)?.length > 0" class="p-col">
     <div class="p-grid p-nogutter" style="height: 100%">
       <div class="p-col-6">
         <app-loan-view></app-loan-view>
@@ -14,6 +15,12 @@
       </div>
     </div>
   </div>
+
+  <div *ngIf="!((loans$|async)?.length > 0)"
+       class="p-col-12 p-col-align-center center">
+    <span class="empty-page">There are no mortgages in your profile</span>
+  </div>
+
 
   <router-outlet></router-outlet>
 </div>

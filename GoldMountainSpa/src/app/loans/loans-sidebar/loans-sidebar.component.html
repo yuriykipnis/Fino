@@ -13,13 +13,13 @@
           <div class="p-grid p-nogutter">
             <div *ngIf="isSelected(loan)" class="p-col-fixed selected-loan"></div>
             <p-card class="p-col bw-sidebar-item">
-              <div>
-                <span class="">{{loan.Id}}</span>
-                <span class="right">{{loan.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+              <div class="p-grid p-nogutter">
+                <span class="p-col-8">{{loan.Id}}</span>
+                <span class="p-col-4 right">{{loan.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
               </div>
-              <div>
-                <span class="basic-text">{{loan.PayoffDate | utcToLocalTime | date:'MMMM, y'}}</span>
-                <span class="right">{{loan.InterestType}} - {{loan.IndexType}}</span>
+              <div class="p-grid p-nogutter">
+                <span class="p-col-5 basic-text">{{loan.PayoffDate | utcToLocalTime | date:'MMMM, y'}}</span>
+                <span class="p-col-7 right">{{loan.InterestType}}</span>
               </div>
             </p-card>
           </div>

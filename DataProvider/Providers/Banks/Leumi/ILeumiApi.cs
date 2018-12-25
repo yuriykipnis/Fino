@@ -9,8 +9,8 @@ namespace DataProvider.Providers.Banks.Leumi
     {
         IEnumerable<LeumiAccountResponse> GetAccounts();
         IEnumerable<LeumiTransactionResponse> GetTransactions(String accountId, DateTime startTime, DateTime endTime);
-        IEnumerable<Mortgage> GetMortgages(String accountId);
+        IEnumerable<LeumiMortgageResponse> GetMortgages(String accountId);
         IEnumerable<String> GetBalance(String accountId);
-        IEnumerable<Loan> GetLoans(String accountId);
+        IEnumerable<LeumiLoanResponse> GetLoans(String accountId);
     }
 }

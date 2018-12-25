@@ -108,7 +108,9 @@ export class NewAccountComponent implements OnInit, OnDestroy {
   }
 
   cancel() {
-    this.router.navigate(['../'], {relativeTo: this.route});
+    if (!this.isLoading && !this.isSaving){
+      this.router.navigate(['../'], {relativeTo: this.route});
+    }
   }
 
   private getCredentialsForm(item: Institution): FormGroup {

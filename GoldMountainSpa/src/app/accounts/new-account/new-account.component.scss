@@ -1,6 +1,4 @@
-@import '~sass/variables';
-@import '~sass/mixins';
-
+@import "../sass/styles";
 
 .wait-message{
   @include light-font-lg;
@@ -12,4 +10,19 @@
 
 .add-button {
   margin-left: 20px;
+}
+
+.update-notification{
+  @include regular-font-xxl;
+  color: $at-ligth-blue;
+  line-height: $at-line-height-2;
+}
+
+.right {
+  float: right;
+
+}
+
+.center{
+  text-align: center;
 }

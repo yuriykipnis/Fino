@@ -3,12 +3,19 @@ import {Router} from '@angular/router';
 import {NavigationEnd} from '@angular/router';
 import {AfterViewInit} from '@angular/core';
 import {AccountsSummaryService} from "../accounts/services/accounts-summary.service";
-import {Subscription} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
+import { Store } from '@ngrx/store';
 import {OnDestroy} from '@angular/core';
 import {Months} from '../models/months';
 import {UserProfileService} from "../services/user-profile.service";
 import {OverviewService} from '../services/overview.service';
 import {Overview, LoanOverview} from "../models/overview";
+import * as bankAccountReducer from '../accounts/store/reducers/bank-account.reducer';
+import * as creditAccountReducer from '../accounts/store/reducers/credit-account.reducer';
+import {AppState} from "../shared/store/app.states";
+import {BankAccount} from "../accounts/models/bank-account";
+import {CreditAccount} from "../accounts/models/credit-account";
+import {UserProfile} from "../models/user.profile";
 
 @Component({
   selector: 'app-overview',
@@ -61,38 +68,78 @@ export class OverviewComponent implements OnInit, OnDestroy {
     "#32CD32",
   ];
 
-  constructor(private accountSummaryService: AccountsSummaryService,
+  private userProfile: UserProfile;
+  private bankAccounts$: Observable<BankAccount[]>;
+  private creditAccounts$: Observable<CreditAccount[]>;
+  private bankAccountsSubscription: Subscription;
+  private creditAccountsSubscription: Subscription;
+
+  constructor(private store: Store<AppState>,
+              private accountSummaryService: AccountsSummaryService,
               private userProfileService: UserProfileService,
               private overviewService: OverviewService) {
+    this.bankAccounts$ = store.select(bankAccountReducer.getBankAccounts);
+    this.creditAccounts$ = store.select(creditAccountReducer.getCreditAccounts);
+  }
+
+  private subscribeToAddingFirstAccount() {
+    if (!this.bankAccountsSubscription) {
+      this.bankAccountsSubscription = this.bankAccounts$.subscribe(res => {
+        if (res.length > 0) {
+          this.loadData();
+        }
+      });
+    }
+
+    if (!this.creditAccountsSubscription) {
+      this.creditAccountsSubscription = this.bankAccounts$.subscribe(res => {
+        if (res.length > 0) {
+          this.loadData();
+        }
+      });
+    }
   }
 
   ngOnInit() {
+    this.isLoading = true;
     this.userProfileSubscription = this.userProfileService.userProfile$.subscribe(up => {
       if (!up || !up.Id ) { return; }
-
-      this.isLoading = true;
-      this.overviewService.getOverview$(up.Id)
-        .subscribe(res => {
-            this.overviewData = res;
-            this.generateNetWorthExpenseData();
-            this.generateNetWorthIncomeData();
-            this.generateCashFlowData(res.CashFlowIncomes, res.CashFlowExpenses);
-            this.generateMortgageData(res.MortgageOverview);
-            this.generateLoansData(res.LoanOverview);
-            this.isLoading = false;
-          },
-          err => {
-            this.isLoading = false;
-          });
+        this.userProfile = up;
+        this.loadData();
     });
+  }
 
-    //
-    // this.accountSummarySubscription = this.accountSummaryService.monthlyBalanceChanged$.subscribe(data => {
-    //   this.generateCashFlowData(data);
-    // });
+  loadData() {
+    if (!this.userProfile || !this.userProfile.Id ) { return; }
+
+    this.overviewService.getOverview$(this.userProfile.Id)
+      .subscribe(res => {
+          this.overviewData = res;
+          this.generateNetWorthExpenseData();
+          this.generateNetWorthIncomeData();
+          this.generateCashFlowData(res.CashFlowIncomes, res.CashFlowExpenses);
+          this.generateMortgageData(res.MortgageOverview);
+          this.generateLoansData(res.LoanOverview);
+
+          if (res && res.InstitutionOverviews.length == 0){
+            this.subscribeToAddingFirstAccount();
+          }
+
+          this.isLoading = false;
+        },
+        err => {
+          this.isLoading = false;
+        });
   }
 
   ngOnDestroy() {
+    if (this.bankAccountsSubscription) {
+      this.bankAccountsSubscription.unsubscribe();
+    }
+    if (this.creditAccountsSubscription) {
+      this.creditAccountsSubscription.unsubscribe();
+    }
+
     this.userProfileSubscription.unsubscribe();
   }
 

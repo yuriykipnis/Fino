@@ -1,4 +1,5 @@
 @import "../../sass/styles";
+@import "../../sass/button";
 
 .overview-outline{
   background-color: $at-ocean;
@@ -14,7 +15,7 @@
 
 .overview-container{
   padding: 2em 4em 2em 4em;
-
+  height: 100%;
 }
 
 .overview-sub-container{
@@ -58,4 +59,14 @@
 .right {
   float: right;
   text-align: right;
+}
+
+.center{
+  text-align: center;
+}
+
+.no-data{
+  @include regular-font-xxxl;
+  color: $at-ligth-blue;
+  line-height: $at-line-height-2;
 }

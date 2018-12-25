@@ -24,23 +24,6 @@ namespace DataProvider.Providers.Banks.Leumi
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Transaction> GetTransactions(BankAccountDescriptor accountDescriptor, DateTime startTime, DateTime endTime)
-        {
-            var transactions = _api.GetTransactions(accountDescriptor.AccountNumber, startTime, endTime);
-            var result = ConvertToTransactions(transactions);
-            return result;
-        }
-        
-        public IEnumerable<Mortgage> GetMortgages(BankAccountDescriptor accountDescriptor)
-        {
-            return _api.GetMortgages(accountDescriptor.AccountNumber);
-        }
-
-        public IEnumerable<Loan> GetLoans(BankAccountDescriptor accountDescriptor)
-        {
-            return _api.GetLoans(accountDescriptor.AccountNumber);
-        }
-
         public IEnumerable<BankAccount> GetAccounts()
         {
             var accounts = _api.GetAccounts();
@@ -66,6 +49,27 @@ namespace DataProvider.Providers.Banks.Leumi
             return result;
         }
 
+        public IEnumerable<Transaction> GetTransactions(BankAccountDescriptor accountDescriptor, DateTime startTime, DateTime endTime)
+        {
+            var transactions = _api.GetTransactions(accountDescriptor.AccountNumber, startTime, endTime);
+            var result = ConvertToTransactions(transactions);
+            return result;
+        }
+        
+        public IEnumerable<Mortgage> GetMortgages(BankAccountDescriptor accountDescriptor)
+        {
+            var mortgages = _api.GetMortgages(accountDescriptor.AccountNumber);
+            var result = AutoMapper.Mapper.Map<IEnumerable<Mortgage>>(mortgages);
+            return result;
+        }
+
+        public IEnumerable<Loan> GetLoans(BankAccountDescriptor accountDescriptor)
+        {
+            var loans = _api.GetLoans(accountDescriptor.AccountNumber);
+            var result = AutoMapper.Mapper.Map<IEnumerable<Loan>>(loans);
+            return result;
+        }
+        
         private static List<Transaction> ConvertToTransactions(IEnumerable<LeumiTransactionResponse> transactions)
         {
             var result = new List<Transaction>();

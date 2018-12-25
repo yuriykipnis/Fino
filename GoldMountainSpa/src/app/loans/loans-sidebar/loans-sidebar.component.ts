@@ -27,7 +27,6 @@ export class LoansSidebarComponent implements OnInit {
               private loanControlService: LoanControlService,
               private accountControlService: AccountControlService) {
     this.loans$ = store.select(loanReducer.getLoans);
-
   }
 
   ngOnInit() {
@@ -39,7 +38,10 @@ export class LoansSidebarComponent implements OnInit {
     this.loansSubscription = this.loans$.subscribe(res =>{
       this.mortgages = new Array<{key: string, loans: LoanViewModel[]}>();
       res.forEach(l => {
-        let key : string = l.CityName + "-" + l.StreetName + "-" + l.BuildingNumber;
+        let key : string = (l.CityName.length > 0)
+          ? l.CityName + "-" + l.StreetName + "-" + l.BuildingNumber
+          : "Unknown";
+
         let loans = this.mortgages.find(el => { return el.key === key });
         if(!loans) {
           this.mortgages.push({key: key, loans: new Array<LoanViewModel>()});

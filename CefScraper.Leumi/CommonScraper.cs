@@ -46,16 +46,16 @@ namespace CefScraper.Leumi
             Browser.Load(dataUrl);
         }
 
-        protected async Task SelectAccount(AccountBasic setAccount)
+        protected async Task SelectAccount(AccountBasic setAccount, String selectorId)
         {
             string script = @"(function(){
-                        var select = document.getElementById('ddlAccounts_m_ddl');
+                        var select = document.getElementById('" + selectorId + @"');
                         for ( var i = 0; i < select.options.length; i++ ) {
                            if (select[i].value != -1 ) {
                                 var label = select[i].innerHTML;
                                 var l = label.split('-');
                                 var ll = l[1].split('/');
-                                if (ll[0] == " + setAccount.AccountNumber + @") {
+                                if (ll[0] == " + setAccount.AccountNumber.Split('/')[0] + @") {
                                     select.value = select[i].value;
                                 }
                            }

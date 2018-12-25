@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import {AccountsSummaryService} from "../services/accounts-summary.service";
 import {Subscription} from 'rxjs';
+import {Months} from "../../models/months";
 
 @Component({
   selector: 'app-status-sidebar',
@@ -73,19 +74,25 @@ export class StatusSidebarComponent implements OnInit, OnDestroy {
 
   updateMonthlyBalance(income: number[], expense: number[]){
     this.monthlyBalance = {
-      labels: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+      labels: [
+        Months[this.getIndexOfMonthsAgo(5)],
+        Months[this.getIndexOfMonthsAgo(4)],
+        Months[this.getIndexOfMonthsAgo(3)],
+        Months[this.getIndexOfMonthsAgo(2)],
+        Months[this.getIndexOfMonthsAgo(1)],
+        Months[this.getIndexOfMonthsAgo(0)]],
       datasets: [
         {
           label: 'Income',
           backgroundColor: '#20B2AA',
           borderColor: '#20B2AA',
           data: [
-            income[6],
-            income[7],
-            income[8],
-            income[9],
-            income[10],
-            income[11],
+            income[this.getIndexOfMonthsAgo(5)],
+            income[this.getIndexOfMonthsAgo(4)],
+            income[this.getIndexOfMonthsAgo(3)],
+            income[this.getIndexOfMonthsAgo(2)],
+            income[this.getIndexOfMonthsAgo(1)],
+            income[this.getIndexOfMonthsAgo(0)],
           ]
         },
         {
@@ -93,12 +100,12 @@ export class StatusSidebarComponent implements OnInit, OnDestroy {
           backgroundColor: '#FF6347',
           borderColor: '#FF6347',
           data: [
-            expense[6],
-            expense[7],
-            expense[8],
-            expense[9],
-            expense[10],
-            expense[11],
+            expense[this.getIndexOfMonthsAgo(5)],
+            expense[this.getIndexOfMonthsAgo(4)],
+            expense[this.getIndexOfMonthsAgo(3)],
+            expense[this.getIndexOfMonthsAgo(2)],
+            expense[this.getIndexOfMonthsAgo(1)],
+            expense[this.getIndexOfMonthsAgo(0)],
           ]
         }
       ]
@@ -107,9 +114,31 @@ export class StatusSidebarComponent implements OnInit, OnDestroy {
       plugins:{
         datalabels: {
           display: false,
-        },
+        }
+      },
+      tooltips: {
+        callbacks: {
+          label: function(tooltipItem, data) {
+            var label = data.datasets[tooltipItem.datasetIndex].label || '';
+            if (label) {
+              label += ': ';
+            }
+            label += tooltipItem.yLabel.toFixed(2);
+            return label;
+          }
+        }
       }
     };
+  }
+
+  private getIndexOfMonthsAgo(monthsPast:number): number {
+    let nowMonth = new Date().getMonth();
+    let rel = nowMonth-monthsPast;
+    if (rel > 0) {
+      return rel;
+    }
+
+    return 12 + rel;
   }
 
   getBalanceColor(balance : number)

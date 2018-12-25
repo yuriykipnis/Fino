@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using DataProvider.Providers.Banks.Hapoalim;
 using DataProvider.Providers.Banks.Leumi;
+using DataProvider.Providers.Banks.Tefahot;
 using DataProvider.Providers.Cards.Amex;
 using DataProvider.Providers.Interfaces;
 using GoldMountainShared;
@@ -23,6 +24,9 @@ namespace DataProvider.Providers
                     break;
                 case "Bank Leumi":
                     accountProvider = new LeumiAccountProvider(new LeumiApi(provider));
+                    break;
+                case "Bank Mizrahi-Tefahot":
+                    accountProvider = new TefahotAccountProvider(new TefahotApi(provider));
                     break;
                 case "Amex":
                     //accountProvider = new AmexAccountProvider(provider, new AmexFileApi(provider));

@@ -15,11 +15,11 @@
             <p-card class="p-col bw-sidebar-item">
               <div class="p-grid p-nogutter">
                 <span class="p-col-8">{{loan.Id}}</span>
-                <span class="p-col-4 right">{{loan.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
+                <span class="p-col-4 text-right">{{loan.DeptAmount | currency:'ILS':'symbol':'1.0-0'}}</span>
               </div>
               <div class="p-grid p-nogutter">
                 <span class="p-col-5 basic-text">{{loan.PayoffDate | utcToLocalTime | date:'MMMM, y'}}</span>
-                <span class="p-col-7 right">{{loan.InterestType}}</span>
+                <span class="p-col-7 text-right">{{loan.InterestType}}</span>
               </div>
             </p-card>
           </div>

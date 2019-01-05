@@ -87,12 +87,12 @@ export class StatusSidebarComponent implements OnInit, OnDestroy {
           backgroundColor: '#20B2AA',
           borderColor: '#20B2AA',
           data: [
-            income[this.getIndexOfMonthsAgo(5)],
-            income[this.getIndexOfMonthsAgo(4)],
-            income[this.getIndexOfMonthsAgo(3)],
-            income[this.getIndexOfMonthsAgo(2)],
-            income[this.getIndexOfMonthsAgo(1)],
-            income[this.getIndexOfMonthsAgo(0)],
+            income[6],
+            income[7],
+            income[8],
+            income[9],
+            income[10],
+            income[11],
           ]
         },
         {
@@ -100,12 +100,12 @@ export class StatusSidebarComponent implements OnInit, OnDestroy {
           backgroundColor: '#FF6347',
           borderColor: '#FF6347',
           data: [
-            expense[this.getIndexOfMonthsAgo(5)],
-            expense[this.getIndexOfMonthsAgo(4)],
-            expense[this.getIndexOfMonthsAgo(3)],
-            expense[this.getIndexOfMonthsAgo(2)],
-            expense[this.getIndexOfMonthsAgo(1)],
-            expense[this.getIndexOfMonthsAgo(0)],
+            expense[6],
+            expense[7],
+            expense[8],
+            expense[9],
+            expense[10],
+            expense[11],
           ]
         }
       ]
@@ -134,7 +134,7 @@ export class StatusSidebarComponent implements OnInit, OnDestroy {
   private getIndexOfMonthsAgo(monthsPast:number): number {
     let nowMonth = new Date().getMonth();
     let rel = nowMonth-monthsPast;
-    if (rel > 0) {
+    if (rel >= 0) {
       return rel;
     }
 

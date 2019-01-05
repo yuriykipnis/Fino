@@ -415,7 +415,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
   private getIndexOfMonthsAgo(monthsPast:number): number {
     let nowMonth = new Date().getMonth();
     let rel = nowMonth-monthsPast;
-    if (rel > 0) {
+    if (rel >= 0) {
       return rel;
     }
 

@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Providers\Cards\Cal\" />
+    <Folder Include="Providers\Cards\Leumi\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -25,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DistributedLock\DistributedLock.csproj" />
     <ProjectReference Include="..\GoldMountainShared\GoldMountainShared.csproj" />
   </ItemGroup>
 

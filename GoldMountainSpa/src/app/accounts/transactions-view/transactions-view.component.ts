@@ -37,7 +37,8 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
   private tableTypeSubscription: Subscription;
   private transactionScopeSubscription: Subscription;
   private selectedAccountIdSubscription: Subscription;
-  private loadingStateSubscription: Subscription;
+  private loadingBankStateSubscription: Subscription;
+  private loadingCreditStateSubscription: Subscription;
 
   treeTableCols: { field: string, header: string }[];
 
@@ -65,7 +66,7 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.isLoading = this.accountControlService.getIsLoading();
+    this.isLoading = this.accountControlService.getIsBankLoading() || this.accountControlService.getIsCreditLoading();
     this.updateTransactions(this.selectedAccount);
 
     this.viewPeriodSubscription = this.accountControlService.viewPeriodChanged$.subscribe(
@@ -114,7 +115,11 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
       this.transactions.splice(0, this.transactions.length);
     });
 
-    this.loadingStateSubscription = this.accountControlService.isLoadingChanged$.subscribe(isLoading =>{
+    this.loadingBankStateSubscription = this.accountControlService.isBankAccountLoadingChanged$.subscribe(isLoading =>{
+      this.isLoading = isLoading;
+    })
+
+    this.loadingCreditStateSubscription = this.accountControlService.isCreditAccountLoadingChanged$.subscribe(isLoading =>{
       this.isLoading = isLoading;
     })
   }
@@ -126,7 +131,8 @@ export class TransactionsViewComponent implements OnInit, OnDestroy {
     this.transactionScopeSubscription.unsubscribe();
     this.selectedAccountIdSubscription.unsubscribe();
     this.userProfileSubscription.unsubscribe();
-    this.loadingStateSubscription.unsubscribe();
+    this.loadingBankStateSubscription.unsubscribe();
+    this.loadingCreditStateSubscription.unsubscribe();
   }
 
   private retrieveAllTransactions$() : Observable<Transaction[]>{

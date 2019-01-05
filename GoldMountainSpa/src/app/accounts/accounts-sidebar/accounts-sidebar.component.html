@@ -7,7 +7,7 @@
           <span class="right">{{accountsSummaryService?.totalInBanks | currency:'ILS':'symbol':'1.0-0'}}</span>
         </div>
       </p-header>
-      <p-progressBar *ngIf="isLoading" mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+      <p-progressBar *ngIf="isBankLoading" mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
 
       <div *ngFor="let account of bankAccounts$ | async" (click)="openBankAccountView(account)">
         <app-sidebar-bank-account [account]="account"></app-sidebar-bank-account>
@@ -21,7 +21,7 @@
           <span style="float: right">{{-1*accountsSummaryService?.totalInCredit | currency:'ILS':'symbol':'1.0-0'}}</span>
         </div>
       </p-header>
-      <p-progressBar *ngIf="isLoading" mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+      <p-progressBar *ngIf="isCreditLoading" mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
 
       <div *ngFor="let account of creditAccounts$ | async" (click)="openCreditAccountView(account)">
         <app-sidebar-credit-account [account]="account"></app-sidebar-credit-account>

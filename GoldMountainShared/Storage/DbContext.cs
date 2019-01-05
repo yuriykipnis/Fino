@@ -61,5 +61,8 @@ namespace GoldMountainShared.Storage
 
         public IMongoCollection<ContactMessage> Messages =>
             _database.GetCollection<ContactMessage>("Messages");
+
+        public IMongoCollection<ExclusiveLockStorage> ExclusiveLock =>
+            _database.GetCollection<ExclusiveLockStorage>("ExclusiveLock");
     }
 }

@@ -188,7 +188,14 @@ o
             this.totalBalance -= (t.Type === TransactionType.Expense) ? t.Amount : 0;
           }
 
+
+
           let monthIndex = 11 - (12 * (now.getFullYear() - tDate.getFullYear()) + now.getMonth() - tDate.getMonth());
+
+          // let rel = nowMonth-monthsPast;
+          // if (rel >= 0) { return rel; }
+          // return 12 + rel;
+
           if (monthIndex >= 0 && monthIndex < 12) {
             if (isNaN(this.incomeMonthly[InstitutionType.Credit][monthIndex])) this.incomeMonthly[InstitutionType.Credit][monthIndex] = 0;
             if (isNaN(this.expenseMonthly[InstitutionType.Credit][monthIndex])) this.expenseMonthly[InstitutionType.Credit][monthIndex] = 0;

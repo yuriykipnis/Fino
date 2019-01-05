@@ -18,5 +18,5 @@ namespace DataProvider.Providers.Models
         public string SupplierId { get; set; }
     }
 
-    public enum TransactionType { Income, Expense };
+    public enum TransactionType { Income, Expense, None };
 }

@@ -66,10 +66,20 @@
             </div>
 
             <div class="group-items" *ngIf="isCreditAccount(account)">
-              <label >
-                <input type="checkbox" [name]="account.CardNumber"  [(ngModel)]=account.IsActive>
-                {{account.CardNumber}}-{{account.Name}}
-              </label>
+              <p-card class="bw-account-item">
+                <div>
+                  <span>
+                    <img class="switch-icon link" (click)="onSwitchToggle(account)" *ngIf="!account.IsActive" src="assets/icons/switch-off.svg"/>
+                    <img class="switch-icon link" (click)="onSwitchToggle(account)" *ngIf="account.IsActive" src="assets/icons/switch-on.svg"/>
+                  </span>
+                  <span class="account-number">{{account.Name}}</span>
+                </div>
+              </p-card>
+
+              <!--<label >-->
+                <!--<input type="checkbox" [name]="account.CardNumber"  [(ngModel)]=account.IsActive>-->
+                <!--{{account.CardNumber}}-{{account.Name}}-->
+              <!--</label>-->
             </div>
           </div>
         </div>

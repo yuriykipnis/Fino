@@ -5,6 +5,8 @@ using DataProvider.Providers;
 using DataProvider.Providers.Banks.Leumi.Dto;
 using DataProvider.Providers.Interfaces;
 using DataProvider.Services;
+using DistibutedLocking.Interfaces;
+using DistributedLock;
 using GoldMountainShared.Models;
 using GoldMountainShared.Models.Bank;
 using GoldMountainShared.Models.Credit;
@@ -69,6 +71,8 @@ namespace DataProvider
             services.AddTransient<ICreditAccountRepository, CreditAccountRepository>();
             services.AddSingleton<IProviderFactory, ProviderFactory>();
             services.AddTransient<IAccountService, AccountService>();
+
+            services.AddTransient<IExclusiveLockRepository, ExclusiveLockRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -16,6 +16,8 @@ namespace GoldMountainShared.Storage.Interfaces
 
         Task<IEnumerable<BankAccount>> GetAccountsByUserId(String id);
 
+        Task<IEnumerable<BankAccount>> GetAccountsByProviderId(Guid providerId);
+
         Task AddAccount(BankAccount item);
 
         Task AddAccounts(IEnumerable<BankAccount> items);

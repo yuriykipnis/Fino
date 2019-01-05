@@ -24,8 +24,10 @@ export class AccountsSidebarComponent implements OnInit {
   creditAccounts$: Observable<CreditAccount[]>;
   bankAccountsSubscription: Subscription;
   creditAccountsSubscription: Subscription;
-  loadingStateSubscription: Subscription;
-  isLoading: boolean;
+  loadingBankStateSubscription: Subscription;
+  loadingCreditStateSubscription: Subscription;
+  isCreditLoading: boolean;
+  isBankLoading: boolean;
 
   constructor(private store: Store<AppState>,
               private accountControlService: AccountControlService,
@@ -37,9 +39,15 @@ export class AccountsSidebarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.isLoading = this.accountControlService.getIsLoading();
-    this.loadingStateSubscription = this.accountControlService.isLoadingChanged$.subscribe(newState => {
-      this.isLoading = newState;
+    this.isCreditLoading = this.accountControlService.getIsCreditLoading();
+    this.isBankLoading = this.accountControlService.getIsBankLoading();
+
+    this.loadingBankStateSubscription = this.accountControlService.isBankAccountLoadingChanged$.subscribe(newState => {
+      this.isBankLoading = newState;
+    });
+
+    this.loadingCreditStateSubscription = this.accountControlService.isCreditAccountLoadingChanged$.subscribe(newState => {
+      this.isCreditLoading = newState;
     });
 
     this.bankAccountsSubscription = this.bankAccounts$.subscribe(res => {
@@ -58,6 +66,8 @@ export class AccountsSidebarComponent implements OnInit {
   ngOnDestroy() {
     this.bankAccountsSubscription.unsubscribe();
     this.creditAccountsSubscription.unsubscribe();
+    this.loadingBankStateSubscription.unsubscribe();
+    this.loadingCreditStateSubscription.unsubscribe()
   }
 
   openBankAccountView(account: any) {

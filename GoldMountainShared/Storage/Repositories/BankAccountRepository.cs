@@ -88,6 +88,19 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
+        public async Task<IEnumerable<BankAccount>> GetAccountsByProviderId(Guid providerId)
+        {
+            try
+            {
+                return await _context.BankAccounts.Find(account => account.ProviderId.Equals(providerId)).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                // log or manage the exception
+                throw ex;
+            }
+        }
+
         public async Task AddAccount(BankAccount item)
         {
             try

@@ -31,7 +31,7 @@ namespace DataProvider.Providers.Banks.Tefahot
                     AccountNumber = account.Number,
                     BranchNumber = Convert.ToInt32(account.Branch),
                     Balance = account.Remain,
-                    Label = account.Name
+                    Label = $"{account.Branch} {account.Number}"
                 });
             }
 

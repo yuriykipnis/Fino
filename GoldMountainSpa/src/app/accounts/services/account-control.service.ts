@@ -15,14 +15,16 @@ export class AccountControlService {
   private transactionScopeSource = new Subject<TransactionScope>();
   private tableTypeSource = new Subject<TableType>();
   private selectedAccountSource = new Subject<AccountIdentifier>();
-  private isLoadingSource = new Subject<boolean>();
+  private isBankAccountLoadingSource = new Subject<boolean>();
+  private isCreditAccountLoadingSource = new Subject<boolean>();
 
   private viewPeriod: Date;
   private transactionType: TransactionType;
   private transactionScope: TransactionScope;
   private tableType: TableType;
   private selectedAccount: AccountIdentifier;
-  private isLoading: boolean;
+  private isBankLoading: boolean;
+  private isCreditLoading: boolean;
 
   // Observable string streams
   selectedAccountChanged$ = this.selectedAccountSource.asObservable();
@@ -30,7 +32,8 @@ export class AccountControlService {
   transactionTypeChanged$ = this.transactionTypeSource.asObservable();
   tableTypeChanged$ = this.tableTypeSource.asObservable();
   transactionScopeChanged$ = this.transactionScopeSource.asObservable();
-  isLoadingChanged$ = this.isLoadingSource.asObservable();
+  isBankAccountLoadingChanged$ = this.isBankAccountLoadingSource.asObservable();
+  isCreditAccountLoadingChanged$ = this.isCreditAccountLoadingSource.asObservable();
 
   constructor(){
     this.viewPeriod = new Date();
@@ -38,7 +41,8 @@ export class AccountControlService {
     this.transactionScope = TransactionScope.Split;
     this.tableType = TableType.Flat;
     this.selectedAccount = null;
-    this.isLoading = false;
+    this.isBankLoading = false;
+    this.isCreditLoading = false;
   }
 
   // Service message commands
@@ -78,10 +82,17 @@ export class AccountControlService {
     }
   }
 
-  changeLoadingState(isLoading: boolean) {
-    if (this.isLoading !== isLoading){
-      this.isLoading = isLoading;
-      this.isLoadingSource.next(this.isLoading);
+  changeBankLoadingState(isLoading: boolean) {
+    if (this.isBankLoading !== isLoading){
+      this.isBankLoading = isLoading;
+      this.isBankAccountLoadingSource.next(this.isBankLoading);
+    }
+  }
+
+  changeCreditLoadingState(isLoading: boolean) {
+    if (this.isCreditLoading !== isLoading){
+      this.isCreditLoading = isLoading;
+      this.isCreditAccountLoadingSource.next(this.isCreditLoading);
     }
   }
 
@@ -105,7 +116,11 @@ export class AccountControlService {
     return this.selectedAccount;
   }
 
-  getIsLoading():boolean{
-    return this.isLoading;
+  getIsBankLoading():boolean{
+    return this.isBankLoading;
+  }
+
+  getIsCreditLoading():boolean{
+    return this.isBankLoading;
   }
 }

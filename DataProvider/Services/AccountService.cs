@@ -4,8 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using DataProvider.Providers.Interfaces;
 using DataProvider.Providers.Models;
+using DistibutedLocking.Interfaces;
+using DistributedLock;
 using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
+using Microsoft.Extensions.Configuration;
 using BankAccount = GoldMountainShared.Storage.Documents.BankAccount;
 using RawBankAccount = DataProvider.Providers.Models.BankAccount;
 using CreditAccount = GoldMountainShared.Storage.Documents.CreditAccount;
@@ -23,7 +26,8 @@ namespace DataProvider.Services
         private readonly ICreditAccountRepository _creditAccountRepository;
 
         public AccountService(IProviderFactory providerFactory, 
-            IBankAccountRepository bankAccountRepository, ICreditAccountRepository creditAccountRepository)
+            IBankAccountRepository bankAccountRepository, 
+            ICreditAccountRepository creditAccountRepository)
         {
             _providerFactory = providerFactory;
             _bankAccountRepository = bankAccountRepository;
@@ -103,14 +107,16 @@ namespace DataProvider.Services
             var updatedAccount = RetriveBankAccount(accounts, accountToUpdate);
             var accountDescriptor = AutoMapper.Mapper.Map<BankAccountDescriptor>(accountToUpdate);
 
-            if (updatedAccount == null)
+            if (updatedAccount == null || accountToUpdate.UpdatedOn.AddDays(1) > DateTime.Now)
             {
                 return accountToUpdate;
             }
 
+            var now = DateTime.Now;
             var startOfThisMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            var startTime = isFirstTime ? startOfThisMonth.AddYears(-1) : startOfThisMonth;
-            var endTime = DateTime.Now;
+
+            var startTime = isFirstTime ? now.AddYears(-1) : startOfThisMonth;
+            var endTime = now;
 
             var transactions = ((IBankAccountProvider)dataProvider).GetTransactions(accountDescriptor, startTime, endTime);
             var mortgages = ((IBankAccountProvider)dataProvider).GetMortgages(accountDescriptor);

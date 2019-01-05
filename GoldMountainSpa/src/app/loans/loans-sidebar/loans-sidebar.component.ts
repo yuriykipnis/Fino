@@ -30,8 +30,8 @@ export class LoansSidebarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.isLoading = this.accountControlService.getIsLoading();
-    this.loadingStateSubscription = this.accountControlService.isLoadingChanged$.subscribe(newState => {
+    this.isLoading = this.accountControlService.getIsBankLoading();
+    this.loadingStateSubscription = this.accountControlService.isBankAccountLoadingChanged$.subscribe(newState => {
       this.isLoading = newState;
     });
 

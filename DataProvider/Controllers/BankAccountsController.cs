@@ -9,6 +9,7 @@ using DataProvider.ErrorHandling;
 using DataProvider.Providers.Interfaces;
 using DataProvider.Providers.Models;
 using DataProvider.Services;
+using DistributedLock;
 using GoldMountainShared;
 using GoldMountainShared.Models;
 using GoldMountainShared.Models.Bank;
@@ -33,16 +34,19 @@ namespace DataProvider.Controllers
         private readonly IBankAccountRepository _accountRepository;
         private readonly IProviderFactory _providerFactory;
         private readonly IAccountService _accountService;
+        private readonly IExclusiveLockRepository _exclusiveLockRepository;
 
         public BankAccountsController(IProviderRepository providerRepository, 
             IBankAccountRepository accountRepository, 
             IProviderFactory providerFactory,
-            IAccountService accountService)
+            IAccountService accountService,
+            IExclusiveLockRepository exclusiveLockRepository)
         {
             _providerRepository = providerRepository;
             _accountRepository = accountRepository;
             _providerFactory = providerFactory;
             _accountService = accountService;
+            _exclusiveLockRepository = exclusiveLockRepository;
         }
 
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
@@ -60,12 +64,37 @@ namespace DataProvider.Controllers
             IActionResult errorResult = null;
             var result = new List<BankAccount>();
             var providers = await _providerRepository.GetProviders(p => p.UserId.Equals(userId));
-            var bankProviders = providers.Where(p => p.Type.Equals(InstitutionType.Bank));
+            var bankProviders = providers.Where(p => p.Type.Equals(InstitutionType.Bank) && HasExpiredAccount(p));
 
+            var tasks = ParallelProvidersUpdate(bankProviders, result);
+            if (!tasks.Any(t => (t.Result is OkResult)))
+            {
+                errorResult = tasks.FirstOrDefault(t => !(t.Result is OkResult))?.Result;
+            }
+            return errorResult ?? Ok(result);
+        }
+
+        private List<Task<IActionResult>> ParallelProvidersUpdate(IEnumerable<Provider> bankProviders,
+            List<BankAccount> result)
+        {
             Barrier barrier = new Barrier(bankProviders.Count() + 1);
             List<Task<IActionResult>> tasks = new List<Task<IActionResult>>();
+            //List<Tuple<ExclusiveGlobalLockEngine, String>> lockEngines = new List<Tuple<ExclusiveGlobalLockEngine, String>>();
+
             foreach (var provider in bankProviders)
             {
+                //var uniqueId = Guid.NewGuid().ToString();
+                //var lockEngine = new ExclusiveGlobalLockEngine(_exclusiveLockRepository, provider.Id.ToString());
+                //lockEngines.Add(new Tuple<ExclusiveGlobalLockEngine, string>(lockEngine, uniqueId));
+
+                //lockEngine.StartCheckingLock(uniqueId, () =>
+                //{
+                //    var testProvider = _providerRepository.FindProviderByCriteria(p => p.Id == provider.Id).Result;
+                //    if (!HasExpiredAccount(testProvider))
+                //    {
+                //        return;
+                //    }
+
                 tasks.Add(Task<IActionResult>.Factory.StartNew(() =>
                 {
                     try
@@ -90,16 +119,28 @@ namespace DataProvider.Controllers
 
                     return Ok();
                 }));
+
+                //    }, (reason) =>
+                //    {
+                //        Console.WriteLine("Lock Lost, reason: " + reason);
+                //    });
+                //}
             }
 
             barrier.SignalAndWait();
-            if (tasks.Any(t => !(t.Result is OkResult)))
-            {
-                errorResult = tasks.FirstOrDefault(t => !(t.Result is OkResult))?.Result;
-            }
-            return errorResult ?? Ok(result);
+            //foreach (var lockEngine in lockEngines)
+            //{
+            //    lockEngine.Item1.StopCheckingOrReleaseLock(lockEngine.Item2);
+            //}
+            return tasks;
         }
-        
+
+        private bool HasExpiredAccount(Provider provider)
+        {
+            return _accountRepository.GetAccountsByProviderId(provider.Id).Result.ToList()
+                .Any(a => a.UpdatedOn.AddDays(1) < DateTime.Now);
+        }
+
         //Retrive accounts based on the user credentials. We use Post insted of get in order to pass credintials in the body 
         [HttpPost("BankAccounts")]
         public async Task<IActionResult> Post([FromBody] ProviderCreatingDto providerDto)

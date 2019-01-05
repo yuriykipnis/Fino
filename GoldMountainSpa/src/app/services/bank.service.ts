@@ -18,11 +18,10 @@ export class BankService implements AccountService{
 
   getAccounts$(userId : string): Observable<BankAccount[]> {
     let url = environment.api.clientApiUrl + '/user/' + userId + '/bankAccounts';
-    let headers = new HttpHeaders()
-      .set('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
+    let headers = new HttpHeaders().set('Authorization', 'Bearer ' + localStorage.getItem('access_token'));
+    let timeout = 120000;
 
-    var response = this.http.get<BankAccount[]>(url, {headers: headers})
-      .timeout(120000)
+    var response = this.http.get<BankAccount[]>(url, {headers: headers}).timeout(timeout)
       .map((res: any[]) => {
       let result = new Array<BankAccount>();
       res.forEach(r => {

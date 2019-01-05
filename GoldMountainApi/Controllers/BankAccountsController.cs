@@ -47,12 +47,6 @@ namespace GoldMountainApi.Controllers
             var account = await _accountRepository.GetAccount(id) ?? new BankAccount();
             var result = AutoMapper.Mapper.Map<BankAccountDto>(account);
             return result;
-
-            //if (DateTime.Compare(account.UpdatedOn.AddHours(1), DateTime.Now) < 0)
-            //{
-            //    await _dataService.UpdateAccount(id);
-            //    account = await _accountRepository.GetAccount(id) ?? new BankAccount();
-            //}
         }
         
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
@@ -66,9 +60,9 @@ namespace GoldMountainApi.Controllers
             
             var accounts = await _accountRepository.GetAccountsByUserId(userId) ?? new List<BankAccount>();
             var accountsToUpdate = accounts
-                .Where(a => DateTime.Compare(a.UpdatedOn.ToLocalTime().AddHours(28), DateTime.Now) < 0)
+                .Where(a => DateTime.Compare(a.UpdatedOn.ToLocalTime().AddDays(1), DateTime.Now) < 0)
                 .Select(account => account.Id);
-            
+
             if (accountsToUpdate.Any())
             {
                 try
@@ -85,7 +79,7 @@ namespace GoldMountainApi.Controllers
 
             return AutoMapper.Mapper.Map<IEnumerable<BankAccountDto>>(accounts);
         }
-        
+
         [HttpPost("BankAccounts")]
         public async Task<IActionResult> Post([FromBody] IEnumerable<BankAccountDto> newAccounts)
         {

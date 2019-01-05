@@ -68,11 +68,11 @@ namespace DataProvider.Providers.Banks.Tefahot
 
             LoadOshPage();
 
-            var result = LoadOshTransactions();
+            var result = LoadOshTransactions(startTime, endTime);
             var transacations = GetTransactionsData(result).ToList();
             while (result.Contains("javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder2$uc428Grid$grvP428G2$ctl00$ctl02$ctl00$ctl04"))
             {
-                result = LoadOshNextTransactions();
+                result = LoadOshNextTransactions(startTime, endTime);
                 transacations.AddRange(GetTransactionsData(result));
             }
 
@@ -89,11 +89,18 @@ namespace DataProvider.Providers.Banks.Tefahot
                 a.Attributes.Contains("id") &&
                 a.Attributes["id"].Value.Equals("ctl00_ContentPlaceHolder2_uc428Grid_grvP428G2_ctl00"));
 
+            if (table == null)
+            {
+                return result;
+            }
+
             foreach (var row in table.SelectNodes("tbody").Nodes())
             {
                 if (row.ChildNodes.Count <5) { continue; }
                 
                 var date = row.SelectNodes("td")[0].InnerText.Split("/");
+                if (!int.TryParse(date[0], out int n)) { continue; }
+
                 var amount = Convert.ToDecimal(row.SelectNodes("td")[4].InnerText);
                 var balance = row.SelectNodes("td")[5].InnerText;
 
@@ -280,9 +287,9 @@ namespace DataProvider.Providers.Banks.Tefahot
             return mortgages;
         }
 
-        private String LoadOshTransactions()
+        private String LoadOshTransactions(DateTime startTime, DateTime endTime)
         {
-            var body = GetFirstOshRequestBody();
+            var body = GetFirstOshRequestBody(startTime, endTime);
 
             var headers = new List<Tuple<string, string>>
             {
@@ -304,9 +311,9 @@ namespace DataProvider.Providers.Banks.Tefahot
             return responseBody;
         }
 
-        private String LoadOshNextTransactions()
+        private String LoadOshNextTransactions(DateTime startTime, DateTime endTime)
         {
-            var body = GetNextOshRequestBody();
+            var body = GetNextOshRequestBody(startTime, endTime);
             var headers = new List<Tuple<string, string>>
             {
                 new Tuple<string, string>("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"),
@@ -344,9 +351,9 @@ namespace DataProvider.Providers.Banks.Tefahot
             _sessionInfo.EventValidation = ExtractAspEntity(responseBody, EventValidation);
         }
 
-        private IEnumerable<KeyValuePair<string, string>> GetFirstOshRequestBody()
+        private IEnumerable<KeyValuePair<string, string>> GetFirstOshRequestBody(DateTime startTime, DateTime endTime)
         {
-            var body = GetBodyForOshRequest().ToList();
+            var body = GetBodyForOshRequest(startTime, endTime).ToList();
             body.Add(new KeyValuePair<string, string>("__VIEWSTATE", _sessionInfo.ViewState));
             body.Add(new KeyValuePair<string, string>("__VIEWSTATEGENERATOR", _sessionInfo.ViewStateGenerator));
             body.Add(new KeyValuePair<string, string>("__EVENTVALIDATION", _sessionInfo.EventValidation));
@@ -356,9 +363,9 @@ namespace DataProvider.Providers.Banks.Tefahot
             return body;
         }
 
-        private IEnumerable<KeyValuePair<string, string>> GetNextOshRequestBody()
+        private IEnumerable<KeyValuePair<string, string>> GetNextOshRequestBody(DateTime startTime, DateTime endTime)
         {
-            var body = GetBodyForOshRequest().ToList();
+            var body = GetBodyForOshRequest(startTime, endTime).ToList();
             body.Add(new KeyValuePair<string, string>("__VIEWSTATE", _sessionInfo.ViewState));
             body.Add(new KeyValuePair<string, string>("__VIEWSTATEGENERATOR", _sessionInfo.ViewStateGenerator));
             body.Add(new KeyValuePair<string, string>("__EVENTVALIDATION", _sessionInfo.EventValidation));
@@ -372,8 +379,15 @@ namespace DataProvider.Providers.Banks.Tefahot
             return body;
         }
 
-        private IEnumerable<KeyValuePair<string, string>> GetBodyForOshRequest()
+        private IEnumerable<KeyValuePair<string, string>> GetBodyForOshRequest(DateTime startTime, DateTime endTime)
         {
+            var start = $"{startTime.Year}, {startTime.Month}, {startTime.Day}";
+            var end = $"{endTime.Year}, {endTime.Month}, {endTime.Day}";
+            var start2 = $"{startTime.Year}-{startTime.Month:D2}-{startTime.Day:D2}";
+            var end2 = $"{endTime.Year}-{endTime.Month:D2}-{endTime.Day:D2}";
+            var start3 = $"{startTime.Day:D2}/{startTime.Month:D2}/{startTime.Year}";
+            var end3 = $"{endTime.Day:D2}/{endTime.Month:D2}/{endTime.Year}";
+
             IEnumerable<KeyValuePair<string, string>> body = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>("ctl00_radScriptManager_TSM", ";;Telerik.Web.UI, Version=2013.2.717.45, Culture=neutral, PublicKeyToken=121fae78165ba3d4:en-US:4401a8f1-5215-4b97-a426-3601ce0fa0ff:16e4e7cd:ed16cbdc:365331c3:7c926187:8674cba1:b7778d6c:c08e9f8a:59462f1:a51ee93e:58366029"),
@@ -383,18 +397,18 @@ namespace DataProvider.Providers.Banks.Tefahot
                 new KeyValuePair<string, string>("__LASTFOCUS", ""),
                 new KeyValuePair<string, string>("__VIEWSTATEENCRYPTED", ""),
                 new KeyValuePair<string, string>("ctl00$ContentPlaceHolder2$ddlRules", "0"),
-                new KeyValuePair<string, string>("ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker1ID$radDatePickerID", "2017-12-25"),
-                new KeyValuePair<string, string>("ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker1ID$radDatePickerID$dateInput", "25/12/2017"),
-                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_dateInput_ClientState", "{\"enabled\":true,\"emptyMessage\":\"\",\"validationText\":\"2017-12-25-00-00-00\",\"valueAsString\":\"2017-12-25-00-00-00\",\"minDateStr\":\"2017-12-25-00-00-00\",\"maxDateStr\":\"2018-12-25-00-00-00\",\"lastSetTextBoxValue\":\"25/12/2017\"}"),
-                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_calendar_SD", "[[2017,12,25]]"),
-                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_calendar_AD", "[[2017,12,25],[2018,12,25],[2017,12,25]]"),
-                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_ClientState", "{\"minDateStr\":\"2017-12-25-00-00-00\",\"maxDateStr\":\"2018-12-25-00-00-00\"}"),
-                new KeyValuePair<string, string>("ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker2ID$radDatePickerID", "2018-12-25"),
-                new KeyValuePair<string, string>("ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker2ID$radDatePickerID$dateInput", "25/12/2018"),
-                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_dateInput_ClientState", "{\"enabled\":true,\"emptyMessage\":\"\",\"validationText\":\"2018-12-25-00-00-00\",\"valueAsString\":\"2018-12-25-00-00-00\",\"minDateStr\":\"2017-12-25-00-00-00\",\"maxDateStr\":\"2018-12-25-00-00-00\",\"lastSetTextBoxValue\":\"25/12/2018\"}"),
-                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_calendar_SD", "[]"),
-                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_calendar_AD", "[[2017,12,25],[2018,12,25],[2018,12,25]]"),
-                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_ClientState", "{\"minDateStr\":\"2017-12-25-00-00-00\",\"maxDateStr\":\"2018-12-25-00-00-00\"}"),
+                new KeyValuePair<string, string>("ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker1ID$radDatePickerID", start2),
+                new KeyValuePair<string, string>("ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker1ID$radDatePickerID$dateInput", start3),
+                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_dateInput_ClientState", "{\"enabled\":true,\"emptyMessage\":\"\",\"validationText\":\"" + start2 + "-00-00-00\",\"valueAsString\":\"" + start2 + "-00-00-00\",\"minDateStr\":\"" + start2 + "-00-00-00\",\"maxDateStr\":\"" + end2 + "-00-00-00\",\"lastSetTextBoxValue\":\"" + start3 + "\"}"),
+                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_calendar_SD", "[[" + start +"]]"),
+                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_calendar_AD", "[[" + start +"],[" + end +"],[" + start +"]]"),
+                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_ClientState", "{\"minDateStr\":\"" + start2 + "-00-00-00\",\"maxDateStr\":\"" + end2 + "-00-00-00\"}"),
+                new KeyValuePair<string, string>("ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker2ID$radDatePickerID", end2),
+                new KeyValuePair<string, string>("ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker2ID$radDatePickerID$dateInput", end3),
+                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_dateInput_ClientState", "{\"enabled\":true,\"emptyMessage\":\"\",\"validationText\":\"" + end2 + "-00-00-00\",\"valueAsString\":\"" + end2 + "-00-00-00\",\"minDateStr\":\"" + start2 + "-00-00-00\",\"maxDateStr\":\"" + end2 + "-00-00-00\",\"lastSetTextBoxValue\":\"" + end3 + "\"}"),
+                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_calendar_SD", "[[" + end +"]]"),
+                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_calendar_AD", "[[" + start +"],[" + end +"],[" + end +"]]"),
+                new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_ClientState", "{\"minDateStr\":\"" + start2 + "-00-00-00\",\"maxDateStr\":\"" + end2 + "-00-00-00\"}"),
                 new KeyValuePair<string, string>("ctl00$ContentPlaceHolder2$ddlSug", "00"),
                 new KeyValuePair<string, string>("ctl00_ContentPlaceHolder2_uc428Grid_grvP428G2_ClientState", ""),
                 new KeyValuePair<string, string>("ctl00$hdnLinkToExternalSite", "קישור לאתר חיצוני")
@@ -568,32 +582,4 @@ namespace DataProvider.Providers.Banks.Tefahot
     }
 }
 
-//var body = String.Format(
-//            "ctl00_radScriptManager_TSM=&" +
-//            "ctl00_RadStyleSheetManager_TSSM=&" +
-//            "__EVENTTARGET=&" +
-//            "__EVENTARGUMENT=&" +
-//            "__LASTFOCUS=&" +
-//            "__VIEWSTATE=&" +
-//            "__VIEWSTATEGENERATOR={0}&" +
-//            "__VIEWSTATEENCRYPTED=&" +
-//            "__EVENTVALIDATION=&" +
-//            "ctl00$ContentPlaceHolder2$ddlRules=0&" +
-//            "ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker1ID$radDatePickerID=2017-12-25&" +
-//            "ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker1ID$radDatePickerID$dateInput=25%2F12%2F2017&" +
-//            "ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_dateInput_ClientState=&" +
-//            "ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_calendar_SD=%5B%5B2017%2C12%2C25%5D%5D&" +
-//            "ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_calendar_AD=%5B%5B2017%2C12%2C25%5D%2C%5B2018%2C12%2C25%5D%2C%5B2017%2C12%2C1%5D%5D&" +
-//            "ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker1ID_radDatePickerID_ClientState=2018-12-25&" +
-//            "ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker2ID$radDatePickerID=25%2F12%2F2018&" +
-//            "ctl00$ContentPlaceHolder2$SkyDRP$SkyDatePicker2ID$radDatePickerID$dateInput=&" +
-//            "ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_dateInput_ClientState=&" +
-//            "ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_calendar_SD=&" +
-//            "ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_calendar_AD=&" +
-//            "ctl00_ContentPlaceHolder2_SkyDRP_SkyDatePicker2ID_radDatePickerID_ClientState=&" +
-//            "ctl00$ContentPlaceHolder2$btShow=הצג&" +
-//            "ctl00$ContentPlaceHolder2$ddlSug=00&",
-//            "ctl00_ContentPlaceHolder2_uc428Grid_grvP428G2_ClientState=&",
-//            "ctl00$hdnLinkToExternalSite=&",
-//            _sessionInfo.ViewStateGenerator);
 

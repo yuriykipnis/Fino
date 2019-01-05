@@ -41,7 +41,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isBankAccountsLoading = true;
     this.isCreditAccountsLoading = true;
-    this.accountControlService.changeLoadingState(true);
+    this.accountControlService.changeBankLoadingState(true);
+    this.accountControlService.changeCreditLoadingState(true);
 
     this.userProfileSubscription = this.userProfileService.userProfile$.subscribe(up => {
       if (!up || !up.Id) {
@@ -54,22 +55,22 @@ export class AccountsComponent implements OnInit, OnDestroy {
       this.bankService.getAccounts$(up.Id)
         .subscribe(res => {
             this.store.dispatch(new fromBankActions.FetchBankAccounts(res));
-            this.accountControlService.changeLoadingState(false);
+            this.accountControlService.changeBankLoadingState(false);
           },
           err => {
             this.isBankAccountsLoading = false;
-            this.accountControlService.changeLoadingState(false);
+            this.accountControlService.changeBankLoadingState(false);
           });
 
       this.creditService.getAccounts$(up.Id)
         .subscribe(res => {
             this.store.dispatch(new fromCreditActions.FetchCreditAccounts(res));
             this.isCreditAccountsLoading = false;
-            //this.accountControlService.changeLoadingState(false);
+            this.accountControlService.changeCreditLoadingState(false);
           },
           err => {
             this.isCreditAccountsLoading = false;
-            //this.accountControlService.changeLoadingState(false);
+            this.accountControlService.changeCreditLoadingState(false);
           });
     });
   }

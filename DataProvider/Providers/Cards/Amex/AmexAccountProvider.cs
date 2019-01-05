@@ -137,7 +137,7 @@ namespace DataProvider.Providers.Cards.Amex
                             Id = voucherNumberRatz,
                             PurchaseDate = purchaseDate,
                             PaymentDate = purchaseDate.AddMonths(paymentDate),
-                            Description = string.IsNullOrEmpty(creditInfo) ? supplierName : string.Format("{0} - {1}", supplierName, creditInfo),
+                            Description = string.IsNullOrEmpty(creditInfo) ? supplierName : $"{supplierName} - {creditInfo}",
                             ProviderName = _providerName,
                             CurrentBalance = Decimal.Zero,
                             Amount = paymentSum > 0 ? paymentSum : -1 * paymentSum,
@@ -174,7 +174,14 @@ namespace DataProvider.Providers.Cards.Amex
                 }
             }
 
+            FilterPullTransactions(result);
+
             return result;
+        }
+
+        private static void FilterPullTransactions(List<Transaction> result)
+        {
+            result.RemoveAll(t => t.Description.Equals("משיכת מזומנים"));
         }
 
         private IList<CardListInfo> GetAllCards()
@@ -182,9 +189,16 @@ namespace DataProvider.Providers.Cards.Amex
             var listDetails = _api.GetCards();
 
             var cards = new List<CardListInfo>();
-            cards.AddRange(listDetails.Table1);
-            cards.AddRange(listDetails.Table2);
+            if (listDetails.Table1 != null)
+            {
+                cards.AddRange(listDetails.Table1);
+            }
 
+            if (listDetails.Table2 != null)
+            {
+                cards.AddRange(listDetails.Table2);
+            }
+            
             return cards;
         }
         

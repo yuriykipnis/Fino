@@ -17,5 +17,6 @@ namespace GoldMountainApi.Services
         Task<IEnumerable<BankAccount>> GetBankAccountsForUserId(string userId);
         Task<IEnumerable<BankAccount>> GetBankAccounts(IEnumerable<Guid> accounts);
         Task<IEnumerable<CreditAccount>> GetCreditAccountsForUserId(string userId);
+
     }
 }

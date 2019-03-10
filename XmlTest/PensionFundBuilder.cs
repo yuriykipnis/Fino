@@ -10,9 +10,9 @@ namespace MaslekaReader
 {
     public class PensionFundBuilder
     {
-        public List<PensionFundAccount> CreateAccounts(IEnumerable<Mimshak> data, String userId)
+        public List<PensionFundAccountDoc> CreateAccounts(IEnumerable<Mimshak> data, String userId)
         {
-            List<PensionFundAccount> accounts = new List<PensionFundAccount>();
+            List<PensionFundAccountDoc> accounts = new List<PensionFundAccountDoc>();
 
             foreach (var item in data)
             {
@@ -29,9 +29,9 @@ namespace MaslekaReader
             return accounts;
         }
 
-        private List<PensionFundAccount> CreateAccounts(String userId, Mimshak item, Mutzar product)
+        private List<PensionFundAccountDoc> CreateAccounts(String userId, Mimshak item, Mutzar product)
         {
-            List<PensionFundAccount> accounts = new List<PensionFundAccount>();
+            List<PensionFundAccountDoc> accounts = new List<PensionFundAccountDoc>();
 
             if (product.NetuneiMutzar?.SugMutzar == 2 && product?.HeshbonotOPolisot != null)
             {
@@ -48,9 +48,9 @@ namespace MaslekaReader
             return accounts;
         }
 
-        private PensionFundAccount CreateAccount(String userId, Mimshak item, Mutzar product, HeshbonOPolisa policy)
+        private PensionFundAccountDoc CreateAccount(String userId, Mimshak item, Mutzar product, HeshbonOPolisa policy)
         {
-            PensionFundAccount account;
+            PensionFundAccountDoc account;
             try
             {
                 Double totalSavings = 0;
@@ -68,7 +68,7 @@ namespace MaslekaReader
                 var employeerId = policy.PirteiTaktziv.PirteiOved.MprMaasikBeYatzran;
                 var employerIdentity = product.NetuneiMutzar.YeshutMaasik.Where(ym => ym.MprMaasikBeYatzran.Equals(employeerId)).FirstOrDefault();
                 
-                account = new PensionFundAccount
+                account = new PensionFundAccountDoc
                 {
                     UserId = userId,
                     ProviderName = item.YeshutYatzran?.ShemYatzran,

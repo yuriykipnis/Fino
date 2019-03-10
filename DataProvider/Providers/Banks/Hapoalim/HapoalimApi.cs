@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using DataProvider.Providers.Banks.Hapoalim.Dto;
+using DataProvider.Providers.Exceptions;
 using DataProvider.Providers.Models;
 using GoldMountainShared.Storage.Documents;
 using Newtonsoft.Json;
@@ -12,7 +14,7 @@ using Mortgage = DataProvider.Providers.Models.Mortgage;
 
 namespace DataProvider.Providers.Banks.Hapoalim
 {
-    public class HapoalimApi : IHapoalimApi
+    public class HapoalimApi : HttpScrapper, IHapoalimApi
     {
         #region Constants
         private const string DefaultOrganisation = "106402333";
@@ -22,83 +24,94 @@ namespace DataProvider.Providers.Banks.Hapoalim
         private const string Jsessionid = "JSESSIONID";
         private const string Token = "token";
         private const string Lbinfologin = "lbinfologin";
-        private const string SubDomain = "/ServerServices";
+        private const string SubDomain = "/ssb";
+        //private const string SubDomain = "/ServerServices";
         #endregion
 
         #region Fields
         private HapoalimSessionInfo _sessionInfo;
         #endregion
 
-        public HapoalimApi(Provider providerDescriptor)
+        public HapoalimApi(IDictionary<string, string> credentials)
         {
-            if (providerDescriptor == null || providerDescriptor.Credentials.Count == 0)
+            if (credentials == null || !credentials.Any() || credentials.Count != 2)
             {
-                throw new ArgumentNullException(nameof(providerDescriptor));
+                throw new ArgumentException("Credentials for access to Bank Hapoalim are incorrect.");
             }
 
-            var crentialValues = providerDescriptor.Credentials.Values.ToArray();
+            var crentialValues = credentials.Values.ToArray();
             var userId = crentialValues[0];
-            var userCredentials = crentialValues[1];
-            
-            var initInfo = Init(userId);
-            var result = Verify(userId, userCredentials);
-           
-            GetLandpage();
+            var password = crentialValues[1];
+
+            try
+            {
+                var initInfo = Init(userId);
+                var result = Verify(userId, password);
+
+                GetLandpage();
+            }
+            catch (Exception exp)
+            {
+                throw new LoginException("Bank Hapoalim", userId) { Error = exp.Message };
+            }
         }
 
-        public IEnumerable<HapoalimAccountResponse> GetAccountsData()
+        public IEnumerable<HapoalimAccountResponse> GetAccounts()
         {
             var baseAddress = new Uri(LoginDomain);
-            var cookieContainer = new CookieContainer();
-            cookieContainer.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
-            cookieContainer.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
-            cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
-            cookieContainer.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
-            cookieContainer.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
+            var cookies = new CookieContainer();
+            cookies.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
+            cookies.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
+            cookies.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
+            cookies.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
+            cookies.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
             var api = SubDomain + "/general/accounts";
+            
+            var callResult = CallGetRequest(baseAddress, api, cookies, null);
 
-            IList<HapoalimAccountResponse> content = null;
-            var accountsResponse = CallGetRequest(baseAddress, api, cookieContainer);
-            content = JsonConvert.DeserializeObject<IList<HapoalimAccountResponse>>(accountsResponse);
-            return content;
+            IList<HapoalimAccountResponse> result = null;
+            result = JsonConvert.DeserializeObject<IList<HapoalimAccountResponse>>(callResult);
+            return result;
         }
 
-        public HapoalimTransactionsResponse GetTransactions(HapoalimAccountResponse account, DateTime startTime, DateTime endTime)
+        public IEnumerable<HapoalimTransactionResponse> GetTransactions(BankAccount account, DateTime startTime, DateTime endTime)
         {
-            var date1 = string.Format("{0}{1}{2}", startTime.Year, startTime.Month.ToString("00"), startTime.Day.ToString("00"));
-            var date2 = string.Format("{0}{1}{2}", endTime.Year, endTime.Month.ToString("00"), endTime.Day.ToString("00"));
+            var date1 = $"{startTime.Year}{startTime.Month:00}{startTime.Day:00}";
+            var date2 = $"{endTime.Year}{endTime.Month:00}{endTime.Day:00}";
 
             var baseAddress = new Uri(LoginDomain);
-            var cookieContainer = new CookieContainer();
-            cookieContainer.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
-            cookieContainer.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
-            cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
-            cookieContainer.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
-            cookieContainer.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
-            var api = SubDomain + $@"/current-account/transactions?accountId={account.BankNumber}-{account.BranchNumber}-{account.AccountNumber}&retrievalEndDate={date2}&retrievalStartDate={date1}";
+            var cookies = new CookieContainer();
+            cookies.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
+            cookies.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
+            cookies.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
+            cookies.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
+            cookies.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
+            var api = SubDomain + $"/current-account/transactions?accountId=" +
+                      $"{account.BankNumber}-{account.BranchNumber}-{account.AccountNumber}" +
+                      $"&retrievalEndDate={date2}&retrievalStartDate={date1}";
 
-            var accountsResponse = CallGetRequest(baseAddress, api, cookieContainer);
+            var accountsResponse = CallGetRequest(baseAddress, api, cookies, null);
             if (string.IsNullOrEmpty(accountsResponse)) 
             {
-                return new HapoalimTransactionsResponse();
+                return new List<HapoalimTransactionResponse>();
             }
 
             var content = JsonConvert.DeserializeObject<HapoalimTransactionsResponse>(accountsResponse);
-            return content;
+            return content.Transactions;
         }
-
-        public HapoalimMortgagesResponse GetMortgages(HapoalimAccountResponse account)
+        
+        public HapoalimMortgagesResponse GetMortgages(BankAccount account)
         {
             var baseAddress = new Uri(LoginDomain);
-            var cookieContainer = new CookieContainer();
-            cookieContainer.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
-            cookieContainer.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
-            cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
-            cookieContainer.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
-            cookieContainer.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
+            var cookies = new CookieContainer();
+            cookies.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
+            cookies.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
+            cookies.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
+            cookies.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
+            cookies.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
             var api = SubDomain + $@"/credit-and-mortgage/mortgages?accountId={account.BankNumber}-{account.BranchNumber}-{account.AccountNumber}";
 
-            var accountsResponse = CallGetRequest(baseAddress, api, cookieContainer);
+            var accountsResponse = CallGetRequest(baseAddress, api, cookies, null);
             if (string.IsNullOrEmpty(accountsResponse))
             {
                 return new HapoalimMortgagesResponse();
@@ -108,18 +121,18 @@ namespace DataProvider.Providers.Banks.Hapoalim
             return content;
         }
 
-        public HapoalimMortgageAssetResponse GetAssetForMortgage(HapoalimAccountResponse account, string loanId)
+        public HapoalimMortgageAssetResponse GetAssetForMortgage(BankAccount account, string loanId)
         {
             var baseAddress = new Uri(LoginDomain);
-            var cookieContainer = new CookieContainer();
-            cookieContainer.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
-            cookieContainer.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
-            cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
-            cookieContainer.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
-            cookieContainer.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
+            var cookies = new CookieContainer();
+            cookies.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
+            cookies.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
+            cookies.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
+            cookies.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
+            cookies.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
             var api = SubDomain + $@"/credit-and-mortgage/mortgages/{loanId}?accountId={account.BankNumber}-{account.BranchNumber}-{account.AccountNumber}&accountNumber={account.AccountNumber}&bankNumber={account.BankNumber}&branchNumber={account.BranchNumber}";
 
-            var accountsResponse = CallGetRequest(baseAddress, api, cookieContainer);
+            var accountsResponse = CallGetRequest(baseAddress, api, cookies, null);
             if (string.IsNullOrEmpty(accountsResponse))
             {
                 return new HapoalimMortgageAssetResponse();
@@ -129,18 +142,18 @@ namespace DataProvider.Providers.Banks.Hapoalim
             return content;
         }
 
-        public HapoalimLoansResponse GetLoans(HapoalimAccountResponse account)
+        public HapoalimLoansResponse GetLoans(BankAccount account)
         {
             var baseAddress = new Uri(LoginDomain);
-            var cookieContainer = new CookieContainer();
-            cookieContainer.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
-            cookieContainer.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
-            cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
-            cookieContainer.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
-            cookieContainer.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
+            var cookies = new CookieContainer();
+            cookies.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
+            cookies.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
+            cookies.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
+            cookies.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
+            cookies.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
             var api = SubDomain + $@"/credit-and-mortgage/loans?accountId={account.BankNumber}-{account.BranchNumber}-{account.AccountNumber}";
 
-            var accountsResponse = CallGetRequest(baseAddress, api, cookieContainer);
+            var accountsResponse = CallGetRequest(baseAddress, api, cookies, null);
             if (string.IsNullOrEmpty(accountsResponse))
             {
                 return new HapoalimLoansResponse();
@@ -150,18 +163,18 @@ namespace DataProvider.Providers.Banks.Hapoalim
             return content;
         }
 
-        public HapoalimLoanDetailsResponse GetDetailsForLoan(HapoalimAccountResponse account, HapoalimLoansResponse.LoanData loan)
+        public HapoalimLoanDetailsResponse GetDetailsForLoan(BankAccount account, HapoalimLoansResponse.LoanData loan)
         {
             var baseAddress = new Uri(LoginDomain);
-            var cookieContainer = new CookieContainer();
-            cookieContainer.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
-            cookieContainer.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
-            cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
-            cookieContainer.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
-            cookieContainer.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
+            var cookies = new CookieContainer();
+            cookies.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
+            cookies.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
+            cookies.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
+            cookies.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
+            cookies.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
             var api = SubDomain + $@"/credit-and-mortgage/loans/{loan.CreditSerialNumber}?accountId={account.BankNumber}-{account.BranchNumber}-{account.AccountNumber}&unitedCreditTypeCode={loan.UnitedCreditTypeCode}";
 
-            var accountsResponse = CallGetRequest(baseAddress, api, cookieContainer);
+            var accountsResponse = CallGetRequest(baseAddress, api, cookies, null);
             if (string.IsNullOrEmpty(accountsResponse))
             {
                 return new HapoalimLoanDetailsResponse();
@@ -171,42 +184,43 @@ namespace DataProvider.Providers.Banks.Hapoalim
             return content;
         }
 
-        public HapoalimBalanceResponse GetBalance(HapoalimAccountResponse account)
+        public Decimal GetBalance(BankAccount account)
         {
             var baseAddress = new Uri(LoginDomain);
-            var cookieContainer = new CookieContainer();
-            cookieContainer.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
-            cookieContainer.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
-            cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
-            cookieContainer.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
-            cookieContainer.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
+            var cookies = new CookieContainer();
+            cookies.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
+            cookies.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
+            cookies.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
+            cookies.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
+            cookies.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
 
-            var api = string.Format(SubDomain + @"/current-account/composite/balanceAndCreditLimit?accountId={0}-{1}-{2}",
-                account.BankNumber, account.BranchNumber, account.AccountNumber);
+            var api = SubDomain + $"/current-account/composite/balanceAndCreditLimit?accountId=" +
+                      $"{account.BankNumber}-{account.BranchNumber}-{account.AccountNumber}";
 
-            var balanceResponse = CallGetRequest(baseAddress, api, cookieContainer);
+            var balanceResponse = CallGetRequest(baseAddress, api, cookies, null);
             var content = JsonConvert.DeserializeObject<HapoalimBalanceResponse>(balanceResponse);
-            return content;
+            return content?.CurrentBalance ?? 0;
         }
 
         #region Private Methods
-        private InitLoginResponse Init(String userId)
+        private HapoalimInitLoginResponse Init(String userId)
         {
             var baseAddress = new Uri(LoginDomain);
-            IEnumerable<KeyValuePair<string, string>> content = new List<KeyValuePair<string, string>>
+            IEnumerable<KeyValuePair<string, string>> body = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>("identifier", userId),
                 new KeyValuePair<string, string>("organization", DefaultOrganisation)
             };
 
-            var result = CallPostRequest<InitLoginResponse>(baseAddress, "/authenticate/init", content);
+            var content = new FormUrlEncodedContent(body);
+            var result = CallPostRequest<HapoalimInitLoginResponse>(baseAddress, "/authenticate/init", content, null, null);
             return result;
         }
 
-        private VerifyResponse Verify(String userId, String userCredentials)
+        private HapoalimVerifyResponse Verify(String userId, String userCredentials)
         {
             var baseAddress = new Uri(LoginDomain);
-            IEnumerable<KeyValuePair<string, string>> content = new List<KeyValuePair<string, string>>
+            IEnumerable<KeyValuePair<string, string>> body = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>("identifier", userId),
                 new KeyValuePair<string, string>("Language", ""),
@@ -221,7 +235,8 @@ namespace DataProvider.Providers.Banks.Hapoalim
                 new KeyValuePair<string, string>("state", ""),
             };
 
-            var result = CallPostRequest<VerifyResponse>(baseAddress, "/authenticate/verify", content);
+            var content = new FormUrlEncodedContent(body);
+            var result = CallPostRequest<HapoalimVerifyResponse>(baseAddress, "/authenticate/verify", content, null, null);
             if (result == null || result.Error != null)
             {
                 throw new FieldAccessException(result?.Error.ErrorDescription);
@@ -232,94 +247,32 @@ namespace DataProvider.Providers.Banks.Hapoalim
         private void GetLandpage()
         {
             var baseAddress = new Uri(LoginDomain);
-            var cookieContainer = new CookieContainer();
-            cookieContainer.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
-            cookieContainer.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
-            cookieContainer.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
+            var cookies = new CookieContainer();
+            cookies.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
+            cookies.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
+            cookies.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
             var api = "/AUTHENTICATE/LANDPAGE?flow=AUTHENTICATE&state=LANDPAGE&reqName=MainFrameSet";
 
-            string result = CallGetRequest(baseAddress, api, cookieContainer);
+            string result = CallGetRequest(baseAddress, api, cookies, null);
         }
 
-        private void Exit()
+        protected override void Exit()
         {
             var baseAddress = new Uri(LoginDomain);
-            var cookieContainer = new CookieContainer();
-            cookieContainer.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
-            cookieContainer.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
-            cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
-            cookieContainer.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
-            cookieContainer.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
+            var cookies = new CookieContainer();
+            cookies.Add(baseAddress, new Cookie(ActiveUser, _sessionInfo.ActiveUser));
+            cookies.Add(baseAddress, new Cookie(Smsession, _sessionInfo.Smsession));
+            cookies.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
+            cookies.Add(baseAddress, new Cookie(Token, _sessionInfo.Token));
+            cookies.Add(baseAddress, new Cookie(Lbinfologin, _sessionInfo.Lbinfologin));
             var api = "/cgi-bin/poalwwwc?reqName=Logoff";
 
-            var response = CallGetRequest(baseAddress, api, cookieContainer);
+            var response = CallGetRequest(baseAddress, api, cookies, null);
         }
 
-        private string CallGetRequest(Uri baseAddress, string api, CookieContainer cookieContainer)
-        {
-            //WebProxy proxy = WebProxy.GetDefaultProxy();
-            HttpResponseMessage response;
-            using (var httpClientHandler = new HttpClientHandler
-            {
-                CookieContainer = cookieContainer,
-                //Proxy = proxy,
-                //UseProxy = true
-            })
-            {
-                httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
-                using (var client = new HttpClient(httpClientHandler) { BaseAddress = baseAddress })
-                {
-                    
-                    response = client.GetAsync(api).Result;
-                }
-            }
+        #endregion
 
-            if (!response.IsSuccessStatusCode)
-            {
-                return String.Empty;
-            }
-
-            ExtractCookies(response);
-            return response.Content.ReadAsStringAsync().Result;
-        }
-
-        private T CallPostRequest<T>(Uri baseAddress, string api, IEnumerable<KeyValuePair<string, string>> content)
-        {
-            //WebProxy proxy = WebProxy.GetDefaultProxy();
-            HttpResponseMessage response;
-            using (var httpClientHandler = new HttpClientHandler
-            {
-                //Proxy = proxy,
-                //UseProxy = true
-            })
-            {
-                httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
-                using (var client = new HttpClient(httpClientHandler) { BaseAddress = baseAddress })
-                {
-                    response = client.PostAsync(api, new FormUrlEncodedContent(content)).Result;
-                }
-            }
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return default(T);
-            }
-
-            ExtractCookies(response);
-            T result;
-            try
-            {
-                result = JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return default(T);
-            }
-            return result;
-        }
-
-        private void ExtractCookies(HttpResponseMessage response)
+        protected override void ExtractCookies(HttpResponseMessage response)
         {
             if (_sessionInfo == null)
             {
@@ -362,18 +315,10 @@ namespace DataProvider.Providers.Banks.Hapoalim
                 }
             }
         }
-        #endregion
 
-        #region IDisposable
-        public void Dispose()
-        {
-            Task.Factory.StartNew(Exit).ContinueWith(ErrorHandler, TaskContinuationOptions.OnlyOnFaulted);
-        }
-
-        private void ErrorHandler(Task task, object context)
+        protected override void ExitErrorHandler(Task task, object context)
         {
             //throw new NotImplementedException();
         }
-        #endregion
     }
 }

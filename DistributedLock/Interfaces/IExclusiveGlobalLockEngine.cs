@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Threading.Tasks;
 
-namespace DistibutedLocking.Interfaces
+namespace DistributedLock.Interfaces
 {
     public interface IExclusiveGlobalLockEngine
     {

@@ -8,7 +8,6 @@ using GoldMountainApi.Controllers.Helper;
 using GoldMountainApi.Models;
 using GoldMountainApi.Services;
 using GoldMountainShared;
-using GoldMountainShared.Models.Bank;
 using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -22,10 +21,10 @@ namespace GoldMountainApi.Controllers
     public class OverviewController : Controller
     {
         private readonly IBankAccountRepository _bankAccountRepository;
-        private readonly ICreditAccountRepository _creditAccountRepository;
+        private readonly ICreditCardRepository _creditAccountRepository;
         private readonly IValidationHelper _validationHelper;
 
-        public OverviewController(IBankAccountRepository bankAccountRepository, ICreditAccountRepository creditAccountRepository,
+        public OverviewController(IBankAccountRepository bankAccountRepository, ICreditCardRepository creditAccountRepository,
             IValidationHelper validationHelper)
         {
             _bankAccountRepository = bankAccountRepository;
@@ -75,17 +74,17 @@ namespace GoldMountainApi.Controllers
 
             }
 
-            var creditAccounts = await _creditAccountRepository.GetAccountsByUserId(userId);
-            foreach (var account in creditAccounts)
+            var creditCards = await _creditAccountRepository.GetCardsByUserId(userId);
+            foreach (var account in creditCards)
             {
                 GenerateNetWorthFromCredit(account, incomes, expenses);
-                netWorth += incomes[account.CardNumber] - expenses[account.CardNumber];
+                netWorth += incomes[account.LastDigits] - expenses[account.LastDigits];
 
                 institutions.Add(new InstitutionOverviewDto
                 {
-                    Label = account.CardNumber,
+                    Label = account.LastDigits,
                     ProviderName = account.ProviderName,
-                    Balance = incomes[account.CardNumber] - expenses[account.CardNumber]
+                    Balance = incomes[account.LastDigits] - expenses[account.LastDigits]
                 });
             }
             
@@ -106,7 +105,7 @@ namespace GoldMountainApi.Controllers
             };
         }
 
-        private int GenerateMortgageFromBank(BankAccount account, LoanOverviewDto mortgageOverview)
+        private int GenerateMortgageFromBank(BankAccountDoc account, LoanOverviewDto mortgageOverview)
         {
             decimal principal = 0;
             decimal interest = 0;
@@ -126,7 +125,7 @@ namespace GoldMountainApi.Controllers
             return account.Mortgages.Count();
         }
 
-        private int GenerateLoanFromBank(BankAccount account, LoanOverviewDto loanOverview)
+        private int GenerateLoanFromBank(BankAccountDoc account, LoanOverviewDto loanOverview)
         {
             decimal principal = 0;
             decimal interest = 0;
@@ -143,15 +142,15 @@ namespace GoldMountainApi.Controllers
             return account.Loans.Count();
         }
 
-        private void GenerateNetWorthFromCredit(CreditAccount account, Dictionary<string, Decimal> incomes, Dictionary<string, Decimal> expenses)
+        private void GenerateNetWorthFromCredit(CreditCardDoc account, Dictionary<string, Decimal> incomes, Dictionary<string, Decimal> expenses)
         {
-            incomes.Add(account.CardNumber, 0);
-            expenses.Add(account.CardNumber, 0);
+            incomes.Add(account.LastDigits, 0);
+            expenses.Add(account.LastDigits, 0);
             foreach (var transaction in account.Transactions.Where(t => t.PaymentDate.IsInThisMonth()))
             {
                 if (transaction.Type == TransactionType.Income)
                 {
-                    incomes[account.CardNumber] += Math.Abs(transaction.Amount);
+                    incomes[account.LastDigits] += Math.Abs(transaction.Amount);
                 }
                 else if (transaction.Type == TransactionType.Expense)
                 {
@@ -160,7 +159,7 @@ namespace GoldMountainApi.Controllers
             }
         }
 
-        private void GenerateCashFlowFromBank(BankAccount account, Dictionary<string, Decimal> cashFlowIncomes, Dictionary<string, Decimal> cashFlowExpenses)
+        private void GenerateCashFlowFromBank(BankAccountDoc account, Dictionary<string, Decimal> cashFlowIncomes, Dictionary<string, Decimal> cashFlowExpenses)
         {
             foreach (var transaction in account.Transactions.Where(t => t.PaymentDate.IsInLast6Months()))
             {
@@ -176,7 +175,7 @@ namespace GoldMountainApi.Controllers
             }
         }
 
-        private void GenerateNetWorthFromBank(BankAccount account, Dictionary<string, Decimal> incomes, Dictionary<string, Decimal> expenses)
+        private void GenerateNetWorthFromBank(BankAccountDoc account, Dictionary<string, Decimal> incomes, Dictionary<string, Decimal> expenses)
         {
             incomes.Add(account.Label, 0);
             expenses.Add(account.Label, 0);

@@ -10,9 +10,9 @@ namespace MaslekaReader
 {
     public class MortgageInsurBuilder
     {
-        public List<MortgageInsurAccount> CreateAccounts(IEnumerable<Mimshak> data, String userId)
+        public List<MortgageInsurAccountDoc> CreateAccounts(IEnumerable<Mimshak> data, String userId)
         {
-            List<MortgageInsurAccount> accounts = new List<MortgageInsurAccount>();
+            List<MortgageInsurAccountDoc> accounts = new List<MortgageInsurAccountDoc>();
 
             foreach (var item in data)
             {
@@ -29,9 +29,9 @@ namespace MaslekaReader
             return accounts;
         }
 
-        private List<MortgageInsurAccount> CreateAccounts(String userId, Mimshak item, Mutzar product)
+        private List<MortgageInsurAccountDoc> CreateAccounts(String userId, Mimshak item, Mutzar product)
         {
-            List<MortgageInsurAccount> accounts = new List<MortgageInsurAccount>();
+            List<MortgageInsurAccountDoc> accounts = new List<MortgageInsurAccountDoc>();
 
             if (product.NetuneiMutzar?.SugMutzar == 7 && product?.HeshbonotOPolisot != null)
             {
@@ -48,9 +48,9 @@ namespace MaslekaReader
             return accounts;
         }
 
-        private MortgageInsurAccount CreateAccount(String userId, Mimshak item, Mutzar product, HeshbonOPolisa policy)
+        private MortgageInsurAccountDoc CreateAccount(String userId, Mimshak item, Mutzar product, HeshbonOPolisa policy)
         {
-            MortgageInsurAccount account;
+            MortgageInsurAccountDoc account;
             try
             {
                 var coverages = new List<Coverage>();
@@ -68,7 +68,7 @@ namespace MaslekaReader
                     }
                 }
 
-                account = new MortgageInsurAccount
+                account = new MortgageInsurAccountDoc
                 {
                     UserId = userId,
                     ProviderName = item.YeshutYatzran?.ShemYatzran,

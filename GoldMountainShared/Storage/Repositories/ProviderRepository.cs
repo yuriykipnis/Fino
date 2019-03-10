@@ -14,14 +14,14 @@ namespace GoldMountainShared.Storage.Repositories
 {
     public class ProviderRepository : IProviderRepository
     {
-        private readonly DbContext _context = null;
+        private readonly DbContext _context;
 
         public ProviderRepository(IOptions<DbSettings> settings)
         {
             _context = new DbContext(settings);
         }
 
-        public async Task<Provider> GetProvider(Guid id)
+        public async Task<ProviderDoc> GetProvider(String id)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<IEnumerable<Provider>> GetProviders()
+        public async Task<IEnumerable<ProviderDoc>> GetProviders()
         {
             try
             {
@@ -47,7 +47,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<IEnumerable<Provider>> GetProviders(String userId)
+        public async Task<IEnumerable<ProviderDoc>> GetProviders(String userId)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<IEnumerable<Provider>> GetProviders(Expression<Func<Provider, bool>> filter)
+        public async Task<IEnumerable<ProviderDoc>> GetProviders(Expression<Func<ProviderDoc, bool>> filter)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddProvider(Provider provider)
+        public async Task<String> AddProvider(ProviderDoc provider)
         {
             try
             {
@@ -83,15 +83,16 @@ namespace GoldMountainShared.Storage.Repositories
                 // log or manage the exception
                 throw ex;
             }
+
+            return provider.Id;
         }
 
-        public async Task<bool> RemoveProvider(String userId, String name)
+        public async Task<bool> RemoveProvider(String id)
         {
             try
             {
                 DeleteResult actionResult
-                    = await _context.Providers.DeleteOneAsync(Builders<Provider>.Filter.And(
-                        Builders<Provider>.Filter.Eq("UserId", userId), Builders<Provider>.Filter.Eq("ProviderName", name)));
+                    = await _context.Providers.DeleteOneAsync(Builders<ProviderDoc>.Filter.Eq("Id", id));
 
                 return actionResult.IsAcknowledged && actionResult.DeletedCount > 0;
             }
@@ -102,23 +103,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<bool> RemoveProviders(String userId)
-        {
-            try
-            {
-                DeleteResult actionResult
-                    = await _context.Providers.DeleteOneAsync(Builders<Provider>.Filter.Eq("UserId", userId));
-
-                return actionResult.IsAcknowledged && actionResult.DeletedCount > 0;
-            }
-            catch (Exception ex)
-            {
-                // log or manage the exception
-                throw ex;
-            }
-        }
-
-        public async Task<bool> UpdateProvider(Guid id, Provider provider)
+        public async Task<bool> UpdateProvider(String id, ProviderDoc provider)
         {
             try
             {
@@ -151,7 +136,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<Provider> Find(Provider provider)
+        public async Task<ProviderDoc> Find(ProviderDoc provider)
         {
             try
             {
@@ -173,7 +158,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<Provider> FindProviderByCriteria(Expression<Func<Provider, bool>> filter)
+        public async Task<ProviderDoc> FindProviderByCriteria(Expression<Func<ProviderDoc, bool>> filter)
         {
             try
             {

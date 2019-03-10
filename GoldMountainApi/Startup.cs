@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 using GoldMountainApi.Controllers.Helper;
 using GoldMountainApi.Models;
 using GoldMountainApi.Services;
-using GoldMountainShared.Models;
-using GoldMountainShared.Models.Bank;
-using GoldMountainShared.Models.Credit;
-using GoldMountainShared.Models.Insur;
-using GoldMountainShared.Models.Provider;
-using GoldMountainShared.Models.Shared;
+using GoldMountainShared.Dto.Bank;
+using GoldMountainShared.Dto.Credit;
+using GoldMountainShared.Dto.Insur;
+using GoldMountainShared.Dto.Shared;
 using GoldMountainShared.Storage;
 using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
@@ -87,7 +85,7 @@ namespace GoldMountainApi
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IBankAccountRepository, BankAccountRepository>();
-            services.AddTransient<ICreditAccountRepository, CreditAccountRepository>();
+            services.AddTransient<ICreditCardRepository, CreditCardRepository>();
             services.AddTransient<IInsurAccountRepository, InsurAccountRepository>();
             services.AddTransient<ILifeInsurAccountRepository, LifeInsurAccountRepository>();
             services.AddTransient<IEfundAccountRepository, EfundAccountRepository>();
@@ -131,26 +129,26 @@ namespace GoldMountainApi
                 cfg.CreateMap<Guid?, string>().ConvertUsing(g => g?.ToString("N"));
                 cfg.CreateMap<Guid, string>().ConvertUsing(g => g.ToString("N"));
 
-                cfg.CreateMap<BankAccountCreatingDto, BankAccount>()
+                cfg.CreateMap<BankAccountCreatingDto, BankAccountDoc>()
                     .ForMember(dest => dest.Id, _ => Guid.NewGuid());
 
-                cfg.CreateMap<Transaction, TransactionDto>();
-                cfg.CreateMap<TransactionDto, Transaction>();
+                cfg.CreateMap<TransactionDoc, TransactionDto>();
+                cfg.CreateMap<TransactionDto, TransactionDoc>();
 
-                cfg.CreateMap<Mortgage, MortgageDto>();
+                cfg.CreateMap<MortgageDoc, MortgageDto>();
 
-                cfg.CreateMap<BankAccount, BankAccountDto>();
-                cfg.CreateMap<CreditAccount, CreditAccountDto>();
-                cfg.CreateMap<BankAccountDto, BankAccount>();
-                cfg.CreateMap<CreditAccountDto, CreditAccount>();
+                cfg.CreateMap<BankAccountDoc, BankAccountDto>();
+                cfg.CreateMap<CreditCardDoc, CreditCardDto>();
+                cfg.CreateMap<BankAccountDto, BankAccountDoc>();
+                cfg.CreateMap<CreditCardDto, CreditCardDoc>();
 
-                cfg.CreateMap<ContactMessageDto, ContactMessage>();
+                cfg.CreateMap<ContactMessageDto, ContactMessageDoc>();
 
-                cfg.CreateMap<SeInsurAccount, SeInsurAccountDto>();
-                cfg.CreateMap<ProvidentFundAccount, ProvidentFundAccountDto>();
+                cfg.CreateMap<SeInsurAccountDoc, SeInsurAccountDto>();
+                cfg.CreateMap<ProvidentFundAccountDoc, ProvidentFundAccountDto>();
                 cfg.CreateMap<StudyFundAccount, StudyFundAccountDto>();
-                cfg.CreateMap<PensionFundAccount, PensionFundAccountDto>();
-                cfg.CreateMap<MortgageInsurAccount, MortgageInsurAccountDto>();
+                cfg.CreateMap<PensionFundAccountDoc, PensionFundAccountDto>();
+                cfg.CreateMap<MortgageInsurAccountDoc, MortgageInsurAccountDto>();
             });
 
             app.UseMvc();

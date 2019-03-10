@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using GoldMountainApi.Controllers.Helper;
 using GoldMountainApi.Models;
 using GoldMountainApi.Services;
-using GoldMountainShared.Models.Shared;
+using GoldMountainShared.Dto.Shared;
 using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -45,7 +45,7 @@ namespace GoldMountainApi.Controllers
 
             try
             {
-                var message = AutoMapper.Mapper.Map<ContactMessage>(messageDto);
+                var message = AutoMapper.Mapper.Map<ContactMessageDoc>(messageDto);
                 message.UserId = userId;
                 message.Id = Guid.NewGuid();
                 await _messageRepository.AddMessage(message);

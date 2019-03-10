@@ -8,22 +8,22 @@ namespace GoldMountainShared.Storage.Interfaces
 {
     public interface IMessageRepository
     {
-        Task<IEnumerable<ContactMessage>> GetAllMessages();
+        Task<IEnumerable<ContactMessageDoc>> GetAllMessages();
 
-        Task<ContactMessage> GetMessage(Guid id);
+        Task<ContactMessageDoc> GetMessage(Guid id);
 
-        Task<ContactMessage> GetMessageByInternalId(string id);
+        Task<ContactMessageDoc> GetMessageByInternalId(string id);
 
-        Task<IEnumerable<ContactMessage>> GetMessagesByUserId(String id);
+        Task<IEnumerable<ContactMessageDoc>> GetMessagesByUserId(String id);
 
-        Task AddMessage(ContactMessage item);
+        Task AddMessage(ContactMessageDoc item);
 
-        Task AddMessages(IEnumerable<ContactMessage> items);
+        Task AddMessages(IEnumerable<ContactMessageDoc> items);
 
         Task<bool> RemoveMessage(Guid id);
 
         Task<bool> RemoveAllMessages();
 
-        Task<ContactMessage> FindMessageByCriteria(Expression<Func<ContactMessage, bool>> filter);
+        Task<ContactMessageDoc> FindMessageByCriteria(Expression<Func<ContactMessageDoc, bool>> filter);
     }
 }

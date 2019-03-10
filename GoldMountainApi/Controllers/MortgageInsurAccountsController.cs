@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Threading.Tasks;
 using GoldMountainApi.Controllers.Helper;
-using GoldMountainShared.Models.Insur;
+using GoldMountainShared.Dto.Insur;
 using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
 using MaslekaReader;
@@ -41,7 +41,7 @@ namespace GoldMountainApi.Controllers
         [HttpGet("MortgageInsurAccounts/{id}")]
         public async Task<MortgageInsurAccountDto> Get(Guid id)
         {
-            var account = await _accountRepository.GetAccount(id) ?? new MortgageInsurAccount();
+            var account = await _accountRepository.GetAccount(id) ?? new MortgageInsurAccountDoc();
             var result = AutoMapper.Mapper.Map<MortgageInsurAccountDto>(account);
             return result;
         }
@@ -50,12 +50,12 @@ namespace GoldMountainApi.Controllers
         [HttpGet("user/{userId}/MortgageInsurAccounts")]
         public async Task<IEnumerable<MortgageInsurAccountDto>> GetAccountsForUser(String userId)
         {
-            var accounts = await _accountRepository.GetAccountsByUserId(userId) ?? new List<MortgageInsurAccount>();
+            var accounts = await _accountRepository.GetAccountsByUserId(userId) ?? new List<MortgageInsurAccountDoc>();
             if (!accounts.Any())
             {
                 var maslekaReader = new Reader();
                 maslekaReader.GenerateMortgageInsurAccounts(userId);
-                accounts = await _accountRepository.GetAccountsByUserId(userId) ?? new List<MortgageInsurAccount>();
+                accounts = await _accountRepository.GetAccountsByUserId(userId) ?? new List<MortgageInsurAccountDoc>();
             }
 
             var result = AutoMapper.Mapper.Map<IEnumerable<MortgageInsurAccountDto>>(accounts);

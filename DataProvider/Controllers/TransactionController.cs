@@ -5,15 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using DataProvider.Providers.Interfaces;
 using DataProvider.Providers.Models;
-using GoldMountainShared.Models.Bank;
-using GoldMountainShared.Models.Shared;
+using GoldMountainShared.Dto.Shared;
 using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.KeyVault;
-using RawTransaction = DataProvider.Providers.Models.Transaction;
-using Transaction = GoldMountainShared.Storage.Documents.Transaction;
 
 namespace DataProvider.Controllers
 {
@@ -23,11 +19,11 @@ namespace DataProvider.Controllers
     {
         private readonly IProviderRepository _providerRepository;
         private readonly IBankAccountRepository _bankAccountRepository;
-        private readonly ICreditAccountRepository _creditAccountRepository;
+        private readonly ICreditCardRepository _creditAccountRepository;
         private readonly IProviderFactory _providerFactory;
 
         public TransactionController(IProviderRepository providerRepository, IProviderFactory providerFactory,
-                                     IBankAccountRepository bankAccountRepository, ICreditAccountRepository creditAccountRepository)
+                                     IBankAccountRepository bankAccountRepository, ICreditCardRepository creditAccountRepository)
         {
             _providerRepository = providerRepository;
             _bankAccountRepository = bankAccountRepository;
@@ -39,19 +35,18 @@ namespace DataProvider.Controllers
         public async Task<IActionResult> GetTransactionsForAccount(String accountId,
             [FromQuery(Name = "year")] int year, [FromQuery(Name = "month")] int month)
         {
-            IEnumerable<Transaction> transactions = null;
-            var id = new Guid(accountId);
+            IEnumerable<TransactionDoc> transactions = null;
 
-            var bankAccount = await _bankAccountRepository.GetAccount(id);
+            var bankAccount = await _bankAccountRepository.GetAccount(accountId);
             if (bankAccount != null)
             {
-                transactions = await GetTransactionsForBankAccount(id, year, month);
+                transactions = await GetTransactionsForBankAccount(accountId, year, month);
             }
 
-            var creditAccount = await _creditAccountRepository.GetAccount(id);
+            var creditAccount = await _creditAccountRepository.GetCard(accountId);
             if (creditAccount != null)
             {
-                transactions = await GetTransactionsForCreditAccount(id, year, month);
+                transactions = await GetTransactionsForCreditAccount(accountId, year, month);
             }
 
             var result = AutoMapper.Mapper.Map<IEnumerable<TransactionDto>>(transactions);
@@ -59,7 +54,7 @@ namespace DataProvider.Controllers
             return Ok(result);
         }
 
-        private async Task<IEnumerable<Transaction>> GetTransactionsForBankAccount(Guid id, int year, int month)
+        private async Task<IEnumerable<TransactionDoc>> GetTransactionsForBankAccount(String id, int year, int month)
         {
             // get credentials for this account...
             var account = await _bankAccountRepository.GetAccount(id);
@@ -78,43 +73,43 @@ namespace DataProvider.Controllers
             return result;
         }
 
-        private async Task<IEnumerable<Transaction>> GetTransactionsForCreditAccount(Guid id, int year, int month)
+        private async Task<IEnumerable<TransactionDoc>> GetTransactionsForCreditAccount(String id, int year, int month)
         {
             // get credentials for this account...
-            var account = await _creditAccountRepository.GetAccount(id);
+            var account = await _creditAccountRepository.GetCard(id);
             var provider = await _providerRepository.GetProvider(account.ProviderId);
             var dataProvider = await _providerFactory.CreateDataProvider(provider);
 
             var start = new DateTime(year, month, 1);
             var end = new DateTime(year, month, DateTime.DaysInMonth(year, month));
 
-            var accountDescriptor = AutoMapper.Mapper.Map<CreditAccountDescriptor>(account);
-            var transactions = (dataProvider as ICreditAccountProvider)?.GetTransactions(accountDescriptor, start, end);
+            var accountDescriptor = AutoMapper.Mapper.Map<CreditCardDescriptor>(account);
+            var transactions = (dataProvider as ICreditCardProvider)?
+                .GetCardsWithTransactions(new List<CreditCardDescriptor>{accountDescriptor}, start, end);
             dataProvider.Dispose();
 
-            //var accounts = GetFakeTransactions();
-            var result = await UpdateNewTransactions(account, transactions, start);
+            var result = await UpdateNewTransactions(account, null, start);
             return result;
         }
 
-        private async Task<IEnumerable<Transaction>> UpdateNewTransactions(
-            GoldMountainShared.Storage.Documents.CreditAccount account, IEnumerable<RawTransaction> transactions, DateTime date)
+        private async Task<IEnumerable<TransactionDoc>> UpdateNewTransactions(
+                            CreditCardDoc account, IEnumerable<BankTransaction> transactions, DateTime date)
         {
-            var newTransactions = AutoMapper.Mapper.Map<IEnumerable<Transaction>>(transactions).ToList();
+            var newTransactions = AutoMapper.Mapper.Map<IEnumerable<TransactionDoc>>(transactions).ToList();
 
-            account.Transactions.ToList()
-                .RemoveAll(t => t.PaymentDate.Year.Equals(date.Year) && t.PaymentDate.Month.Equals(date.Month));
-            account.Transactions = newTransactions;
+            //account.Transactions.ToList()
+            //    .RemoveAll(t => t.PaymentDate.Year.Equals(date.Year) && t.PaymentDate.Month.Equals(date.Month));
+            //account.Transactions = newTransactions;
 
-            await _creditAccountRepository.UpdateAccount(account.Id, account);
+            await _creditAccountRepository.UpdateCard(account.Id, account);
 
             return newTransactions;
         }
 
-        private async Task<IEnumerable<Transaction>> UpdateNewTransactions(
-            GoldMountainShared.Storage.Documents.BankAccount account, IEnumerable<RawTransaction> transactions, DateTime date)
+        private async Task<IEnumerable<TransactionDoc>> UpdateNewTransactions(
+                    BankAccountDoc account, IEnumerable<BankTransaction> transactions, DateTime date)
         {
-            var newTransactions = AutoMapper.Mapper.Map<IEnumerable<Transaction>>(transactions).ToList();
+            var newTransactions = AutoMapper.Mapper.Map<IEnumerable<TransactionDoc>>(transactions).ToList();
 
             account.Transactions.ToList()
                 .RemoveAll(t => t.PaymentDate.Year.Equals(date.Year) && t.PaymentDate.Month.Equals(date.Month));

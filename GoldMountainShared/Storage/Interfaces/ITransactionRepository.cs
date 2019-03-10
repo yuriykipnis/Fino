@@ -9,22 +9,22 @@ namespace GoldMountainShared.Storage.Interfaces
 {
     public interface ITransactionRepository
     {
-        Task<IEnumerable<Transaction>> GetAllTransactions();
+        Task<IEnumerable<TransactionDoc>> GetAllTransactions();
 
-        Task<Transaction> GetTransaction(Guid id);
+        Task<TransactionDoc> GetTransaction(Guid id);
 
-        Task<Transaction> GetTransactionByInternalId(string id);
+        Task<TransactionDoc> GetTransactionByInternalId(string id);
 
-        Task AddTransaction(Transaction item);
+        Task AddTransaction(TransactionDoc item);
 
-        Task AddTransactions(IEnumerable<Transaction> items);
+        Task AddTransactions(IEnumerable<TransactionDoc> items);
 
         Task<bool> RemoveTransaction(Guid id);
         
-        Task<bool> UpdateTransaction(Guid id, Transaction account);
+        Task<bool> UpdateTransaction(Guid id, TransactionDoc account);
 
         Task<bool> RemoveAllTransactions();
 
-        Task<Transaction> FindTransactionByCriteria(Expression<Func<Transaction, bool>> filter);
+        Task<TransactionDoc> FindTransactionByCriteria(Expression<Func<TransactionDoc, bool>> filter);
     }
 }

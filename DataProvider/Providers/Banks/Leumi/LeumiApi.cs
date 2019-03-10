@@ -12,7 +12,7 @@ using DataProvider.Providers.Models;
 using GoldMountainShared.Storage.Documents;
 using Newtonsoft.Json;
 using BankAccount = DataProvider.Providers.Models.BankAccount;
-using Transaction = DataProvider.Providers.Models.Transaction;
+using Transaction = DataProvider.Providers.Models.BankTransaction;
 using Mortgage = DataProvider.Providers.Models.Mortgage;
 using Loan = DataProvider.Providers.Models.Loan;
 
@@ -24,7 +24,7 @@ namespace DataProvider.Providers.Banks.Leumi
         private readonly String _userName;
         private readonly String _userPassword;
 
-        public LeumiApi(Provider providerDescriptor)
+        public LeumiApi(ProviderDoc providerDescriptor)
         {
             if (providerDescriptor == null || providerDescriptor.Credentials.Count == 0)
             {

@@ -15,10 +15,15 @@ h4 {
 }
 
 .brand-name {
-  @include regular-font-xxl;
-  color: $at-azure;
+  font: {
+    family: $ct-font-family;
+    weight: $ct-font-weight-regular;
+    size: 1.8em;
+  }
+
+  color: $at-ocean;
   min-width: 6em;
-  padding: 0.3em 0 0.2em 1em !important;
+  padding: 0.2em 0 0 0.6em !important;
 }
 
 .brand-icon {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using DataProvider.Providers.Banks.Hapoalim.Dto;
 using DataProvider.Providers.Interfaces;
@@ -10,29 +11,36 @@ namespace DataProvider.Providers.Banks.Hapoalim
     public class HapoalimAccountProvider : IBankAccountProvider
     {
         private readonly IHapoalimApi _api;
-        private const string _providerName = "Hapoalim";
+        private const string ProviderName = "Hapoalim";
 
         public HapoalimAccountProvider(IHapoalimApi api)
         {
             _api = api;
         }
-        
+
+        public IEnumerable<BankAccount> GetAccounts()
+        {
+            var hapoalimAccounts = _api.GetAccounts();
+            var accounts = GenerateBankAccounts(hapoalimAccounts);
+            return accounts;
+        }
+
         public BankAccount GetAccount(BankAccountDescriptor accountDescriptor)
         {
             try
             {
-                var accountDto = GenerateAccountByAccountId(accountDescriptor);
-                if (accountDto == null)
+                var id = BankAccount.GenerateAccountId(accountDescriptor.BankNumber, accountDescriptor.BankNumber,
+                                                       accountDescriptor.AccountNumber);
+                var account = GetAccount(id);
+                if (account == null)
                 {
                     return null;
                 }
 
-                var account = GetAccountInfo(accountDto);
-
                 DateTime now = DateTime.Now;
                 var firstDayOfMonth = new DateTime(now.Year, now.Month, 1);
                 var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
-                var transactions = GetAccountTransactions(accountDto, firstDayOfMonth, lastDayOfMonth);
+                var transactions = GetAccountTransactions(account, firstDayOfMonth, lastDayOfMonth);
                 account.Transactions = transactions;
 
                 return account;
@@ -43,61 +51,85 @@ namespace DataProvider.Providers.Banks.Hapoalim
                 throw;
             }
         }
-
-        public IEnumerable<BankAccount> GetAccounts()
+        
+        public IEnumerable<BankAccount> GetAccountsWithAllData(List<CreditCardDescriptor> creditCardDescriptor, DateTime startDate, DateTime endDate, bool includeDeatils = false)
         {
-            IList<BankAccount> result = new List<BankAccount>();
-            var accounts = _api.GetAccountsData();
-            foreach (var account in accounts)
-            {
-                result.Add(GetAccountInfo(account));
-            }
-            return result;
+            throw new NotImplementedException();
         }
 
-        public IEnumerable<Transaction> GetTransactions(BankAccountDescriptor accountDescriptor, DateTime startTime, DateTime endTime)
+        public IEnumerable<BankTransaction> GetTransactions(BankAccountDescriptor accountDescriptor, DateTime startTime, DateTime endTime)
         {
-            var account = GenerateAccountByAccountId(accountDescriptor);
+            var id = BankAccount.GenerateAccountId(accountDescriptor.BankNumber, accountDescriptor.BankNumber,
+                                                   accountDescriptor.AccountNumber);
+            var account = GetAccount(id);
             return GetAccountTransactions( account, startTime, endTime);
         }
 
         public IEnumerable<Mortgage> GetMortgages(BankAccountDescriptor accountDescriptor)
         {
-            var account = GenerateAccountByAccountId(accountDescriptor);
+            var id = BankAccount.GenerateAccountId(accountDescriptor.BankNumber, accountDescriptor.BankNumber,
+                accountDescriptor.AccountNumber);
+            var account = GetAccount(id);
             return GetAccountMortgages(account);
         }
 
         public IEnumerable<Loan> GetLoans(BankAccountDescriptor accountDescriptor)
         {
-            var account = GenerateAccountByAccountId(accountDescriptor);
+            var id = BankAccount.GenerateAccountId(accountDescriptor.BankNumber, accountDescriptor.BankNumber,
+                accountDescriptor.AccountNumber);
+            var account = GetAccount(id);
             return GetAccountLoans(account);
         }
 
-        private HapoalimAccountResponse GenerateAccountByAccountId(BankAccountDescriptor accountDescriptor)
+        #region Private
+        private BankAccount GetAccount(string accountId)
         {
-            var accounts = _api.GetAccountsData();
-            var account = accounts.FirstOrDefault(a => 
-                a.AccountNumber.Equals(accountDescriptor?.AccountNumber, StringComparison.CurrentCultureIgnoreCase)
-                && a.BranchNumber == accountDescriptor?.BranchNumber);
-
+            var accounts = GetAccounts();
+            var account = accounts.FirstOrDefault(a => a.Id == accountId);
             return account;
         }
 
-        private IList<Transaction> GetAccountTransactions(HapoalimAccountResponse accountDto,  DateTime startTime, DateTime endTime)
+        private List<BankAccount> GenerateBankAccounts(IEnumerable<HapoalimAccountResponse> response)
         {
-            var transactions = _api.GetTransactions(accountDto, startTime, endTime);
-            var result = new List<Transaction>();
-            foreach (var transaction in transactions.Transactions)
+            var result = new List<BankAccount>();
+            foreach (var accountResponse in response)
             {
+                var account = AutoMapper.Mapper.Map<BankAccount>(accountResponse);
+                account.Id = BankAccount.GenerateAccountId(account.BankNumber, account.BranchNumber, account.AccountNumber);
+
+                if (accountResponse.AccountClosingReasonCode == 0)
+                {
+                    try
+                    {
+                        var balance = _api.GetBalance(account);
+                        account.Balance = balance;
+                        result.Add(account);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                }
+            }
+            return result;
+        }
+        private IList<BankTransaction> GetAccountTransactions(BankAccount account,  DateTime startTime, DateTime endTime)
+        {
+            var transactions = _api.GetTransactions(account, startTime, endTime);
+            var result = new List<BankTransaction>();
+            foreach (var transaction in transactions)
+            {
+                if (transaction.TransactionType.Equals("FUTURE")) { continue;}
+
                 var eventDate = new DateTime((int) (transaction.EventDate / 10000), (int) (transaction.EventDate / 100 % 100),
                     (int) (transaction.EventDate % 100)).AddMinutes((int) (transaction.ExpandedEventDate % 100));
-                result.Add(new Transaction
+                result.Add(new BankTransaction
                 {
-                    Id = (long)(transaction.ReferenceNumber + Math.Round(transaction.EventAmount) + Math.Round(transaction.CurrentBalance)),
+                    Id = (transaction.ReferenceNumber + Math.Round(transaction.EventAmount) + Math.Round(transaction.CurrentBalance)).ToString(CultureInfo.InvariantCulture),
                     PurchaseDate = eventDate,
                     PaymentDate = eventDate,
                     Description = transaction.ActivityDescription,
-                    ProviderName = _providerName,
+                    ProviderName = ProviderName,
                     CurrentBalance = transaction.CurrentBalance,
                     Amount = transaction.EventAmount,
                     IsFee = transaction.ActivityTypeCode == (int)HapoalimActivityType.Fee,
@@ -109,9 +141,9 @@ namespace DataProvider.Providers.Banks.Hapoalim
             return result;
         }
 
-        private IList<Mortgage> GetAccountMortgages(HapoalimAccountResponse accountDto)
+        private IList<Mortgage> GetAccountMortgages(BankAccount account)
         {
-            var mortgages = _api.GetMortgages(accountDto);
+            var mortgages = _api.GetMortgages(account);
             var result = new List<Mortgage>();
             if (mortgages.Data == null)
             {
@@ -120,13 +152,13 @@ namespace DataProvider.Providers.Banks.Hapoalim
 
             foreach (var mortgage in mortgages.Data)
             {
-                if (!(accountDto.AccountNumber == mortgage.AccountNumber &&
-                      accountDto.BranchNumber == mortgage.BranchNumber))
+                if (!(account.AccountNumber == mortgage.AccountNumber &&
+                      account.BranchNumber == mortgage.BranchNumber))
                 {
                     continue;
                 }
 
-                var asset = _api.GetAssetForMortgage(accountDto, mortgage.MortgageLoanSerialId);
+                var asset = _api.GetAssetForMortgage(account, mortgage.MortgageLoanSerialId);
 
                 foreach (var subLoan in mortgage.SubLoanData)
                 {
@@ -141,7 +173,7 @@ namespace DataProvider.Providers.Banks.Hapoalim
 
                     var newMortgage = new Mortgage
                     {
-                        LoanId = string.Format("{0}/{1}", mortgage.MortgageLoanSerialId, subLoan.SubLoansSerialId),
+                        LoanId = $"{mortgage.MortgageLoanSerialId}/{subLoan.SubLoansSerialId}",
                         StartDate = startDate,
                         EndDate = endDate,
                         DeptAmount = subLoan.PrincipalBalanceAmount,
@@ -171,9 +203,9 @@ namespace DataProvider.Providers.Banks.Hapoalim
             return result;
         }
 
-        private IList<Loan> GetAccountLoans(HapoalimAccountResponse accountDto)
+        private IList<Loan> GetAccountLoans(BankAccount account)
         {
-            var loans = _api.GetLoans(accountDto);
+            var loans = _api.GetLoans(account);
             var result = new List<Loan>();
             if (loans.Data == null)
             {
@@ -182,13 +214,13 @@ namespace DataProvider.Providers.Banks.Hapoalim
 
             foreach (var loan in loans.Data)
             {
-                if (!(accountDto.AccountNumber == loans.AccountNumber &&
-                      accountDto.BranchNumber == loans.BranchNumber))
+                if (!(account.AccountNumber == loans.AccountNumber &&
+                      account.BranchNumber == loans.BranchNumber))
                 {
                     continue;
                 }
 
-                var details = _api.GetDetailsForLoan(accountDto, loan);
+                var details = _api.GetDetailsForLoan(account, loan);
                 var startDate = (details.ValueDate == 0) ? DateTime.MinValue : new DateTime((int)(details.ValueDate / 10000), (int)(details.ValueDate / 100 % 100),
                     (int)(details.ValueDate % 100)).AddMinutes((int)(details.ValueDate % 100));
                 var endDate = (details.LoanEndDate == 0) ? DateTime.MinValue : new DateTime((int)(details.LoanEndDate / 10000), (int)(details.LoanEndDate / 100 % 100),
@@ -218,26 +250,7 @@ namespace DataProvider.Providers.Banks.Hapoalim
 
             return result;
         }
-
-        private BankAccount GetAccountInfo(HapoalimAccountResponse account)
-        {
-            var result = new BankAccount
-            {
-                Label = account.ProductLabel,
-                AccountNumber = account.AccountNumber,
-                BankNumber = account.BankNumber,
-                BranchNumber = account.BranchNumber,
-            };
-
-            if (account.AccountClosingReasonCode > 0)
-            {
-                return result;
-            }
-
-            var balance = _api.GetBalance(account);
-            result.Balance = balance?.CurrentBalance ?? 0;
-            return result;
-        }
+        #endregion
 
         public void Dispose()
         {

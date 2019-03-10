@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using GoldMountainShared.Models;
+using GoldMountainShared.Dto;
 using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DataProvider.Controllers
@@ -43,7 +42,7 @@ namespace DataProvider.Controllers
         {
             _institutionRepository.RemoveAllInstitutions();
 
-            _institutionRepository.AddInstitution(new Institution
+            _institutionRepository.AddInstitution(new InstitutionDoc
             {
                 Id = Guid.NewGuid(),
                 Name = "Bank Hapoalim",
@@ -52,7 +51,7 @@ namespace DataProvider.Controllers
                 IsSupported = true,
             });
 
-            _institutionRepository.AddInstitution(new Institution
+            _institutionRepository.AddInstitution(new InstitutionDoc
             {
                 Id = Guid.NewGuid(),
                 Name = "Bank Leumi",
@@ -61,25 +60,16 @@ namespace DataProvider.Controllers
                 IsSupported = false,
             });
 
-            //_institutionRepository.AddInstitution(new Institution
-            //{
-            //    Id = Guid.NewGuid(),
-            //    Name = "Bank Discount",
-            //    Credentials = new List<string> { "Username", "Password" },
-            //    Type = InstitutionType.Bank,
-            //    IsSupported = false,
-            //});
-
-            _institutionRepository.AddInstitution(new Institution
+            _institutionRepository.AddInstitution(new InstitutionDoc
             {
                 Id = Guid.NewGuid(),
                 Name = "Bank Mizrahi-Tefahot",
                 Credentials = new List<string> { "Username", "Password" },
                 Type = InstitutionType.Bank,
-                IsSupported = false,
+                IsSupported = true,
             });
 
-            _institutionRepository.AddInstitution(new Institution
+            _institutionRepository.AddInstitution(new InstitutionDoc
             {
                 Id = Guid.NewGuid(),
                 Name = "Amex",
@@ -88,13 +78,13 @@ namespace DataProvider.Controllers
                 IsSupported = true,
             });
 
-            _institutionRepository.AddInstitution(new Institution
+            _institutionRepository.AddInstitution(new InstitutionDoc
             {
                 Id = Guid.NewGuid(),
-                Name = "Visa",
+                Name = "Visa Cal",
                 Credentials = new List<string> { "Username", "Password" },
                 Type = InstitutionType.Credit,
-                IsSupported = false,
+                IsSupported = true,
             });
         }
 
@@ -119,24 +109,6 @@ namespace DataProvider.Controllers
             //    CreatedOn = DateTime.Now,
             //    UpdatedOn = DateTime.Now
             //});
-
-            //_providerRepository.AddProvider(new Provider()
-            //{
-            //    Id = _cardProvider,
-            //    Name = "Amex",
-            //    Accounts = new List<Guid>
-            //    {
-            //        _cardAccount1
-            //    },
-            //    Credentials = new Dictionary<string, string>
-            //    {
-            //        {"id", "311913289"},
-            //        {"Last 6 digits", "742989"},
-            //        { "password", "5t6y7u8i"}
-            //    },
-            //    CreatedOn = DateTime.Now,
-            //    UpdatedOn = DateTime.Now
-            //});
         }
 
         private void InitAccounts()
@@ -151,25 +123,6 @@ namespace DataProvider.Controllers
             //    CreatedOn = DateTime.Now,
             //    UpdatedOn = DateTime.Now
             //});
-
-            //_accountRepository.AddAccount(new Account()
-            //{
-            //    Id = _bankAccount2,
-            //    Name = "309490",
-            //    ProviderId = _bankProvider,
-            //    CreatedOn = DateTime.Now,
-            //    UpdatedOn = DateTime.Now
-            //});
-
-            //_accountRepository.AddAccount(new Account()
-            //{
-            //    Id = _cardAccount1,
-            //    Name = "2989",
-            //    ProviderId = _cardProvider,
-            //    CreatedOn = DateTime.Now,
-            //    UpdatedOn = DateTime.Now
-            //});
-
         }
     }
 }

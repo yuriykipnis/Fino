@@ -17,7 +17,7 @@ namespace GoldMountainShared.Storage.Repositories
             _context = new DbContext(settings);
         }
 
-        public async Task<IEnumerable<Institution>> GetInstitutions()
+        public async Task<IEnumerable<InstitutionDoc>> GetInstitutions()
         {
             try
             {
@@ -30,7 +30,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddInstitution(Institution item)
+        public async Task AddInstitution(InstitutionDoc item)
         {
             try
             {

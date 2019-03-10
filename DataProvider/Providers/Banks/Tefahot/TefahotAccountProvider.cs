@@ -37,15 +37,21 @@ namespace DataProvider.Providers.Banks.Tefahot
 
             return result;
         }
-        
+
+        public IEnumerable<BankAccount> GetAccountsWithAllData(List<CreditCardDescriptor> creditCardDescriptor, DateTime startDate, DateTime endDate,
+            bool includeDeatils = false)
+        {
+            throw new NotImplementedException();
+        }
+
         public BankAccount GetAccount(BankAccountDescriptor accountDescriptor)
         {
             return null;
         }
 
-        public IEnumerable<Transaction> GetTransactions(BankAccountDescriptor accountDescriptor, DateTime startTime, DateTime endTime)
+        public IEnumerable<BankTransaction> GetTransactions(BankAccountDescriptor accountDescriptor, DateTime startTime, DateTime endTime)
         {
-            IList<Transaction> result = new List<Transaction>();
+            IList<BankTransaction> result = new List<BankTransaction>();
             var transactions = _api.GetTransactions(accountDescriptor.AccountNumber, startTime, endTime);
             foreach (var transaction in transactions)
             {

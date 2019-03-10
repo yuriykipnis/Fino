@@ -8,28 +8,28 @@ namespace GoldMountainShared.Storage.Interfaces
 {
     public interface IBankAccountRepository
     {
-        Task<IEnumerable<BankAccount>> GetAllAccounts();
+        Task<IEnumerable<BankAccountDoc>> GetAllAccounts();
 
-        Task<BankAccount> GetAccount(Guid id);
+        Task<BankAccountDoc> GetAccount(String id);
 
-        Task<BankAccount> GetAccountByInternalId(string id);
+        Task<BankAccountDoc> GetAccountByInternalId(String id);
 
-        Task<IEnumerable<BankAccount>> GetAccountsByUserId(String id);
+        Task<IEnumerable<BankAccountDoc>> GetAccountsByUserId(String id);
 
-        Task<IEnumerable<BankAccount>> GetAccountsByProviderId(Guid providerId);
+        Task<IEnumerable<BankAccountDoc>> GetAccountsByProviderId(String providerId);
 
-        Task AddAccount(BankAccount item);
+        Task AddAccount(BankAccountDoc item);
 
-        Task AddAccounts(IEnumerable<BankAccount> items);
+        Task AddAccounts(IEnumerable<BankAccountDoc> items);
 
-        Task<bool> RemoveAccount(Guid id);
+        Task<bool> RemoveAccount(String id);
 
-        Task<bool> UpdateAccountBalance(Guid id, Decimal balance);
+        Task<bool> UpdateAccountBalance(String id, Decimal balance);
 
-        Task<bool> UpdateAccount(Guid id, BankAccount account);
+        Task<bool> UpdateAccount(String id, BankAccountDoc account);
 
         Task<bool> RemoveAllAccounts();
 
-        Task<BankAccount> FindAccountByCriteria(Expression<Func<BankAccount, bool>> filter);
+        Task<BankAccountDoc> FindAccountByCriteria(Expression<Func<BankAccountDoc, bool>> filter);
     }
 }

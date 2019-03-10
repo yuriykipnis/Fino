@@ -4,15 +4,15 @@ using DataProvider.Providers.Banks.Hapoalim;
 using DataProvider.Providers.Banks.Leumi;
 using DataProvider.Providers.Banks.Tefahot;
 using DataProvider.Providers.Cards.Amex;
+using DataProvider.Providers.Cards.Cal;
 using DataProvider.Providers.Interfaces;
-using GoldMountainShared;
 using GoldMountainShared.Storage.Documents;
 
 namespace DataProvider.Providers
 {
     public class ProviderFactory : IProviderFactory
     {
-        public async Task<IAccountProvider> CreateDataProvider(Provider provider)
+        public async Task<IAccountProvider> CreateDataProvider(ProviderDoc provider)
         {
             IAccountProvider accountProvider = null;
 
@@ -20,7 +20,7 @@ namespace DataProvider.Providers
             {
                 case "Bank Hapoalim":
                     //accountProvider = new HapoalimAccountProvider(provider, new HapoalimFileApi(provider));
-                    accountProvider = new HapoalimAccountProvider(new HapoalimApi(provider));
+                    accountProvider = new HapoalimAccountProvider(new HapoalimApi(provider.Credentials));
                     break;
                 case "Bank Leumi":
                     accountProvider = new LeumiAccountProvider(new LeumiApi(provider));
@@ -29,11 +29,11 @@ namespace DataProvider.Providers
                     accountProvider = new TefahotAccountProvider(new TefahotApi(provider));
                     break;
                 case "Amex":
-                    //accountProvider = new AmexAccountProvider(provider, new AmexFileApi(provider));
-                    accountProvider = new AmexAccountProvider(new AmexApi(provider));
+                    accountProvider = new AmexProvider(new AmexApi(provider.Credentials));
+                    //accountProvider = new AmexProvider(provider, new AmexFileApi(provider));
                     break;
                 case "Visa Cal":
-                    accountProvider = new AmexAccountProvider(new AmexFakeApi(provider));
+                    accountProvider = new CalProvider(new CalApi(provider.Credentials));
                     break;
                 default: break;
             }

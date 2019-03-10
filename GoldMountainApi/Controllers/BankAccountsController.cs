@@ -5,7 +5,7 @@ using System.Security.Authentication;
 using System.Threading.Tasks;
 using GoldMountainApi.Controllers.Helper;
 using GoldMountainApi.Services;
-using GoldMountainShared.Models.Bank;
+using GoldMountainShared.Dto.Bank;
 using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -44,7 +44,7 @@ namespace GoldMountainApi.Controllers
         [HttpGet("BankAccounts/{id}")]
         public async Task<BankAccountDto> Get(Guid id)
         {
-            var account = await _accountRepository.GetAccount(id) ?? new BankAccount();
+            var account = await _accountRepository.GetAccount(id) ?? new BankAccountDoc();
             var result = AutoMapper.Mapper.Map<BankAccountDto>(account);
             return result;
         }
@@ -58,7 +58,7 @@ namespace GoldMountainApi.Controllers
                 throw new AuthenticationException();
             }
             
-            var accounts = await _accountRepository.GetAccountsByUserId(userId) ?? new List<BankAccount>();
+            var accounts = await _accountRepository.GetAccountsByUserId(userId) ?? new List<BankAccountDoc>();
             var accountsToUpdate = accounts
                 .Where(a => DateTime.Compare(a.UpdatedOn.ToLocalTime().AddDays(1), DateTime.Now) < 0)
                 .Select(account => account.Id);
@@ -74,7 +74,7 @@ namespace GoldMountainApi.Controllers
                     Console.WriteLine(e);
                 }
 
-                accounts = await _accountRepository.GetAccountsByUserId(userId) ?? new List<BankAccount>();
+                accounts = await _accountRepository.GetAccountsByUserId(userId) ?? new List<BankAccountDoc>();
             }
 
             return AutoMapper.Mapper.Map<IEnumerable<BankAccountDto>>(accounts);
@@ -92,7 +92,7 @@ namespace GoldMountainApi.Controllers
             {
                 foreach (var newAccount in newAccounts)
                 {
-                    await _accountRepository.AddAccount(new BankAccount
+                    await _accountRepository.AddAccount(new BankAccountDoc
                     {
                         Id = new Guid(newAccount.Id),
                         UserId = newAccount.Id,
@@ -122,7 +122,7 @@ namespace GoldMountainApi.Controllers
             _accountRepository.RemoveAccount(id);
         }
 
-        private async Task<IEnumerable<BankAccount>> UpdateAccounts(string userId, IEnumerable<Guid> accounts)
+        private async Task<IEnumerable<BankAccountDoc>> UpdateAccounts(string userId, IEnumerable<Guid> accounts)
         {
             var updatedAccounts = await _dataService.GetBankAccountsForUserId(userId);
             foreach (var ua in updatedAccounts)

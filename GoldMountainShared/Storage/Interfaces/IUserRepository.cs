@@ -8,17 +8,15 @@ namespace GoldMountainShared.Storage.Interfaces
     public interface IUserRepository
     {
 
-        Task<IEnumerable<User>> GetAllUsers();
+        Task<IEnumerable<UserDoc>> GetAllUsers();
 
-        Task<User> GetUser(Guid id);
+        Task<UserDoc> GetUser(String id);
 
-        Task<User> GetUserByInternalId(string id);
+        Task AddUser(UserDoc user);
 
-        Task AddUser(User user);
+        Task<bool> UpdateUserEmail(String id, string email);
 
-        Task<bool> UpdateUserEmail(Guid id, string email);
-
-        Task<bool> RemoveUser(Guid id);
+        Task<bool> RemoveUser(String id);
 
         Task<bool> RemoveAllUsers();
 

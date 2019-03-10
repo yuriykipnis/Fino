@@ -5,18 +5,13 @@ using System.Threading.Tasks;
 using DataProvider.Providers.Interfaces;
 using DataProvider.Providers.Models;
 using DataProvider.Services;
-using GoldMountainShared.Models;
-using GoldMountainShared.Models.Credit;
-using GoldMountainShared.Models.Bank;
-using GoldMountainShared.Models.Provider;
+using GoldMountainShared.Dto;
+using GoldMountainShared.Dto.Bank;
+using GoldMountainShared.Dto.Credit;
+using GoldMountainShared.Dto.Provider;
 using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using BankAccount = GoldMountainShared.Storage.Documents.BankAccount;
-using RawBankAccount = DataProvider.Providers.Models.BankAccount;
-using CreditAccount = GoldMountainShared.Storage.Documents.CreditAccount;
-using RawCreditAccount = DataProvider.Providers.Models.CreditAccount;
-using Transaction = GoldMountainShared.Storage.Documents.Transaction;
 
 namespace DataProvider.Controllers
 {
@@ -26,34 +21,34 @@ namespace DataProvider.Controllers
     {
         private readonly IProviderRepository _providerRepository;
         private readonly IBankAccountRepository _bankAccountRepository;
-        private readonly ICreditAccountRepository _creditAccountRepository;
+        private readonly ICreditCardRepository _creditCardRepository;
         private readonly IAccountService _accountService;
 
-        public ProviderController(IProviderRepository providerRepository, IProviderFactory providerFactory,
+        public ProviderController(IProviderRepository providerRepository, 
+                                  IProviderFactory providerFactory,
                                   IAccountService accountService,  
                                   IBankAccountRepository bankAccountRepository, 
-                                  ICreditAccountRepository creditAccountRepository)
+                                  ICreditCardRepository creditCardRepository)
         {
             _providerRepository = providerRepository;
             _bankAccountRepository = bankAccountRepository;
-            _creditAccountRepository = creditAccountRepository;
+            _creditCardRepository = creditCardRepository;
             _accountService = accountService;
         }
 
-        //Get provider with including account refferences for specific user
-        [HttpGet("{id}/accounts")]
-        public async Task<IActionResult> Get(Guid id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(String id)
         {
-            //var provider = await _providerRepository.GetProvider(id);
-            //var providerWorker = await _providerFactory.CreateDataProvider(provider);
-            //var accounts = (providerWorker as IBankAccountProvider)?.GetAccounts();
-            //providerWorker.Dispose();
-            //var result = AutoMapper.Mapper.Map<IEnumerable<BankAccountCreatingDto>>(accounts);
-            
-            return BadRequest();
+            var providerDoc = await _providerRepository.GetProvider(id);
+            if (providerDoc == null)
+            {
+                return NotFound();
+            }
+
+            var result = AutoMapper.Mapper.Map<ProviderDto>(providerDoc);
+            return Ok(result);
         }
         
-        //Add or update provider with new accounts
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ProviderCreatingDto newProvider)
         {
@@ -62,32 +57,23 @@ namespace DataProvider.Controllers
                 return BadRequest();
             }
 
-            ProviderDto result;
-            try
-            {
-                result = await AddProvider(newProvider);
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-            
+            ProviderDto result = await AddOrUpdateProvider(newProvider);
             return Ok(result);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(String id)
         {
-           // _providerRepository.RemoveProvider(id);
-            return Ok();
+            var result = await _providerRepository.RemoveProvider(id);
+            return Ok(result);
         }
 
-        private async Task<ProviderDto> AddProvider(ProviderCreatingDto newProvider)
+        private async Task<ProviderDto> AddOrUpdateProvider(ProviderCreatingDto newProvider)
         {
-            var provider = await GetProvider(newProvider);
-            var accountsIds = provider.Accounts?.ToList() ?? new List<Guid>();
+            var provider = await FetchOrCreateProvider(newProvider);
+            var accountsIds = provider.Accounts?.ToList() ?? new List<String>();
             var result = AutoMapper.Mapper.Map<ProviderDto>(provider);
-
+            
             if (provider.Type == InstitutionType.Bank)
             {
                 var accounts = await UpdateBankAccounts(newProvider, provider, accountsIds);
@@ -95,49 +81,19 @@ namespace DataProvider.Controllers
             }
             else if (provider.Type == InstitutionType.Credit)
             {
-                var creditAccounts = await UpdateCreditAccounts(newProvider, provider, accountsIds);
-                result.CreditAccounts = AutoMapper.Mapper.Map<IEnumerable<CreditAccountDto>>(creditAccounts);
+                var creditAccounts = await UpdateCreditCards(newProvider, provider, accountsIds);
+                result.CreditCards = AutoMapper.Mapper.Map<IEnumerable<CreditCardDto>>(creditAccounts);
             }
 
             return result;
         }
 
-        private async Task<IEnumerable<BankAccount>> UpdateBankAccounts(ProviderCreatingDto newProvider, Provider provider, List<Guid> accountsIds)
+        private async Task<IEnumerable<BankAccountDoc>> AddBankAccounts(ProviderCreatingDto newProvider, String providerId)
         {
-            var bankAccounts = await AddBankAccounts(newProvider, provider.Id);
-            accountsIds.AddRange(bankAccounts.Select(a => a.Id).ToList());
-            provider.Accounts = accountsIds;
-            await _providerRepository.UpdateProvider(provider.Id, provider);
-
-            var accounts = await _accountService.InitiateBankAccountsForProvider(provider);
-            foreach (var account in accounts)
-            {
-                await _bankAccountRepository.UpdateAccount(account.Id, account);
-            }
-            return accounts;
-        }
-
-        private async Task<IEnumerable<CreditAccount>> UpdateCreditAccounts(ProviderCreatingDto newProvider, Provider provider, List<Guid> accountsIds)
-        {
-            var creditAccounts = await AddCreditAccounts(newProvider, provider.Id);
-            accountsIds.AddRange(creditAccounts.Select(a => a.Id).ToList());
-            provider.Accounts = accountsIds;
-            await _providerRepository.UpdateProvider(provider.Id, provider);
-
-            var accounts = await _accountService.InitiateCreditAccountsForProvider(provider);
-            foreach (var account in accounts)
-            {
-                await _creditAccountRepository.UpdateAccount(account.Id, account);
-            }
-            return accounts;
-        }
-        
-        private async Task<IEnumerable<BankAccount>> AddBankAccounts(ProviderCreatingDto newProvider, Guid providerId)
-        {
-            IEnumerable<BankAccount> accounts = new List<BankAccount>();
+            IEnumerable<BankAccountDoc> accounts = new List<BankAccountDoc>();
             if (newProvider.BankAccounts.Any())
             {
-                accounts = AutoMapper.Mapper.Map<IEnumerable<BankAccount>>(newProvider.BankAccounts);
+                accounts = AutoMapper.Mapper.Map<IEnumerable<BankAccountDoc>>(newProvider.BankAccounts);
                 foreach (var bankAccount in accounts)
                 {
                     bankAccount.ProviderId = providerId;
@@ -151,13 +107,13 @@ namespace DataProvider.Controllers
             return accounts;
         }
 
-        private async Task<IEnumerable<CreditAccount>> AddCreditAccounts(ProviderCreatingDto newProvider, Guid providerId)
+        private async Task<IEnumerable<CreditCardDoc>> AddCreditAccounts(ProviderCreatingDto newProvider, String providerId)
         {
-            IEnumerable<CreditAccount> accounts = new List<CreditAccount>();
+            IEnumerable<CreditCardDoc> accounts = new List<CreditCardDoc>();
 
-            if (newProvider.CreditAccounts.Any())
+            if (newProvider.CreditCards.Any())
             {
-                accounts = AutoMapper.Mapper.Map<IEnumerable<CreditAccount>>(newProvider.CreditAccounts);
+                accounts = AutoMapper.Mapper.Map<IEnumerable<CreditCardDoc>>(newProvider.CreditCards);
                 foreach (var creditAccount in accounts)
                 {
                     creditAccount.ProviderId = providerId;
@@ -165,15 +121,47 @@ namespace DataProvider.Controllers
                     creditAccount.UserId = newProvider.UserId;
                 }
 
-                await _creditAccountRepository.AddAccounts(accounts);
+                await _creditCardRepository.AddCards(accounts);
             }
 
             return accounts;
         }
 
-        private async Task<Provider> GetProvider(ProviderCreatingDto newProvider)
+        private async Task<IEnumerable<BankAccountDoc>> UpdateBankAccounts(ProviderCreatingDto newProvider, ProviderDoc provider, List<String> accountsIds)
         {
-            var np = AutoMapper.Mapper.Map<Provider>(newProvider);
+            var bankAccounts = await AddBankAccounts(newProvider, provider.Id);
+            accountsIds.AddRange(bankAccounts.Select(a => a.Id).ToList());
+            provider.Accounts = accountsIds;
+            await _providerRepository.UpdateProvider(provider.Id, provider);
+
+            var accounts = await _accountService.UpdateBankAccountsForProvider(provider);
+            foreach (var account in accounts)
+            {
+                await _bankAccountRepository.UpdateAccount(account.Id, account);
+            }
+            return accounts;
+        }
+
+        private async Task<IEnumerable<CreditCard>> UpdateCreditCards(ProviderCreatingDto newProvider, ProviderDoc provider, List<String> accountsIds)
+        {
+            var creditCards = await AddCreditAccounts(newProvider, provider.Id);
+            accountsIds.AddRange(creditCards.Select(a => a.Id).ToList());
+            provider.Accounts = accountsIds;
+            await _providerRepository.UpdateProvider(provider.Id, provider);
+
+            var updatedCards = await _accountService.UpdateCreditCards(provider);
+            foreach (var updatedCard in updatedCards)
+            {
+
+                await _creditCardRepository.UpdateCard(updatedCard.Id,
+                    AutoMapper.Mapper.Map<CreditCardDoc>(updatedCard));
+            }
+            return updatedCards;
+        }
+
+        private async Task<ProviderDoc> FetchOrCreateProvider(ProviderCreatingDto newProvider)
+        {
+            var np = AutoMapper.Mapper.Map<ProviderDoc>(newProvider);
             var provider = await _providerRepository.Find(np);
             if (provider == null)
             {
@@ -182,6 +170,5 @@ namespace DataProvider.Controllers
             }
             return provider;
         }
-
     }
 }

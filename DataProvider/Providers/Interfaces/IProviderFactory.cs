@@ -5,6 +5,6 @@ namespace DataProvider.Providers.Interfaces
 {
     public interface IProviderFactory
     {
-        Task<IAccountProvider> CreateDataProvider(Provider provider);
+        Task<IAccountProvider> CreateDataProvider(ProviderDoc provider);
     }
 }

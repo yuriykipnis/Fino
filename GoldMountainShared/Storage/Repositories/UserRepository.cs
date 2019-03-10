@@ -18,7 +18,7 @@ namespace GoldMountainShared.Storage.Repositories
             _context = new DbContext(settings);
         }
 
-        public async Task<IEnumerable<User>> GetAllUsers()
+        public async Task<IEnumerable<UserDoc>> GetAllUsers()
         {
             try
             {
@@ -31,7 +31,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<User> GetUser(Guid id)
+        public async Task<UserDoc> GetUser(String id)
         {
             try
             {
@@ -44,21 +44,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<User> GetUserByInternalId(string id)
-        {
-            try
-            {
-                ObjectId internalId = GetInternalId(id);
-                return await _context.Users.Find(user => user.InternalId == internalId).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-                // log or manage the exception
-                throw ex;
-            }
-        }
-
-        public async Task AddUser(User user)
+        public async Task AddUser(UserDoc user)
         {
             try
             {
@@ -71,10 +57,10 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<bool> UpdateUserEmail(Guid id, string email)
+        public async Task<bool> UpdateUserEmail(String id, string email)
         {
-            var filter = Builders<User>.Filter.Eq(s => s.Id, id);
-            var update = Builders<User>.Update
+            var filter = Builders<UserDoc>.Filter.Eq(s => s.Id, id);
+            var update = Builders<UserDoc>.Update
                 .Set(s => s.Email, email)
                 .CurrentDate(s => s.UpdatedOn);
 
@@ -90,12 +76,12 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<bool> RemoveUser(Guid id)
+        public async Task<bool> RemoveUser(String id)
         {
             try
             {
                 DeleteResult actionResult
-                    = await _context.Users.DeleteOneAsync(Builders<User>.Filter.Eq("Id", id));
+                    = await _context.Users.DeleteOneAsync(Builders<UserDoc>.Filter.Eq("Id", id));
 
                 return actionResult.IsAcknowledged && actionResult.DeletedCount > 0;
             }

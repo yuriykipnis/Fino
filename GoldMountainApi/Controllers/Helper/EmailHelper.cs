@@ -16,7 +16,7 @@ namespace GoldMountainApi.Controllers.Helper
         const string SmtpUser = "bewise.demo@gmail.com";
         const string SmtpPassword = "!Q2w3e4r";
 
-        public async Task SendMessage(ContactMessage message)
+        public async Task SendMessage(ContactMessageDoc message)
         {
             try
             {

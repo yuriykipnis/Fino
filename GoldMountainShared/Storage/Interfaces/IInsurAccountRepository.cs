@@ -9,22 +9,22 @@ namespace GoldMountainShared.Storage.Interfaces
 {
     public interface IInsurAccountRepository
     {
-        Task<IEnumerable<SeInsurAccount>> GetAllAccounts();
+        Task<IEnumerable<SeInsurAccountDoc>> GetAllAccounts();
 
-        Task<SeInsurAccount> GetAccount(Guid id);
+        Task<SeInsurAccountDoc> GetAccount(Guid id);
 
-        Task<IEnumerable<SeInsurAccount>> GetAccountsByUserId(String userId);
+        Task<IEnumerable<SeInsurAccountDoc>> GetAccountsByUserId(String userId);
 
-        Task AddAccount(SeInsurAccount item);
+        Task AddAccount(SeInsurAccountDoc item);
 
-        Task AddAccounts(IEnumerable<SeInsurAccount> items);
+        Task AddAccounts(IEnumerable<SeInsurAccountDoc> items);
 
         Task<bool> RemoveAccount(Guid id);
 
-        Task<bool> UpdateAccount(Guid id, SeInsurAccount account);
+        Task<bool> UpdateAccount(Guid id, SeInsurAccountDoc account);
 
         Task<bool> RemoveAllAccounts();
 
-        Task<SeInsurAccount> FindAccountByCriteria(Expression<Func<SeInsurAccount, bool>> filter);
+        Task<SeInsurAccountDoc> FindAccountByCriteria(Expression<Func<SeInsurAccountDoc, bool>> filter);
     }
 }

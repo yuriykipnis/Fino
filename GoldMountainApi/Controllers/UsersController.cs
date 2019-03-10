@@ -21,22 +21,22 @@ namespace GoldMountainApi.Controllers
 
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         [HttpGet]
-        public async Task<IEnumerable<User>> Get()
+        public async Task<IEnumerable<UserDoc>> Get()
         {
             return await _userRepository.GetAllUsers();
         }
 
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         [HttpGet("{id}")]
-        public async Task<User> Get(Guid id)
+        public async Task<UserDoc> Get(Guid id)
         {
-            return await _userRepository.GetUser(id) ?? new User();
+            return await _userRepository.GetUser(id) ?? new UserDoc();
         }
 
         [HttpPost]
         public void Post([FromBody] UserDto newUser)
         {
-            _userRepository.AddUser(new User
+            _userRepository.AddUser(new UserDoc
             {
                 Id = new Guid(),
                 Name = newUser.Name,

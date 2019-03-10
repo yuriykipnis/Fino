@@ -9,22 +9,22 @@ namespace GoldMountainShared.Storage.Interfaces
 {
     public interface IMortgageInsurAccountRepository
     {
-        Task<IEnumerable<MortgageInsurAccount>> GetAllAccounts();
+        Task<IEnumerable<MortgageInsurAccountDoc>> GetAllAccounts();
 
-        Task<MortgageInsurAccount> GetAccount(Guid id);
+        Task<MortgageInsurAccountDoc> GetAccount(Guid id);
 
-        Task<IEnumerable<MortgageInsurAccount>> GetAccountsByUserId(String userId);
+        Task<IEnumerable<MortgageInsurAccountDoc>> GetAccountsByUserId(String userId);
 
-        Task AddAccount(MortgageInsurAccount item);
+        Task AddAccount(MortgageInsurAccountDoc item);
 
-        Task AddAccounts(IEnumerable<MortgageInsurAccount> items);
+        Task AddAccounts(IEnumerable<MortgageInsurAccountDoc> items);
 
         Task<bool> RemoveAccount(Guid id);
 
-        Task<bool> UpdateAccount(Guid id, MortgageInsurAccount account);
+        Task<bool> UpdateAccount(Guid id, MortgageInsurAccountDoc account);
 
         Task<bool> RemoveAllAccounts();
 
-        Task<MortgageInsurAccount> FindAccountByCriteria(Expression<Func<MortgageInsurAccount, bool>> filter);
+        Task<MortgageInsurAccountDoc> FindAccountByCriteria(Expression<Func<MortgageInsurAccountDoc, bool>> filter);
     }
 }

@@ -9,9 +9,9 @@ namespace GoldMountainShared.Storage.Interfaces
 {
     public interface IExclusiveLockRepository
     {
-        Task AddLock(ExclusiveLockStorage item);
-        Task<bool> UpdateLock(ExclusiveLockStorage item);
-        Task<bool> RemoveLockByCriteria(Expression<Func<ExclusiveLockStorage, bool>> filter);
-        Task<ExclusiveLockStorage> FindLockByCriteria(Expression<Func<ExclusiveLockStorage, bool>> filter);
+        Task AddLock(ExclusiveLockStorageDoc item);
+        Task<bool> UpdateLock(ExclusiveLockStorageDoc item);
+        Task<bool> RemoveLockByCriteria(Expression<Func<ExclusiveLockStorageDoc, bool>> filter);
+        Task<ExclusiveLockStorageDoc> FindLockByCriteria(Expression<Func<ExclusiveLockStorageDoc, bool>> filter);
     }
 }

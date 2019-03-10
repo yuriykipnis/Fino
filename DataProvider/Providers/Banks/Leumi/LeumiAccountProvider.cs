@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using DataProvider.Providers.Banks.Leumi.Dto;
@@ -17,6 +18,12 @@ namespace DataProvider.Providers.Banks.Leumi
         public LeumiAccountProvider(ILeumiApi api)
         {
             _api = api;
+        }
+
+        public IEnumerable<BankAccount> GetAccountsWithAllData(List<CreditCardDescriptor> creditCardDescriptor, DateTime startDate, DateTime endDate,
+            bool includeDeatils = false)
+        {
+            throw new NotImplementedException();
         }
 
         public BankAccount GetAccount(BankAccountDescriptor accountDescriptor)
@@ -49,7 +56,7 @@ namespace DataProvider.Providers.Banks.Leumi
             return result;
         }
 
-        public IEnumerable<Transaction> GetTransactions(BankAccountDescriptor accountDescriptor, DateTime startTime, DateTime endTime)
+        public IEnumerable<BankTransaction> GetTransactions(BankAccountDescriptor accountDescriptor, DateTime startTime, DateTime endTime)
         {
             var transactions = _api.GetTransactions(accountDescriptor.AccountNumber, startTime, endTime);
             var result = ConvertToTransactions(transactions);
@@ -70,16 +77,16 @@ namespace DataProvider.Providers.Banks.Leumi
             return result;
         }
         
-        private static List<Transaction> ConvertToTransactions(IEnumerable<LeumiTransactionResponse> transactions)
+        private static List<BankTransaction> ConvertToTransactions(IEnumerable<LeumiTransactionResponse> transactions)
         {
-            var result = new List<Transaction>();
+            var result = new List<BankTransaction>();
 
             foreach (var transaction in transactions)
             {
-                var newTransaction = new Transaction
+                var newTransaction = new BankTransaction
                 {
-                    Id = (long)(Convert.ToInt64(transaction.SupplierId) + Math.Round(transaction.Amount) +
-                                Math.Round(transaction.CurrentBalance)),
+                    Id = (Convert.ToInt64(transaction.SupplierId) + Math.Round(transaction.Amount) +
+                                Math.Round(transaction.CurrentBalance)).ToString(CultureInfo.InvariantCulture),
                     Type = transaction.Type,
                     IsFee = false,
                     PurchaseDate = transaction.PurchaseDate,

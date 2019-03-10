@@ -7,107 +7,326 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DataProvider.Providers.Cards.Amex.Dto;
-using GoldMountainShared.Storage.Documents;
+using DataProvider.Providers.Exceptions;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace DataProvider.Providers.Cards.Amex
 {
-    public class AmexApi : IAmexApi
+    public class AmexApi : HttpScrapper, IAmexApi
     {
         #region Constants
+        private const string Name = "Amex";
         private const string LoginDomain = "https://he.americanexpress.co.il";
+
         private const string AspDotNetSessionId = "ASP.NET_SessionId";
         private const string Jsessionid = "JSESSIONID";
-        private const string Alt50_ZLinuxPrd = "Alt50_ZLinuxPrd";
+        private const string Alt50ZLinuxPrd = "Alt50_ZLinuxPrd";
         private const string ServiceP = "ServiceP";
         private const string RequestVerificationToken = "__RequestVerificationToken";
+
+        private readonly string _idNumber;
         #endregion
 
-        #region Fields
-        private AmexSessionInfo _sessionInfo;
-        #endregion
+        private readonly AmexSessionInfo _sessionInfo;
 
-        public AmexApi(Provider providerDescriptor)
+        public AmexApi(IDictionary<string, string> credentials)
         {
-            if (providerDescriptor == null || providerDescriptor.Credentials.Count == 0)
+            if (credentials == null || credentials.Count != 3)
             {
-                throw new ArgumentNullException(nameof(providerDescriptor));
+                throw new ArgumentException("Credentials for access to Cal are incorrect.");
             }
 
-            var crentialValues = providerDescriptor.Credentials.Values.ToArray();
-            var idNumber = crentialValues[0];
-            var lastDigits = crentialValues[1];
-            var password = crentialValues[2];
+            _sessionInfo = new AmexSessionInfo();
 
-            GetVerificationToken();
-            ValidateId(idNumber, lastDigits);
-
-            var loginResponse = Login(idNumber, lastDigits, password);
+            var credentialValues = credentials.Values.ToArray();
+            _idNumber = credentialValues[0];
+            var lastDigits = credentialValues[1];
+            var password = credentialValues[2];
+            
+            try
+            {
+                _sessionInfo.AntiForgeryToken = GetVerificationToken();
+                ValidateId(_idNumber, lastDigits);
+                Login(_idNumber, lastDigits, password);
+            }
+            catch (Exception exp)
+            {
+                throw new LoginException(Name, _idNumber) { Error = exp.Message };
+            }
         }
 
-        public CardListDeatils GetCards()
+        public IEnumerable<AmexCardInfo> GetCards()
         {
             var api = "/services/ProxyRequestHandler.ashx?reqName=CardsList_102Digital";
             var baseAddress = new Uri(LoginDomain);
 
             var cookieContainer = new CookieContainer();
             cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
-            cookieContainer.Add(baseAddress, new Cookie(Alt50_ZLinuxPrd, _sessionInfo.Alt50_ZLinuxPrd));
+            cookieContainer.Add(baseAddress, new Cookie(Alt50ZLinuxPrd, _sessionInfo.Alt50_ZLinuxPrd));
             cookieContainer.Add(baseAddress, new Cookie(ServiceP, _sessionInfo.ServiceP));
             cookieContainer.Add(baseAddress, new Cookie(RequestVerificationToken, _sessionInfo.RequestVerificationToken));
             cookieContainer.Add(baseAddress, new Cookie(AspDotNetSessionId, _sessionInfo.AspDotNetSessionId));
 
-            var headersToAdd = new List<KeyValuePair<string, IEnumerable<string>>>
+            var headers = new List<Tuple<string, string>>
             {
-                new KeyValuePair<string, IEnumerable<string>> (RequestVerificationToken, new List<string> { _sessionInfo.AntiForgeryToken })
+                new Tuple<string, string> (RequestVerificationToken,  _sessionInfo.AntiForgeryToken),
             };
-            
-            var response = CallGetRequest(baseAddress, api, cookieContainer, headersToAdd);
-            var data = JsonConvert.DeserializeObject<CardListResponse>(response);
-            if (IsError(data.Header))
+
+            var response = CallGetRequest<AmexCardListResponse>(baseAddress, api, cookieContainer, headers);
+
+            if (IsError(response.Header))
             {
-                throw new Exception($"Cannot to get cards. Error: {GetError(data.Header)}");
+                throw new Exception($"Error status returned from get cards call: {GetError(response.Header)}");
             }
 
-            return data.CardsList_102DigitalBean;
+            return FetchValidCards(response);
         }
-
-        public IEnumerable<CardTransaction> GetTransactions(long cardIndex, int month, int year)
+        
+        public IEnumerable<AmexCardTransaction> GetTransactions(int cardIndex, int year, int month)
         {
-            var effMonth = GetEffectiveMonth(month);
-            var effYear = GetEffectiveYear(month, year);
-            var arguments = $"&month={effMonth:00}&year={effYear}&cardIdx={cardIndex}";
+            var arguments = $"&month={month:00}&year={year:0000}&cardIdx={cardIndex}";
             var api = "/services/ProxyRequestHandler.ashx?reqName=CardsTransactionsList" + arguments;
             var baseAddress = new Uri(LoginDomain);
 
             var cookieContainer = new CookieContainer();
             cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
-            cookieContainer.Add(baseAddress, new Cookie(Alt50_ZLinuxPrd, _sessionInfo.Alt50_ZLinuxPrd));
+            cookieContainer.Add(baseAddress, new Cookie(Alt50ZLinuxPrd, _sessionInfo.Alt50_ZLinuxPrd));
             cookieContainer.Add(baseAddress, new Cookie(ServiceP, _sessionInfo.ServiceP));
             cookieContainer.Add(baseAddress, new Cookie(RequestVerificationToken, _sessionInfo.RequestVerificationToken));
             cookieContainer.Add(baseAddress, new Cookie(AspDotNetSessionId, _sessionInfo.AspDotNetSessionId));
 
-            var headersToAdd = new List<KeyValuePair<string, IEnumerable<string>>>
+            var headers = new List<Tuple<string, string>>
             {
-                new KeyValuePair<string, IEnumerable<string>> (RequestVerificationToken, new List<string> { _sessionInfo.AntiForgeryToken })
+                new Tuple<string, string> (RequestVerificationToken,  _sessionInfo.AntiForgeryToken),
             };
 
-            var response = CallGetRequest(baseAddress, api, cookieContainer, headersToAdd);
-            var expensesInfo = RetriveExpensesInfo(response);
-            return expensesInfo.Transactions;
+            var response = CallGetRequest(baseAddress, api, cookieContainer, headers);
+            var result = new AmexExpensesInfo();
+            try
+            {
+                result = FetchExpensesInfo(response);
+            }
+            catch (Exception exp)
+            {
+                throw new Exception($"Exit in {Name} api failed, for user: {_idNumber} with error: {exp.Message}");
+            }
+            
+            return result.Transactions;
         }
 
-        #region Private Methods
-        private int GetEffectiveMonth(int month)
+        public IEnumerable<CardChargeResponse> GetBankDebit(string accountNumber, String cardNumber, int year, int month)
         {
-            return month == 12 ? 1 : month + 1;
+            var arguments = $"&format=Json&actionCode=3" +
+                            $"&accountNumber={accountNumber}" +
+                            $"&billingDate={year:0000}-{month:00}-01";
+            var api = "/services/ProxyRequestHandler.ashx?reqName=DashboardMonth" + arguments;
+            var baseAddress = new Uri(LoginDomain);
+
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
+            cookieContainer.Add(baseAddress, new Cookie(Alt50ZLinuxPrd, _sessionInfo.Alt50_ZLinuxPrd));
+            cookieContainer.Add(baseAddress, new Cookie(ServiceP, _sessionInfo.ServiceP));
+            cookieContainer.Add(baseAddress, new Cookie(RequestVerificationToken, _sessionInfo.RequestVerificationToken));
+            cookieContainer.Add(baseAddress, new Cookie(AspDotNetSessionId, _sessionInfo.AspDotNetSessionId));
+
+            var headers = new List<Tuple<string, string>>
+            {
+                new Tuple<string, string> (RequestVerificationToken,  _sessionInfo.AntiForgeryToken),
+            };
+
+            var response = CallGetRequest<DashboardMonthResponse>(baseAddress, api, cookieContainer, headers);
+            if (response == null || IsError(response.Header))
+            {
+                var error = GetError(response?.Header);
+                throw new Exception($"Exit in {Name} api failed, for user: {_idNumber}, with error: {error}");
+            }
+
+            return response.DashboardMonthBean.CardsCharges.Where(cc => cc.CardNumber == cardNumber);
         }
 
-        private int GetEffectiveYear(int month, int year)
+        public DealDetails GetTransactionDetails(int cardIndex, string paymentDate, Boolean isInbound, string transactionId)
         {
-            return month == 12 ? year + 1 : year;
+            var inState = isInbound ? "yes" : "no";
+            var arguments = $"&CardIndex={cardIndex}&moedChiuv={paymentDate}&inState={inState}&shovarRatz={transactionId}";
+            var api = "/services/ProxyRequestHandler.ashx?reqName=PirteyIska_204" + arguments;
+            var baseAddress = new Uri(LoginDomain);
+
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
+            cookieContainer.Add(baseAddress, new Cookie(Alt50ZLinuxPrd, _sessionInfo.Alt50_ZLinuxPrd));
+            cookieContainer.Add(baseAddress, new Cookie(ServiceP, _sessionInfo.ServiceP));
+            cookieContainer.Add(baseAddress, new Cookie(RequestVerificationToken, _sessionInfo.RequestVerificationToken));
+            cookieContainer.Add(baseAddress, new Cookie(AspDotNetSessionId, _sessionInfo.AspDotNetSessionId));
+
+            var response = CallGetRequest<TransactionDetailsResponse>(baseAddress, api, cookieContainer, null);
+            if (response == null || IsError(response.Header))
+            {
+                var error = GetError(response?.Header);
+                throw new Exception($"Transaction details in {Name} api failed, for user: {_idNumber}, with error: {error}");
+            }
+
+            return response.PirteyIska_204Bean;
+        }
+        
+        private String GetVerificationToken()
+        {
+            var api = "/personalarea/login/";
+
+            var html = CallGetRequest(new Uri(LoginDomain), api, new CookieContainer(), null);
+
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(html);
+
+            var t = doc.DocumentNode.Descendants("input").
+                FirstOrDefault(a => a.Attributes.Contains("name") && a.Attributes["name"].Value.Equals(RequestVerificationToken));
+            
+
+            return t?.Attributes["value"].Value;
+        }
+        
+        private String ValidateId(string idNumber, string lastDigits)
+        {
+            var api = "/services/ProxyRequestHandler.ashx?reqName=ValidateIdData";
+            var baseAddress = new Uri(LoginDomain);
+
+            var body = new ValidateIdRequestBody
+            {
+                Id = idNumber,
+                CardSuffix = lastDigits,
+                CheckLevel = "1",
+                CompanyCode = "77",
+                IdType = "1",
+                CountryCode = "212"
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/x-www-form-urlencoded");
+
+            var headers = new List<Tuple<string, string>>
+            {
+                new Tuple<String, String>(RequestVerificationToken, _sessionInfo.AntiForgeryToken)
+            };
+
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(baseAddress, new Cookie(RequestVerificationToken, _sessionInfo.RequestVerificationToken));
+            cookieContainer.Add(baseAddress, new Cookie(AspDotNetSessionId, _sessionInfo.AspDotNetSessionId));
+
+            var response = CallPostRequest<AmexValidateIdResponse>(baseAddress, api, content, cookieContainer, headers);
+            if (response == null || IsError(response.Header))
+            {
+                var error = GetError(response?.Header);
+                throw new LoginException(Name, idNumber) { Error = error };
+            }
+
+            return response.ValidateIdDataBean.UserName;
+        }
+
+        private AmexLoginResponse Login(string idNumber, string lastDigits, string password)
+        {
+            var api = "/services/ProxyRequestHandler.ashx?reqName=performLogonA";
+            var baseAddress = new Uri(LoginDomain);
+            var body = new AmexLogonBody
+            {
+                MisparZihuy = idNumber,
+                CountryCode = "212",
+                IdType = "1",
+                Sisma = password,
+                CardSuffix = lastDigits
+            };
+
+            var headers = new List<Tuple<string, string>>
+            {
+                new Tuple<string, string> (RequestVerificationToken,  _sessionInfo.AntiForgeryToken),
+            };
+
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(baseAddress, new Cookie(RequestVerificationToken, _sessionInfo.RequestVerificationToken));
+
+            var content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/x-www-form-urlencoded");
+
+            var response = CallPostRequest<AmexLoginResponse>(baseAddress, api, content, cookieContainer, headers);
+            if (response.Status != 1)
+            {
+                throw new LoginException(Name, idNumber) { Error = response.Message };
+            }
+
+            return response;
+        }
+
+        private static bool IsError(AmexHeaderResponse header)
+        {
+            return header == null || header.Status != 1;
+        }
+
+        private static string GetError(AmexHeaderResponse header)
+        {
+            if (header?.Status == 0)
+            {
+                return string.Empty;
+            }
+
+            if (string.IsNullOrEmpty(header?.Message))
+            {
+                return "Unknown error";
+            }
+
+            return header.Message;
+        }
+
+        private static IEnumerable<AmexCardInfo> FetchValidCards(AmexCardListResponse response)
+        {
+            var cards = new List<AmexCardInfo>();
+            if (response.CardsList_102DigitalBean.Table1 != null)
+            {
+                cards.AddRange(response.CardsList_102DigitalBean.Table1);
+            }
+            if (response.CardsList_102DigitalBean.Table2 != null)
+            {
+                cards.AddRange(response.CardsList_102DigitalBean.Table2);
+            }
+
+            var result = cards.Where(card =>
+            {
+                var splitedDates = card.StatusDate.Split('.');
+                return splitedDates[2] == "0001";
+            });
+            return result;
+        }
+
+        private static AmexExpensesInfo FetchExpensesInfo(string response)
+        {
+            string result = response;
+            JObject json = JObject.Parse(result);
+
+            var cardsTransactionsListProperty = json.Property("CardsTransactionsListBean");
+            if (cardsTransactionsListProperty == null)
+            {
+                throw new Exception($"Cannot to get transactions. Error: CardsTransactionsListBean is missing");
+            }
+
+            var cardsTransactionsList = cardsTransactionsListProperty.Value as JObject;
+
+            result = FormatTransactionsList(cardsTransactionsList, result, @"^card[0-9]*$", "card");
+            result = FormatTransactionsList(cardsTransactionsList, result, @"^index[0-9]*$", "index");
+            result = FormatTransactionsList(cardsTransactionsList, result, @"^id[0-9]+$", "id");
+
+            var data = JsonConvert.DeserializeObject<AmexTransactionsListResponse>(result);
+            if (IsError(data.Header))
+            {
+                throw new Exception($"Cannot to get transactions. Error: {GetError(data.Header)}");
+            }
+            var inboundTransactions = data.CardsTransactionsListBean.Index.CurrentCardTransactions.First().TxnIsrael.ToList();
+            var outboundTransactions = data.CardsTransactionsListBean.Index.CurrentCardTransactions.Last().TxnAbroad.ToList();
+            var transactions = inboundTransactions.Concat(outboundTransactions);
+
+            var charge = data.CardsTransactionsListBean.TotalChargeNis;
+
+            return new AmexExpensesInfo
+            {
+                Transactions = transactions  ?? new List<Dto.AmexCardTransaction>(),
+                NextCharge = Convert.ToDecimal(charge)
+            };
         }
 
         private static string FormatTransactionsList(JObject cardsTransactionsList, string json, string pattern, string newText)
@@ -128,244 +347,9 @@ namespace DataProvider.Providers.Cards.Amex
             return result;
         }
 
-        internal static ExpensesInfo RetriveExpensesInfo(string response)
+
+        protected override void ExtractCookies(HttpResponseMessage response)
         {
-            string result = response;
-            JObject json = JObject.Parse(result);
-
-            var cardsTransactionsListProperty = json.Property("CardsTransactionsListBean");
-            if (cardsTransactionsListProperty == null)
-            {
-                throw new Exception($"Cannot to get transactions. Error: CardsTransactionsListBean is missing");
-            }
-
-            var cardsTransactionsList = cardsTransactionsListProperty.Value as JObject;
-
-            result = FormatTransactionsList(cardsTransactionsList, result, @"^card[0-9]*$", "card");
-            result = FormatTransactionsList(cardsTransactionsList, result, @"^index[0-9]*$", "index");
-            result = FormatTransactionsList(cardsTransactionsList, result, @"^id[0-9]+$", "id");
-
-            var data = JsonConvert.DeserializeObject<TransactionsListResponse>(result);
-            if (IsError(data.Header))
-            {
-                throw new Exception($"Cannot to get transactions. Error: {GetError(data.Header)}");
-            }
-            var transactions = data.CardsTransactionsListBean.Index.CurrentCardTransactions.First().TxnIsrael;
-            var charge = data.CardsTransactionsListBean.TotalChargeNis;
-
-            return new ExpensesInfo
-            {
-                Transactions = transactions ?? new List<CardTransaction>(),
-                NextCharge = Convert.ToDecimal(charge)
-            };
-        }
-
-        private LoginResponse Login(string idNumber, string lastDigits, string password)
-        {
-            var api = "/services/ProxyRequestHandler.ashx?reqName=performLogonA";
-            var baseAddress = new Uri(LoginDomain);
-            var body = new LogonBody
-            {
-                MisparZihuy = idNumber,
-                CountryCode = "212",
-                IdType = "1",
-                Sisma = password,
-                CardSuffix = lastDigits
-            };
-
-            var headersToAdd = new List<KeyValuePair<string, IEnumerable<string>>>
-            {
-                new KeyValuePair<string, IEnumerable<string>> (RequestVerificationToken, new List<string> { _sessionInfo.AntiForgeryToken }),
-            };
-
-            var cookieContainer = new CookieContainer();
-            cookieContainer.Add(baseAddress, new Cookie(RequestVerificationToken, _sessionInfo.RequestVerificationToken));
-            cookieContainer.Add(baseAddress, new Cookie(Alt50_ZLinuxPrd, _sessionInfo.Alt50_ZLinuxPrd));
-            cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
-            cookieContainer.Add(baseAddress, new Cookie(ServiceP, _sessionInfo.ServiceP));
-            cookieContainer.Add(baseAddress, new Cookie(AspDotNetSessionId, _sessionInfo.AspDotNetSessionId));
-
-            var content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/x-www-form-urlencoded");
-
-            var response = CallPostRequest<LoginResponse>(baseAddress, api, content, cookieContainer, headersToAdd);
-            if (response.Status != 1)
-            {
-                throw new UnauthorizedAccessException(String.Concat(response.Message, "\n Go to: \n", LoginDomain, "/personalarea/login/"));
-            }
-
-            return response;
-        }
-
-        private void GetVerificationToken()
-        {
-            var baseAddress = new Uri(LoginDomain);
-            var api = "/personalarea/login/";
-
-            var html = CallGetRequest(baseAddress, api, new CookieContainer(), new List<KeyValuePair<string, IEnumerable<string>>>());
-
-            HtmlDocument doc = new HtmlDocument();
-            doc.LoadHtml(html);
-
-            var t = doc.DocumentNode.Descendants("input").
-                FirstOrDefault(a => a.Attributes.Contains("name") && a.Attributes["name"].Value.Equals(RequestVerificationToken));
-            _sessionInfo.AntiForgeryToken = t.Attributes["value"].Value;
-        }
-        
-        private string ValidateId(string idNumber, string lastDigits)
-        {
-            var api = "/services/ProxyRequestHandler.ashx?reqName=ValidateIdData";
-            var baseAddress = new Uri(LoginDomain);
-
-            var body = new ValidateIdRequestBody()
-            {
-                CardSuffix = lastDigits,
-                CheckLevel = "1",
-                CompanyCode = "77",
-                Id = idNumber,
-                IdType = "1",
-                CountryCode = "212"
-            };
-            var content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/x-www-form-urlencoded");
-            
-            var headersToAdd = new List<KeyValuePair<string, IEnumerable<string>>>
-            {
-                new KeyValuePair<string, IEnumerable<string>> (RequestVerificationToken, new List<string> { _sessionInfo.AntiForgeryToken })
-            };
-
-            var cookieContainer = new CookieContainer();
-            cookieContainer.Add(baseAddress, new Cookie(RequestVerificationToken, _sessionInfo.RequestVerificationToken));
-            cookieContainer.Add(baseAddress, new Cookie(AspDotNetSessionId, _sessionInfo.AspDotNetSessionId));
-
-            var response = CallPostRequest<ValidateIdResponse>(baseAddress, api, content, cookieContainer, headersToAdd);
-             if (response == null || IsError(response.Header))
-             {
-                 throw new Exception($"Cannot to code mishtamesh. Error: {GetError(response != null ? response.Header : new HeaderResponse())}");
-             }
-
-             return response.ValidateIdDataBean.UserName;
-        }
-
-        private void Exit()
-        {
-            var api = "/services/ProxyRequestHandler.ashx?reqName=performExit";
-            var baseAddress = new Uri(LoginDomain);
-            var headersToAdd = new List<KeyValuePair<string, IEnumerable<string>>>
-            {
-                new KeyValuePair<string, IEnumerable<string>> (RequestVerificationToken, new List<string> { _sessionInfo.AntiForgeryToken })
-            };
-
-            var cookieContainer = new CookieContainer();
-            cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
-            cookieContainer.Add(baseAddress, new Cookie(Alt50_ZLinuxPrd, _sessionInfo.Alt50_ZLinuxPrd));
-            cookieContainer.Add(baseAddress, new Cookie(ServiceP, _sessionInfo.ServiceP));
-            cookieContainer.Add(baseAddress, new Cookie(RequestVerificationToken, _sessionInfo.RequestVerificationToken));
-            cookieContainer.Add(baseAddress, new Cookie(AspDotNetSessionId, _sessionInfo.AspDotNetSessionId));
-
-            var response = CallPostRequest<object>(baseAddress, api, null, cookieContainer, headersToAdd);
-        }
-        
-        private static bool IsError(HeaderResponse header)
-        {
-            return header == null || header.Status != 1;
-        }
-
-        private static string GetError(HeaderResponse header)
-        {
-            if (header.Status == 0)
-            {
-                return string.Empty;
-            }
-
-            if (string.IsNullOrEmpty(header?.Message))
-            {
-                return "Unknown error";
-            }
-
-            return header.Message;
-        }
-
-        private string CallGetRequest(Uri baseAddress, string api, CookieContainer cookieContainer, IList<KeyValuePair<string, IEnumerable<string>>> headersToAdd)
-        {
-            //WebProxy proxy = WebProxy.GetDefaultProxy();
-            HttpResponseMessage response;
-            using (var httpClientHandler = new HttpClientHandler
-            {
-                CookieContainer = cookieContainer,
-                //Proxy = proxy,
-                //UseProxy = true
-            })
-            {
-                httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
-                using (var client = new HttpClient(httpClientHandler) { BaseAddress = baseAddress })
-                {
-                    foreach (var header in headersToAdd)
-                    {
-                        client.DefaultRequestHeaders.Add(header.Key, header.Value);
-                    }
-
-                    response = client.GetAsync(api).Result;
-                }
-            }
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return null;
-            }
-
-            ExtractCookies(response);
-            return response.Content.ReadAsStringAsync().Result;
-        }
-
-        private T CallPostRequest<T>(Uri baseAddress, string api, StringContent content, CookieContainer cookieContainer, IList<KeyValuePair<string, IEnumerable<string>>> headersToAdd)
-        {
-            //WebProxy proxy = WebProxy.GetDefaultProxy();
-            HttpResponseMessage response;
-            using (var httpClientHandler = new HttpClientHandler
-            {
-                CookieContainer = cookieContainer,
-                //Proxy = proxy,
-                //UseProxy = true
-            })
-            {
-                httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
-                using (var client = new HttpClient(httpClientHandler) { BaseAddress = baseAddress })
-                {
-                    foreach (var header in headersToAdd)
-                    {
-                        client.DefaultRequestHeaders.Add(header.Key, header.Value);
-                    }
-
-                    response = client.PostAsync(api, content).Result;
-                }
-            }
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return default(T);
-            }
-
-            ExtractCookies(response);
-
-            T result;
-            try
-            {
-                result = JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return default(T);
-            }
-            return result;
-        }
-        
-        private void ExtractCookies(HttpResponseMessage response)
-        {
-            if (_sessionInfo == null)
-            {
-                _sessionInfo = new AmexSessionInfo();
-            }
-
             IEnumerable<string> cookies = new List<string>();
             try
             {
@@ -378,7 +362,7 @@ namespace DataProvider.Providers.Cards.Amex
             {
                 Console.WriteLine(e);
             }
-            
+
             if (cookies == null)
             {
                 return;
@@ -395,7 +379,7 @@ namespace DataProvider.Providers.Cards.Amex
                     {
                         _sessionInfo.Jsessionid = nameValue[1];
                     }
-                    else if (nameValue[0].Equals(Alt50_ZLinuxPrd))
+                    else if (nameValue[0].Equals(Alt50ZLinuxPrd))
                     {
                         _sessionInfo.Alt50_ZLinuxPrd = nameValue[1];
                     }
@@ -414,18 +398,35 @@ namespace DataProvider.Providers.Cards.Amex
                 }
             }
         }
-        #endregion 
 
-        #region IDisposable
-        public void Dispose()
+        protected override void Exit()
         {
-            Task.Factory.StartNew(Exit).ContinueWith(ErrorHandler, TaskContinuationOptions.OnlyOnFaulted);
+            var api = "/services/ProxyRequestHandler.ashx?reqName=performExit";
+            var baseAddress = new Uri(LoginDomain);
+
+            var headers = new List<Tuple<string, string>>
+            {
+                new Tuple<String, String>(RequestVerificationToken, _sessionInfo.AntiForgeryToken)
+            };
+            
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(baseAddress, new Cookie(Jsessionid, _sessionInfo.Jsessionid));
+            cookieContainer.Add(baseAddress, new Cookie(RequestVerificationToken, _sessionInfo.RequestVerificationToken));
+            cookieContainer.Add(baseAddress, new Cookie(AspDotNetSessionId, _sessionInfo.AspDotNetSessionId));
+
+            try
+            {
+                CallPostRequest<object>(baseAddress, api, null, cookieContainer, headers);
+            }
+            catch (Exception exp)
+            {
+                throw new Exception($"Exit in {Name} api failed, for user: {_idNumber}, with error: {exp.Message}");
+            }
         }
 
-        private void ErrorHandler(Task task, object context)
+        protected override void ExitErrorHandler(Task task, object context)
         {
-            //throw new NotImplementedException();
+            throw new Exception($"Exit in {Name} api failed, for user: {_idNumber}, with error: {task?.Exception?.Message}");
         }
-        #endregion
     }
 }

@@ -4,7 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using GoldMountainApi.Models;
-using GoldMountainShared.Models.Provider;
+using GoldMountainShared.Dto.Provider;
 using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -50,13 +50,13 @@ namespace GoldMountainApi.Controllers
         [HttpDelete("{id, providerName}")]
         public void Delete(String userId, String providerName)
         {
-            _providerRepository.RemoveProvider(userId, providerName);
+            //_providerRepository.RemoveProvider(userId, providerName);
         }
 
         [HttpDelete("{userId}")]
         public void Delete(String userId)
         {
-            _providerRepository.RemoveProviders(userId);
+            //_providerRepository.RemoveProviders(userId);
         }
     }
 }

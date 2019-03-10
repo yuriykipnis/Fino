@@ -25,7 +25,7 @@ namespace GoldMountainShared.Storage.Repositories
             _context = new DbContext(settings);
         }
 
-        public async Task<IEnumerable<SeInsurAccount>> GetAllAccounts()
+        public async Task<IEnumerable<SeInsurAccountDoc>> GetAllAccounts()
         {
             try
             {
@@ -38,7 +38,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<SeInsurAccount> GetAccount(Guid id)
+        public async Task<SeInsurAccountDoc> GetAccount(Guid id)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<IEnumerable<SeInsurAccount>> GetAccountsByUserId(String userId)
+        public async Task<IEnumerable<SeInsurAccountDoc>> GetAccountsByUserId(String userId)
         {
             try
             {
@@ -64,7 +64,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddAccount(SeInsurAccount item)
+        public async Task AddAccount(SeInsurAccountDoc item)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddAccounts(IEnumerable<SeInsurAccount> items)
+        public async Task AddAccounts(IEnumerable<SeInsurAccountDoc> items)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace GoldMountainShared.Storage.Repositories
             try
             {
                 DeleteResult actionResult
-                    = await _context.InsurAccounts.DeleteOneAsync(Builders<SeInsurAccount>.Filter.Eq("Id", id));
+                    = await _context.InsurAccounts.DeleteOneAsync(Builders<SeInsurAccountDoc>.Filter.Eq("Id", id));
 
                 return actionResult.IsAcknowledged && actionResult.DeletedCount > 0;
             }
@@ -108,7 +108,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<bool> UpdateAccount(Guid id, SeInsurAccount account)
+        public async Task<bool> UpdateAccount(Guid id, SeInsurAccountDoc account)
         {
             try
             {
@@ -139,7 +139,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<SeInsurAccount> FindAccountByCriteria(Expression<Func<SeInsurAccount, bool>> filter)
+        public async Task<SeInsurAccountDoc> FindAccountByCriteria(Expression<Func<SeInsurAccountDoc, bool>> filter)
         {
             try
             {

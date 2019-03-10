@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Threading.Tasks;
 using GoldMountainApi.Controllers.Helper;
-using GoldMountainShared.Models.Insur;
+using GoldMountainShared.Dto.Insur;
 using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
 using MaslekaReader;
@@ -41,7 +41,7 @@ namespace GoldMountainApi.Controllers
         [HttpGet("ProvidentFundAccounts/{id}")]
         public async Task<ProvidentFundAccountDto> Get(Guid id)
         {
-            var account = await _accountRepository.GetAccount(id) ?? new ProvidentFundAccount();
+            var account = await _accountRepository.GetAccount(id) ?? new ProvidentFundAccountDoc();
             var result = AutoMapper.Mapper.Map<ProvidentFundAccountDto>(account);
             return result;
         }
@@ -50,12 +50,12 @@ namespace GoldMountainApi.Controllers
         [HttpGet("user/{userId}/ProvidentFundAccounts")]
         public async Task<IEnumerable<ProvidentFundAccountDto>> GetAccountsForUser(String userId)
         {
-            var accounts = await _accountRepository.GetAccountsByUserId(userId) ?? new List<ProvidentFundAccount>();
+            var accounts = await _accountRepository.GetAccountsByUserId(userId) ?? new List<ProvidentFundAccountDoc>();
             if (!accounts.Any())
             {
                 var maslekaReader = new Reader();
                 maslekaReader.GenerateLifeInsurAccounts(userId);
-                accounts = await _accountRepository.GetAccountsByUserId(userId) ?? new List<ProvidentFundAccount>();
+                accounts = await _accountRepository.GetAccountsByUserId(userId) ?? new List<ProvidentFundAccountDoc>();
             }
 
             var result = AutoMapper.Mapper.Map<IEnumerable<ProvidentFundAccountDto>>(accounts);

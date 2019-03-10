@@ -24,6 +24,7 @@
             "assets": [
               "src/assets",
               "src/assets/brand/gm-icon.ico",
+              "src/assets/brand/logo.png",
               "src/assets/icons/switch-off.svg",
               "src/assets/icons/switch-on.svg",
               "src/web.config"

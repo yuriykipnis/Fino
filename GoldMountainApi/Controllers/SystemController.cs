@@ -42,7 +42,7 @@ namespace GoldMountainApi.Controllers
         private void InitInstitutions()
         {
             _institutionRepository.RemoveAllInstitutions();
-            _institutionRepository.AddInstitution(new Institution
+            _institutionRepository.AddInstitution(new InstitutionDoc
             {
                 Id = Guid.NewGuid(),
                 Name = "Bank Hapoalim",
@@ -51,7 +51,7 @@ namespace GoldMountainApi.Controllers
                 UpdatedOn = DateTime.Now,
                 CreatedOn = DateTime.Now
             });
-            _institutionRepository.AddInstitution(new Institution
+            _institutionRepository.AddInstitution(new InstitutionDoc
             {
                 Id = Guid.NewGuid(),
                 Name = "Bank Leumi",
@@ -60,7 +60,7 @@ namespace GoldMountainApi.Controllers
                 UpdatedOn = DateTime.Now,
                 CreatedOn = DateTime.Now
             });
-            _institutionRepository.AddInstitution(new Institution
+            _institutionRepository.AddInstitution(new InstitutionDoc
             {
                 Id = Guid.NewGuid(),
                 Name = "Bank Discount",
@@ -69,7 +69,7 @@ namespace GoldMountainApi.Controllers
                 UpdatedOn = DateTime.Now,
                 CreatedOn = DateTime.Now
             });
-            _institutionRepository.AddInstitution(new Institution
+            _institutionRepository.AddInstitution(new InstitutionDoc
             {
                 Id = Guid.NewGuid(),
                 Name = "AMEX",

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -9,7 +10,7 @@ using DataProvider.Providers.Models;
 using GoldMountainShared.Storage.Documents;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
-using Transaction = DataProvider.Providers.Models.Transaction;
+using BankTransaction = DataProvider.Providers.Models.BankTransaction;
 
 namespace DataProvider.Providers.Banks.Tefahot
 {
@@ -29,7 +30,7 @@ namespace DataProvider.Providers.Banks.Tefahot
         private readonly Uri _baseAddress = new Uri("https://www.mizrahi-tefahot.co.il");
         private readonly Uri _mtoAddress = new Uri("https://mto.mizrahi-tefahot.co.il");
 
-        public TefahotApi(Provider providerDescriptor)
+        public TefahotApi(ProviderDoc providerDescriptor)
         {
             if (providerDescriptor == null || providerDescriptor.Credentials.Count == 0)
             {
@@ -59,11 +60,11 @@ namespace DataProvider.Providers.Banks.Tefahot
             return accounts;
         }
 
-        public IEnumerable<Transaction> GetTransactions(string accountId, DateTime startTime, DateTime endTime)
+        public IEnumerable<BankTransaction> GetTransactions(string accountId, DateTime startTime, DateTime endTime)
         {
             if (String.IsNullOrEmpty(_sessionInfo.MizSession))
             {
-                return new List<Transaction>();
+                return new List<BankTransaction>();
             }
 
             LoadOshPage();
@@ -79,9 +80,9 @@ namespace DataProvider.Providers.Banks.Tefahot
             return transacations;
         }
 
-        private static IEnumerable<Transaction> GetTransactionsData(string data)
+        private static IEnumerable<BankTransaction> GetTransactionsData(string data)
         {
-            var result = new List<Transaction>();
+            var result = new List<BankTransaction>();
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(data);
 
@@ -104,14 +105,14 @@ namespace DataProvider.Providers.Banks.Tefahot
                 var amount = Convert.ToDecimal(row.SelectNodes("td")[4].InnerText);
                 var balance = row.SelectNodes("td")[5].InnerText;
 
-                var tr = new Transaction();
+                var tr = new BankTransaction();
                 tr.PaymentDate = new DateTime(2000 + Convert.ToInt32(date[2]), Convert.ToInt32(date[1]), Convert.ToInt32(date[0]));
                 tr.PurchaseDate = tr.PaymentDate;
                 tr.Type = amount > 0 ? TransactionType.Income : TransactionType.Expense;
                 tr.Amount = Math.Abs(amount);
                 tr.Description = row.SelectNodes("td")[3].InnerText;
                 tr.CurrentBalance = String.IsNullOrEmpty(balance) ? Decimal.MinValue : Convert.ToDecimal(balance);
-                tr.Id = (long)(Math.Round(tr.Amount) + Math.Round(tr.CurrentBalance.Equals(Decimal.MinValue) ? 0 : tr.CurrentBalance));
+                tr.Id = (Math.Round(tr.Amount) + Math.Round(tr.CurrentBalance.Equals(Decimal.MinValue) ? 0 : tr.CurrentBalance)).ToString(CultureInfo.InvariantCulture);
                 
                 result.Add(tr);
             }
@@ -121,6 +122,8 @@ namespace DataProvider.Providers.Banks.Tefahot
 
         public IEnumerable<TefahotMortgagesResponse.TefahotMortgage> GetMortgages(string accountId)
         {
+            var result = new List<TefahotMortgagesResponse.TefahotMortgage>();
+
             var headers = new List<Tuple<string, string>>
             {
                 new Tuple<string, string>("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"),
@@ -132,16 +135,20 @@ namespace DataProvider.Providers.Banks.Tefahot
             cookies.Add(_mtoAddress, new Cookie(AspSession, _sessionInfo.AspSession));
             cookies.Add(_mtoAddress, new Cookie(MizSession, _sessionInfo.MizSession));
 
-            var result = CallGetRequest(_mtoAddress, "/Online/api/mashkanta/profile", cookies, headers);
-            var mortgages = JsonConvert.DeserializeObject<TefahotMortgagesResponse>(result);
-
-            foreach (var mortgage in mortgages.Mashkantaot)
+            var data = CallGetRequest(_mtoAddress, "/Online/api/mashkanta/profile", cookies, headers);
+            var mortgages = JsonConvert.DeserializeObject<TefahotMortgagesResponse>(data);
+            if (mortgages != null)
             {
-                var loans = GetMortgageLoans(mortgage.Id);
-                mortgage.Maslolim = loans.Maslolim;
+                foreach (var mortgage in mortgages.Mashkantaot)
+                {
+                    var loans = GetMortgageLoans(mortgage.Id);
+                    mortgage.Maslolim = loans.Maslolim;
+                }
+
+                result = mortgages.Mashkantaot.ToList();
             }
 
-            return mortgages.Mashkantaot;
+            return result;
         }
 
         public IEnumerable<string> GetBalance(string accountId)
@@ -392,7 +399,6 @@ namespace DataProvider.Providers.Banks.Tefahot
             {
                 new KeyValuePair<string, string>("ctl00_radScriptManager_TSM", ";;Telerik.Web.UI, Version=2013.2.717.45, Culture=neutral, PublicKeyToken=121fae78165ba3d4:en-US:4401a8f1-5215-4b97-a426-3601ce0fa0ff:16e4e7cd:ed16cbdc:365331c3:7c926187:8674cba1:b7778d6c:c08e9f8a:59462f1:a51ee93e:58366029"),
                 new KeyValuePair<string, string>("ctl00_RadStyleSheetManager_TSSM", ""),
-                
                 new KeyValuePair<string, string>("__EVENTARGUMENT", ""),
                 new KeyValuePair<string, string>("__LASTFOCUS", ""),
                 new KeyValuePair<string, string>("__VIEWSTATEENCRYPTED", ""),

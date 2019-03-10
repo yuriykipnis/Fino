@@ -4,9 +4,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using GoldMountainApi.Models;
-using GoldMountainShared.Models.Bank;
-using GoldMountainShared.Models.Credit;
-using GoldMountainShared.Models.Shared;
+using GoldMountainShared.Dto.Bank;
+using GoldMountainShared.Dto.Credit;
+using GoldMountainShared.Dto.Shared;
 using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -53,7 +53,7 @@ namespace GoldMountainApi.Services
             return result;
         }
 
-        public async Task<CreditAccountDto> GetCreditAccount(Guid accountId)
+        public async Task<CreditCardDto> GetCreditAccount(Guid accountId)
         {
             var hostName = _configuration.GetSection("Host:Name").Value;
             var url = hostName + ":5002/api/CreditAccounts/" + accountId;
@@ -61,11 +61,11 @@ namespace GoldMountainApi.Services
 
             if (!response.IsSuccessStatusCode)
             {
-                return new CreditAccountDto();
+                return new CreditCardDto();
             }
 
             var res = response.Content.ReadAsStringAsync().Result;
-            var result = JsonConvert.DeserializeObject<CreditAccountDto>(res);
+            var result = JsonConvert.DeserializeObject<CreditCardDto>(res);
             return result;
         }
 
@@ -85,9 +85,9 @@ namespace GoldMountainApi.Services
             return result;
         }
 
-        public async Task<IEnumerable<BankAccount>> GetBankAccountsForUserId(String userId)
+        public async Task<IEnumerable<BankAccountDoc>> GetBankAccountsForUserId(String userId)
         {
-            IEnumerable<BankAccount> result;
+            IEnumerable<BankAccountDoc> result;
             var hostName = _configuration.GetSection("Host:Name").Value;
             var url = hostName + ":5002/api/users/" + userId + "/BankAccounts/";
             try
@@ -95,11 +95,11 @@ namespace GoldMountainApi.Services
                 HttpResponseMessage response = await _client.GetAsync(url);
                 if (!response.IsSuccessStatusCode)
                 {
-                    return new List<BankAccount>();
+                    return new List<BankAccountDoc>();
                 }
 
                 var res = response.Content.ReadAsStringAsync().Result;
-                result = JsonConvert.DeserializeObject<IList<BankAccount>>(res);
+                result = JsonConvert.DeserializeObject<IList<BankAccountDoc>>(res);
             }
             catch (Exception e)
             {
@@ -110,12 +110,12 @@ namespace GoldMountainApi.Services
             return result;
         }
 
-        public async Task<IEnumerable<BankAccount>> GetBankAccounts(IEnumerable<Guid> accounts)
+        public async Task<IEnumerable<BankAccountDoc>> GetBankAccounts(IEnumerable<Guid> accounts)
         {
-            return new List<BankAccount>();
+            return new List<BankAccountDoc>();
         }
 
-        public async Task<IEnumerable<CreditAccount>> GetCreditAccountsForUserId(String userId)
+        public async Task<IEnumerable<CreditCardDoc>> GetCreditAccountsForUserId(String userId)
         {
             var hostName = _configuration.GetSection("Host:Name").Value;
             var url = hostName + ":5002/api/users/" + userId + "/CreditAccounts/";
@@ -123,15 +123,15 @@ namespace GoldMountainApi.Services
 
             if (!response.IsSuccessStatusCode)
             {
-                return new List<CreditAccount>();
+                return new List<CreditCardDoc>();
             }
 
             var res = response.Content.ReadAsStringAsync().Result;
-            var result = JsonConvert.DeserializeObject<IList<CreditAccount>>(res);
+            var result = JsonConvert.DeserializeObject<IList<CreditCardDoc>>(res);
             return result;
         }
 
-        private async Task<bool> ProcessProvider(Provider provider)
+        private async Task<bool> ProcessProvider(ProviderDoc provider)
         {
             var hostName = _configuration.GetSection("Host:Name").Value;
             HttpResponseMessage response = await _client.GetAsync(hostName + ":5002/accounts/" +"");

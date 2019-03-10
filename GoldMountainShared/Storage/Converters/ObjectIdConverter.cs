@@ -6,7 +6,6 @@ namespace GoldMountainShared.Storage.Converters
 {
     public class ObjectIdConverter : JsonConverter
     {
-
         public override bool CanConvert(Type objectType)
         {
             return objectType == typeof(ObjectId);

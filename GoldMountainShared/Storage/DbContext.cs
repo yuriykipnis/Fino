@@ -20,49 +20,49 @@ namespace GoldMountainShared.Storage
             _database = client.GetDatabase(settings.Database);
         }
 
-        public IMongoCollection<User> Users =>
-            _database.GetCollection<User>("Users");
+        public IMongoCollection<UserDoc> Users =>
+            _database.GetCollection<UserDoc>("Users");
 
-        public IMongoCollection<BankAccount> BankAccounts =>
-            _database.GetCollection<BankAccount>("BankAccounts");
+        public IMongoCollection<BankAccountDoc> BankAccounts =>
+            _database.GetCollection<BankAccountDoc>("BankAccounts");
 
-        public IMongoCollection<CreditAccount> CreditAccounts =>
-            _database.GetCollection<CreditAccount>("CreditAccounts");
+        public IMongoCollection<CreditCardDoc> CreditAccounts =>
+            _database.GetCollection<CreditCardDoc>("CreditAccounts");
 
-        public IMongoCollection<SeInsurAccount> InsurAccounts =>
-            _database.GetCollection<SeInsurAccount>("InsurAccounts");
+        public IMongoCollection<SeInsurAccountDoc> InsurAccounts =>
+            _database.GetCollection<SeInsurAccountDoc>("InsurAccounts");
 
-        public IMongoCollection<ProvidentFundAccount> LifeInsurAccounts =>
-            _database.GetCollection<ProvidentFundAccount>("LifeInsurAccounts");
+        public IMongoCollection<ProvidentFundAccountDoc> LifeInsurAccounts =>
+            _database.GetCollection<ProvidentFundAccountDoc>("LifeInsurAccounts");
         
-        public IMongoCollection<PensionFundAccount> PensionAccounts =>
-            _database.GetCollection<PensionFundAccount>("PensionAccounts");
+        public IMongoCollection<PensionFundAccountDoc> PensionAccounts =>
+            _database.GetCollection<PensionFundAccountDoc>("PensionAccounts");
 
-        public IMongoCollection<MortgageInsurAccount> MortgageInsurAccounts =>
-            _database.GetCollection<MortgageInsurAccount>("MortgageInsurAccounts");
+        public IMongoCollection<MortgageInsurAccountDoc> MortgageInsurAccounts =>
+            _database.GetCollection<MortgageInsurAccountDoc>("MortgageInsurAccounts");
 
         public IMongoCollection<StudyFundAccount> EfundAccounts =>
             _database.GetCollection<StudyFundAccount>("EfundAccounts");
 
-        public IMongoCollection<Provider> Providers =>
-            _database.GetCollection<Provider>("Providers");
+        public IMongoCollection<ProviderDoc> Providers =>
+            _database.GetCollection<ProviderDoc>("Providers");
         
-        public IMongoCollection<Institution> Institutions =>
-            _database.GetCollection<Institution>("Institutions");
+        public IMongoCollection<InstitutionDoc> Institutions =>
+            _database.GetCollection<InstitutionDoc>("Institutions");
 
-        public IMongoCollection<Transaction> Transactions =>
-            _database.GetCollection<Transaction>("Transactions");
+        public IMongoCollection<TransactionDoc> Transactions =>
+            _database.GetCollection<TransactionDoc>("Transactions");
 
-        public IMongoCollection<Mortgage> Mortgages =>
-            _database.GetCollection<Mortgage>("Mortgages");
+        public IMongoCollection<MortgageDoc> Mortgages =>
+            _database.GetCollection<MortgageDoc>("Mortgages");
 
-        public IMongoCollection<Mortgage> Loans =>
-            _database.GetCollection<Mortgage>("Loans");
+        public IMongoCollection<MortgageDoc> Loans =>
+            _database.GetCollection<MortgageDoc>("Loans");
 
-        public IMongoCollection<ContactMessage> Messages =>
-            _database.GetCollection<ContactMessage>("Messages");
+        public IMongoCollection<ContactMessageDoc> Messages =>
+            _database.GetCollection<ContactMessageDoc>("Messages");
 
-        public IMongoCollection<ExclusiveLockStorage> ExclusiveLock =>
-            _database.GetCollection<ExclusiveLockStorage>("ExclusiveLock");
+        public IMongoCollection<ExclusiveLockStorageDoc> ExclusiveLock =>
+            _database.GetCollection<ExclusiveLockStorageDoc>("ExclusiveLock");
     }
 }

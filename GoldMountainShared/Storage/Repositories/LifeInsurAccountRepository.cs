@@ -25,7 +25,7 @@ namespace GoldMountainShared.Storage.Repositories
             _context = new DbContext(settings);
         }
 
-        public async Task<IEnumerable<ProvidentFundAccount>> GetAllAccounts()
+        public async Task<IEnumerable<ProvidentFundAccountDoc>> GetAllAccounts()
         {
             try
             {
@@ -38,7 +38,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<ProvidentFundAccount> GetAccount(Guid id)
+        public async Task<ProvidentFundAccountDoc> GetAccount(Guid id)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<IEnumerable<ProvidentFundAccount>> GetAccountsByUserId(String userId)
+        public async Task<IEnumerable<ProvidentFundAccountDoc>> GetAccountsByUserId(String userId)
         {
             try
             {
@@ -64,7 +64,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddAccount(ProvidentFundAccount item)
+        public async Task AddAccount(ProvidentFundAccountDoc item)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddAccounts(IEnumerable<ProvidentFundAccount> items)
+        public async Task AddAccounts(IEnumerable<ProvidentFundAccountDoc> items)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace GoldMountainShared.Storage.Repositories
             try
             {
                 DeleteResult actionResult
-                    = await _context.LifeInsurAccounts.DeleteOneAsync(Builders<ProvidentFundAccount>.Filter.Eq("Id", id));
+                    = await _context.LifeInsurAccounts.DeleteOneAsync(Builders<ProvidentFundAccountDoc>.Filter.Eq("Id", id));
 
                 return actionResult.IsAcknowledged && actionResult.DeletedCount > 0;
             }
@@ -108,7 +108,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<bool> UpdateAccount(Guid id, ProvidentFundAccount account)
+        public async Task<bool> UpdateAccount(Guid id, ProvidentFundAccountDoc account)
         {
             try
             {
@@ -139,7 +139,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<ProvidentFundAccount> FindAccountByCriteria(Expression<Func<ProvidentFundAccount, bool>> filter)
+        public async Task<ProvidentFundAccountDoc> FindAccountByCriteria(Expression<Func<ProvidentFundAccountDoc, bool>> filter)
         {
             try
             {

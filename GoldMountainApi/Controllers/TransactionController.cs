@@ -5,7 +5,7 @@ using System.Security.Authentication;
 using System.Threading.Tasks;
 using GoldMountainApi.Controllers.Helper;
 using GoldMountainApi.Services;
-using GoldMountainShared.Models.Shared;
+using GoldMountainShared.Dto.Shared;
 using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -19,11 +19,11 @@ namespace GoldMountainApi.Controllers
     public class TransactionController : Controller
     {
         private readonly IBankAccountRepository _bankAccountRepository;
-        private readonly ICreditAccountRepository _creditAccountRepository;
+        private readonly ICreditCardRepository _creditAccountRepository;
         private readonly IDataService _dataService;
         private readonly IValidationHelper _validationHelper;
 
-        public TransactionController(IBankAccountRepository bankAccountRepository, ICreditAccountRepository creditAccountRepository, 
+        public TransactionController(IBankAccountRepository bankAccountRepository, ICreditCardRepository creditAccountRepository, 
                                      IDataService dataService, IValidationHelper validationHelper)
         {
             _bankAccountRepository = bankAccountRepository;
@@ -96,7 +96,7 @@ namespace GoldMountainApi.Controllers
             try
             {
                 var id = new Guid(accountId);
-                var newTransactions = AutoMapper.Mapper.Map<IEnumerable<Transaction>>(transactions);
+                var newTransactions = AutoMapper.Mapper.Map<IEnumerable<TransactionDoc>>(transactions);
 
                 await UpdateAccountWithTransactions(id, newTransactions);
                 result = AutoMapper.Mapper.Map<IEnumerable<TransactionDto>>(newTransactions);
@@ -132,7 +132,7 @@ namespace GoldMountainApi.Controllers
         }
 
 
-        private async Task<IEnumerable<Transaction>> GetTransactionsForAccount(Guid id, int year, int month)
+        private async Task<IEnumerable<TransactionDoc>> GetTransactionsForAccount(Guid id, int year, int month)
         {
             var bankAccount = await _bankAccountRepository.GetAccount(id);
             if (bankAccount != null)
@@ -154,14 +154,14 @@ namespace GoldMountainApi.Controllers
                 });
             }
 
-            return new List<Transaction>();
+            return new List<TransactionDoc>();
         }
 
-        private async Task<IEnumerable<Transaction>> GetBankTransactionsForUser(String userId, int year, int month)
+        private async Task<IEnumerable<TransactionDoc>> GetBankTransactionsForUser(String userId, int year, int month)
         {
-            var banksAccounts = await _bankAccountRepository.GetAccountsByUserId(userId) ?? new List<BankAccount>();
+            var banksAccounts = await _bankAccountRepository.GetAccountsByUserId(userId) ?? new List<BankAccountDoc>();
 
-            List<Transaction> transactions = new List<Transaction>();
+            List<TransactionDoc> transactions = new List<TransactionDoc>();
             foreach (var banksAccount in banksAccounts)
             {
                 var trs = GetTransactionsForAccount(banksAccount.Id, year, month).Result;
@@ -171,11 +171,11 @@ namespace GoldMountainApi.Controllers
             return transactions;
         }
 
-        private async Task<IEnumerable<Transaction>> GetCreditTransactionsForUser(String userId, int year, int month)
+        private async Task<IEnumerable<TransactionDoc>> GetCreditTransactionsForUser(String userId, int year, int month)
         {
-            var creditAccounts = await _creditAccountRepository.GetAccountsByUserId(userId) ?? new List<CreditAccount>();
+            var creditAccounts = await _creditAccountRepository.GetAccountsByUserId(userId) ?? new List<CreditCardDoc>();
 
-            List<Transaction> transactions = new List<Transaction>();
+            List<TransactionDoc> transactions = new List<TransactionDoc>();
             foreach (var creditAccount in creditAccounts)
             {
                 var trs = GetTransactionsForAccount(creditAccount.Id, year, month).Result;
@@ -185,7 +185,7 @@ namespace GoldMountainApi.Controllers
             return transactions;
         }
 
-        private async Task<IEnumerable<Transaction>> GetTransactionsForUser(String userId, int year, int month)
+        private async Task<IEnumerable<TransactionDoc>> GetTransactionsForUser(String userId, int year, int month)
         {
             var bankTransactions = await GetBankTransactionsForUser(userId, year, month);
             var creditTransactions = await GetCreditTransactionsForUser(userId, year, month);
@@ -193,7 +193,7 @@ namespace GoldMountainApi.Controllers
             return bankTransactions.Concat(creditTransactions);
         }
 
-        private async Task<IEnumerable<Transaction>> UpdateAccountWithTransactions(Guid id, IEnumerable<Transaction> transactions)
+        private async Task<IEnumerable<TransactionDoc>> UpdateAccountWithTransactions(Guid id, IEnumerable<TransactionDoc> transactions)
         {
             var bankAccount = await _bankAccountRepository.GetAccount(id);
             if (bankAccount != null)
@@ -211,7 +211,7 @@ namespace GoldMountainApi.Controllers
                 return creditAccount.Transactions;
             }
 
-            return new List<Transaction>();
+            return new List<TransactionDoc>();
         }
     }
 }

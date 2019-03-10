@@ -8,26 +8,24 @@ namespace GoldMountainShared.Storage.Interfaces
 {
     public interface IProviderRepository
     {
-        Task<Provider> GetProvider(Guid id);
+        Task<ProviderDoc> GetProvider(String id);
 
-        Task<IEnumerable<Provider>> GetProviders();
+        Task<IEnumerable<ProviderDoc>> GetProviders();
         
-        Task<IEnumerable<Provider>> GetProviders(String userId);
+        Task<IEnumerable<ProviderDoc>> GetProviders(String userId);
 
-        Task<IEnumerable<Provider>> GetProviders(Expression<Func<Provider, bool>> filter);
+        Task<IEnumerable<ProviderDoc>> GetProviders(Expression<Func<ProviderDoc, bool>> filter);
 
-        Task AddProvider(Provider provider);
+        Task<String> AddProvider(ProviderDoc provider);
 
-        Task<bool> RemoveProvider(String userId, String name);
+        Task<bool> RemoveProvider(String id);
 
-        Task<bool> RemoveProviders(String userId);
-
-        Task<bool> UpdateProvider(Guid id, Provider provider);
+        Task<bool> UpdateProvider(String id, ProviderDoc provider);
 
         Task<bool> RemoveAllProviders();
 
-        Task<Provider> Find(Provider provider);
+        Task<ProviderDoc> Find(ProviderDoc provider);
 
-        Task<Provider> FindProviderByCriteria(Expression<Func<Provider, bool>> filter);
+        Task<ProviderDoc> FindProviderByCriteria(Expression<Func<ProviderDoc, bool>> filter);
     }
 }

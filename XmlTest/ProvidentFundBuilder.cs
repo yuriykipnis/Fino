@@ -9,9 +9,9 @@ namespace MaslekaReader
 {
     public class ProvidentFundBuilder
     {
-        public List<ProvidentFundAccount> CreateAccounts(IEnumerable<Mimshak> data, String userId)
+        public List<ProvidentFundAccountDoc> CreateAccounts(IEnumerable<Mimshak> data, String userId)
         {
-            List<ProvidentFundAccount> accounts = new List<ProvidentFundAccount>();
+            List<ProvidentFundAccountDoc> accounts = new List<ProvidentFundAccountDoc>();
 
             foreach (var item in data)
             {
@@ -28,9 +28,9 @@ namespace MaslekaReader
             return accounts;
         }
 
-        private List<ProvidentFundAccount> CreateAccounts(String userId, Mimshak item, Mutzar product)
+        private List<ProvidentFundAccountDoc> CreateAccounts(String userId, Mimshak item, Mutzar product)
         {
-            List<ProvidentFundAccount> accounts = new List<ProvidentFundAccount>();
+            List<ProvidentFundAccountDoc> accounts = new List<ProvidentFundAccountDoc>();
 
             if (product.NetuneiMutzar?.SugMutzar == 6 && product?.HeshbonotOPolisot != null)
             {
@@ -47,12 +47,12 @@ namespace MaslekaReader
             return accounts;
         }
 
-        private ProvidentFundAccount CreateAccount(String userId, Mimshak item, HeshbonOPolisa policy)
+        private ProvidentFundAccountDoc CreateAccount(String userId, Mimshak item, HeshbonOPolisa policy)
         {
-            ProvidentFundAccount account;
+            ProvidentFundAccountDoc account;
             try
             {
-                account = new ProvidentFundAccount
+                account = new ProvidentFundAccountDoc
                 {
                     UserId = userId,
                     ProviderName = item.YeshutYatzran?.ShemYatzran,

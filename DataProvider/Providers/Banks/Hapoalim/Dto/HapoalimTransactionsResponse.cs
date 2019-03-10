@@ -5,7 +5,6 @@ namespace DataProvider.Providers.Banks.Hapoalim.Dto
     public class HapoalimTransactionsResponse
     {
         public RetrievalTransaction RetrievalTransactionData { get; set; }
-        public object Message { get; set; }
         public IList<HapoalimTransactionResponse> Transactions { get; set; }
 
         public HapoalimTransactionsResponse()

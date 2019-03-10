@@ -20,7 +20,7 @@ namespace GoldMountainShared.Storage.Repositories
             _context = new DbContext(settings);
         }
 
-        public async Task<IEnumerable<ContactMessage>> GetAllMessages()
+        public async Task<IEnumerable<ContactMessageDoc>> GetAllMessages()
         {
             try
             {
@@ -33,7 +33,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<ContactMessage> GetMessage(Guid id)
+        public async Task<ContactMessageDoc> GetMessage(Guid id)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<ContactMessage> FindMessageByCriteria(Expression<Func<ContactMessage, bool>> filter)
+        public async Task<ContactMessageDoc> FindMessageByCriteria(Expression<Func<ContactMessageDoc, bool>> filter)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<ContactMessage> GetMessageByInternalId(string id)
+        public async Task<ContactMessageDoc> GetMessageByInternalId(string id)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<IEnumerable<ContactMessage>> GetMessagesByUserId(String userId)
+        public async Task<IEnumerable<ContactMessageDoc>> GetMessagesByUserId(String userId)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddMessage(ContactMessage item)
+        public async Task AddMessage(ContactMessageDoc item)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddMessages(IEnumerable<ContactMessage> items)
+        public async Task AddMessages(IEnumerable<ContactMessageDoc> items)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace GoldMountainShared.Storage.Repositories
             try
             {
                 DeleteResult actionResult
-                    = await _context.Messages.DeleteOneAsync(Builders<ContactMessage>.Filter.Eq("Id", id));
+                    = await _context.Messages.DeleteOneAsync(Builders<ContactMessageDoc>.Filter.Eq("Id", id));
 
                 return actionResult.IsAcknowledged && actionResult.DeletedCount > 0;
             }

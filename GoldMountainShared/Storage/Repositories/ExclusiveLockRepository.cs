@@ -19,7 +19,7 @@ namespace GoldMountainShared.Storage.Repositories
             _context = new DbContext(settings);
         }
 
-        public async Task AddLock(ExclusiveLockStorage item)
+        public async Task AddLock(ExclusiveLockStorageDoc item)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<bool> UpdateLock(ExclusiveLockStorage item)
+        public async Task<bool> UpdateLock(ExclusiveLockStorageDoc item)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace GoldMountainShared.Storage.Repositories
             };
         }
 
-        public async Task<bool> RemoveLockByCriteria(Expression<Func<ExclusiveLockStorage, bool>> filter)
+        public async Task<bool> RemoveLockByCriteria(Expression<Func<ExclusiveLockStorageDoc, bool>> filter)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<ExclusiveLockStorage> FindLockByCriteria(Expression<Func<ExclusiveLockStorage, bool>> filter)
+        public async Task<ExclusiveLockStorageDoc> FindLockByCriteria(Expression<Func<ExclusiveLockStorageDoc, bool>> filter)
         {
             try
             {

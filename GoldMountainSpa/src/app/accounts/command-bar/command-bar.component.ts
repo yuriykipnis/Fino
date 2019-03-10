@@ -54,8 +54,8 @@ export class CommandBarComponent implements OnInit, OnDestroy {
     this.selectedTableType = accountControlService.getTableType();
 
     this.filterScope = [
-      {label:'Split', value:TransactionScope.Split},
-      {label:'Combine', value:TransactionScope.Combine}
+      {label:'Flow', value:TransactionScope.Split},
+      {label:'Account', value:TransactionScope.Combine}
     ];
 
     this.filterType = [

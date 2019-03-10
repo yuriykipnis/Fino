@@ -6,9 +6,9 @@ namespace GoldMountainShared.Storage.Interfaces
 {
     public interface IInstitutionRepository
     {
-        Task<IEnumerable<Institution>> GetInstitutions();
+        Task<IEnumerable<InstitutionDoc>> GetInstitutions();
 
-        Task AddInstitution(Institution item);
+        Task AddInstitution(InstitutionDoc item);
 
         Task<bool> RemoveAllInstitutions();
     }

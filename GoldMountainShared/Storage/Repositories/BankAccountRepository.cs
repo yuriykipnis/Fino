@@ -18,9 +18,8 @@ namespace GoldMountainShared.Storage.Repositories
         {
             _context = new DbContext(settings);
         }
-
        
-        public async Task<IEnumerable<BankAccount>> GetAllAccounts()
+        public async Task<IEnumerable<BankAccountDoc>> GetAllAccounts()
         {
             try
             {
@@ -33,7 +32,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<BankAccount> GetAccount(Guid id)
+        public async Task<BankAccountDoc> GetAccount(String id)
         {
             try
             {
@@ -46,7 +45,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<BankAccount> FindAccountByCriteria(Expression<Func<BankAccount, bool>> filter)
+        public async Task<BankAccountDoc> FindAccountByCriteria(Expression<Func<BankAccountDoc, bool>> filter)
         {   
             try
             {
@@ -59,7 +58,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<BankAccount> GetAccountByInternalId(string id)
+        public async Task<BankAccountDoc> GetAccountByInternalId(string id)
         {
             try
             {
@@ -73,7 +72,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<IEnumerable<BankAccount>> GetAccountsByUserId(String userId)
+        public async Task<IEnumerable<BankAccountDoc>> GetAccountsByUserId(String userId)
         {
             try
             {
@@ -88,7 +87,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<IEnumerable<BankAccount>> GetAccountsByProviderId(Guid providerId)
+        public async Task<IEnumerable<BankAccountDoc>> GetAccountsByProviderId(String providerId)
         {
             try
             {
@@ -101,7 +100,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddAccount(BankAccount item)
+        public async Task AddAccount(BankAccountDoc item)
         {
             try
             {
@@ -114,7 +113,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddAccounts(IEnumerable<BankAccount> items)
+        public async Task AddAccounts(IEnumerable<BankAccountDoc> items)
         {
             try
             {
@@ -127,12 +126,12 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<bool> RemoveAccount(Guid id)
+        public async Task<bool> RemoveAccount(String id)
         {
             try
             {
                 DeleteResult actionResult
-                    = await _context.BankAccounts.DeleteOneAsync(Builders<BankAccount>.Filter.Eq("Id", id));
+                    = await _context.BankAccounts.DeleteOneAsync(Builders<BankAccountDoc>.Filter.Eq("Id", id));
 
                 return actionResult.IsAcknowledged && actionResult.DeletedCount > 0;
             }
@@ -143,10 +142,10 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<bool> UpdateAccountBalance(Guid id, Decimal balance)
+        public async Task<bool> UpdateAccountBalance(String id, Decimal balance)
         {
-            var filter = Builders<BankAccount>.Filter.Eq(s => s.Id, id);
-            var update = Builders<BankAccount>.Update
+            var filter = Builders<BankAccountDoc>.Filter.Eq(s => s.Id, id);
+            var update = Builders<BankAccountDoc>.Update
                 .Set(s => s.Balance, balance)
                 .CurrentDate(s => s.UpdatedOn);
 
@@ -162,7 +161,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<bool> UpdateAccount(Guid id, BankAccount account)
+        public async Task<bool> UpdateAccount(String id, BankAccountDoc account)
         {
             try
             {
@@ -194,7 +193,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        private ObjectId GetInternalId(string id)
+        private ObjectId GetInternalId(String id)
         {
             if (!ObjectId.TryParse(id, out var internalId))
             {

@@ -25,7 +25,7 @@ namespace GoldMountainShared.Storage.Repositories
             _context = new DbContext(settings);
         }
 
-        public async Task<IEnumerable<PensionFundAccount>> GetAllAccounts()
+        public async Task<IEnumerable<PensionFundAccountDoc>> GetAllAccounts()
         {
             try
             {
@@ -38,7 +38,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<PensionFundAccount> GetAccount(Guid id)
+        public async Task<PensionFundAccountDoc> GetAccount(Guid id)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<IEnumerable<PensionFundAccount>> GetAccountsByUserId(String userId)
+        public async Task<IEnumerable<PensionFundAccountDoc>> GetAccountsByUserId(String userId)
         {
             try
             {
@@ -64,7 +64,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddAccount(PensionFundAccount item)
+        public async Task AddAccount(PensionFundAccountDoc item)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddAccounts(IEnumerable<PensionFundAccount> items)
+        public async Task AddAccounts(IEnumerable<PensionFundAccountDoc> items)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace GoldMountainShared.Storage.Repositories
             try
             {
                 DeleteResult actionResult
-                    = await _context.PensionAccounts.DeleteOneAsync(Builders<PensionFundAccount>.Filter.Eq("Id", id));
+                    = await _context.PensionAccounts.DeleteOneAsync(Builders<PensionFundAccountDoc>.Filter.Eq("Id", id));
 
                 return actionResult.IsAcknowledged && actionResult.DeletedCount > 0;
             }
@@ -108,7 +108,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<bool> UpdateAccount(Guid id, PensionFundAccount account)
+        public async Task<bool> UpdateAccount(Guid id, PensionFundAccountDoc account)
         {
             try
             {
@@ -139,7 +139,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<PensionFundAccount> FindAccountByCriteria(Expression<Func<PensionFundAccount, bool>> filter)
+        public async Task<PensionFundAccountDoc> FindAccountByCriteria(Expression<Func<PensionFundAccountDoc, bool>> filter)
         {
             try
             {

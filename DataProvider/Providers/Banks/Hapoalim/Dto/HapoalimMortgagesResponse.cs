@@ -11,6 +11,9 @@ namespace DataProvider.Providers.Banks.Hapoalim.Dto
         public string PartyId { get; set; }
         public Decimal PaymentBalance { get; set; }
         public Decimal RevaluedBalance { get; set; }
+        public Decimal PaymentAmount { get; set; }
+        public Decimal LifeInsurancePaymentAmount { get; set; }
+        public Decimal AssetInsurancePaymentAmount { get; set; }
         public long ValidityDate { get; set; }
 
         public class MortgageData

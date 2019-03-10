@@ -1,5 +1,5 @@
 ﻿using System;
-using DistibutedLocking.Interfaces;
+using DistributedLock.Interfaces;
 using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
 
@@ -41,7 +41,7 @@ namespace DistributedLock
                 _lastAquiredLockTime = DateTime.UtcNow;
 
                 //Try to insert lock record into MongoDB - if no error returned -we got the lock
-                _distributedLockRepository.AddLock(new ExclusiveLockStorage{
+                _distributedLockRepository.AddLock(new ExclusiveLockStorageDoc{
                     LockId = _lockId,
                     LockAcquireTime = _lastAquiredLockTime.Value,
                     LockingProcessId = clientIdentifier

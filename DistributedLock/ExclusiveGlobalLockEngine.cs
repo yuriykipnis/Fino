@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using DistibutedLocking.Interfaces;
+using DistributedLock.Interfaces;
 using GoldMountainShared.Storage.Interfaces;
 
 namespace DistributedLock

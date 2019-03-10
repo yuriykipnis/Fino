@@ -21,7 +21,7 @@ namespace GoldMountainShared.Storage.Repositories
         }
 
 
-        public async Task<IEnumerable<Transaction>> GetAllTransactions()
+        public async Task<IEnumerable<TransactionDoc>> GetAllTransactions()
         {
             try
             {
@@ -34,7 +34,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<Transaction> GetTransaction(Guid id)
+        public async Task<TransactionDoc> GetTransaction(Guid id)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<Transaction> GetTransactionByInternalId(string id)
+        public async Task<TransactionDoc> GetTransactionByInternalId(string id)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddTransaction(Transaction item)
+        public async Task AddTransaction(TransactionDoc item)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddTransactions(IEnumerable<Transaction> items)
+        public async Task AddTransactions(IEnumerable<TransactionDoc> items)
         {
             try
             {
@@ -92,7 +92,7 @@ namespace GoldMountainShared.Storage.Repositories
             try
             {
                 DeleteResult actionResult
-                    = await _context.Transactions.DeleteOneAsync(Builders<Transaction>.Filter.Eq("Id", id));
+                    = await _context.Transactions.DeleteOneAsync(Builders<TransactionDoc>.Filter.Eq("Id", id));
 
                 return actionResult.IsAcknowledged && actionResult.DeletedCount > 0;
             }
@@ -103,7 +103,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<bool> UpdateTransaction(Guid id, Transaction account)
+        public async Task<bool> UpdateTransaction(Guid id, TransactionDoc account)
         {
             try
             {
@@ -134,7 +134,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<Transaction> FindTransactionByCriteria(Expression<Func<Transaction, bool>> filter)
+        public async Task<TransactionDoc> FindTransactionByCriteria(Expression<Func<TransactionDoc, bool>> filter)
         {
             try
             {

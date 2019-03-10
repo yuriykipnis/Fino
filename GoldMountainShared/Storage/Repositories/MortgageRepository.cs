@@ -23,7 +23,7 @@ namespace GoldMountainShared.Storage.Repositories
             _context = new DbContext(settings);
         }
 
-        public async Task<IEnumerable<Mortgage>> GetAllLoans()
+        public async Task<IEnumerable<MortgageDoc>> GetAllLoans()
         {
             try
             {
@@ -36,7 +36,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<Mortgage> GetLoan(Guid id)
+        public async Task<MortgageDoc> GetLoan(Guid id)
         {
             try
             {
@@ -49,7 +49,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddLoan(Mortgage item)
+        public async Task AddLoan(MortgageDoc item)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task AddLoans(IEnumerable<Mortgage> items)
+        public async Task AddLoans(IEnumerable<MortgageDoc> items)
         {
             try
             {
@@ -75,7 +75,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<IEnumerable<Mortgage>> GetLoansByUserId(string id)
+        public async Task<IEnumerable<MortgageDoc>> GetLoansByUserId(string id)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace GoldMountainShared.Storage.Repositories
             try
             {
                 DeleteResult actionResult
-                    = await _context.Mortgages.DeleteOneAsync(Builders<Mortgage>.Filter.Eq("Id", id));
+                    = await _context.Mortgages.DeleteOneAsync(Builders<MortgageDoc>.Filter.Eq("Id", id));
 
                 return actionResult.IsAcknowledged && actionResult.DeletedCount > 0;
             }
@@ -104,7 +104,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<bool> UpdateLoan(Guid id, Mortgage account)
+        public async Task<bool> UpdateLoan(Guid id, MortgageDoc account)
         {
             try
             {
@@ -136,7 +136,7 @@ namespace GoldMountainShared.Storage.Repositories
             }
         }
 
-        public async Task<Mortgage> FindLoanByCriteria(Expression<Func<Mortgage, bool>> filter)
+        public async Task<MortgageDoc> FindLoanByCriteria(Expression<Func<MortgageDoc, bool>> filter)
         {
             try
             {

@@ -6,6 +6,7 @@ export const environment = {
     domain: 'gold-mountain.eu.auth0.com',
     audience: 'http://bewise1.westeurope.cloudapp.azure.com:5001',
     redirectUri: 'http://fino.co.il/login-callback'
+    //redirectUri: 'https://fino.co.il/login-callback'
   },
 
   api: {

@@ -10,9 +10,9 @@ namespace MaslekaReader
 {
     public class SeInsurBuilder
     {
-        public List<SeInsurAccount> CreateAccounts(IEnumerable<Mimshak> data, String userId)
+        public List<SeInsurAccountDoc> CreateAccounts(IEnumerable<Mimshak> data, String userId)
         {
-            List<SeInsurAccount> accounts = new List<SeInsurAccount>();
+            List<SeInsurAccountDoc> accounts = new List<SeInsurAccountDoc>();
 
             foreach (var item in data)
             {
@@ -29,9 +29,9 @@ namespace MaslekaReader
             return accounts;
         }
 
-        private List<SeInsurAccount> CreateAccounts(String userId, Mimshak item, Mutzar product)
+        private List<SeInsurAccountDoc> CreateAccounts(String userId, Mimshak item, Mutzar product)
         {
-            List<SeInsurAccount> accounts = new List<SeInsurAccount>();
+            List<SeInsurAccountDoc> accounts = new List<SeInsurAccountDoc>();
 
             if (product.NetuneiMutzar?.SugMutzar == 1 || product.NetuneiMutzar?.SugMutzar == 5 && product?.HeshbonotOPolisot != null)
             {
@@ -48,9 +48,9 @@ namespace MaslekaReader
             return accounts;
         }
 
-        private SeInsurAccount CreateAccount(String userId, Mimshak item, Mutzar product, HeshbonOPolisa policy)
+        private SeInsurAccountDoc CreateAccount(String userId, Mimshak item, Mutzar product, HeshbonOPolisa policy)
         {
-            SeInsurAccount account;
+            SeInsurAccountDoc account;
             try
             {
                 Double totalSchumKitzvatZikna = 0;
@@ -73,7 +73,7 @@ namespace MaslekaReader
                 var employeerId = policy.PirteiTaktziv.PirteiOved.MprMaasikBeYatzran;
                 var employerIdentity = product.NetuneiMutzar.YeshutMaasik.Where(ym => ym.MprMaasikBeYatzran.Equals(employeerId)).FirstOrDefault();
 
-                account = new SeInsurAccount
+                account = new SeInsurAccountDoc
                 {
                     UserId = userId,
                     ProviderName = item.YeshutYatzran?.ShemYatzran,

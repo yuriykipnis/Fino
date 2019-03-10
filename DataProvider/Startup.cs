@@ -1,17 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+using AutoMapper;
 using DataProvider.Providers;
+using DataProvider.Providers.Banks.Hapoalim.Dto;
 using DataProvider.Providers.Banks.Leumi.Dto;
+using DataProvider.Providers.Cards.Cal.Dto;
 using DataProvider.Providers.Interfaces;
+using DataProvider.Providers.Mapping;
+using DataProvider.Providers.Models;
 using DataProvider.Services;
-using DistibutedLocking.Interfaces;
-using DistributedLock;
-using GoldMountainShared.Models;
-using GoldMountainShared.Models.Bank;
-using GoldMountainShared.Models.Credit;
-using GoldMountainShared.Models.Provider;
-using GoldMountainShared.Models.Shared;
+using GoldMountainShared.Dto;
+using GoldMountainShared.Dto.Bank;
+using GoldMountainShared.Dto.Credit;
+using GoldMountainShared.Dto.Provider;
+using GoldMountainShared.Dto.Shared;
 using GoldMountainShared.Storage;
 using GoldMountainShared.Storage.Documents;
 using GoldMountainShared.Storage.Interfaces;
@@ -21,15 +22,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
-using RawMortgage = DataProvider.Providers.Models.Mortgage;
-using Mortgage = GoldMountainShared.Storage.Documents.Mortgage;
-using RawLoan = DataProvider.Providers.Models.Loan;
-using Loan = GoldMountainShared.Storage.Documents.Loan;
-using RawTransaction = DataProvider.Providers.Models.Transaction;
-using Transaction = GoldMountainShared.Storage.Documents.Transaction;
-using RawBankAccount = DataProvider.Providers.Models.BankAccount;
-using RawCreditAccount = DataProvider.Providers.Models.CreditAccount;
 
 namespace DataProvider
 {
@@ -68,7 +60,7 @@ namespace DataProvider
             services.AddSingleton<IInstitutionRepository, InstitutionRepository>();
             services.AddTransient<IProviderRepository, ProviderRepository>();
             services.AddTransient<IBankAccountRepository, BankAccountRepository>();
-            services.AddTransient<ICreditAccountRepository, CreditAccountRepository>();
+            services.AddTransient<ICreditCardRepository, CreditCardRepository>();
             services.AddSingleton<IProviderFactory, ProviderFactory>();
             services.AddTransient<IAccountService, AccountService>();
 
@@ -96,83 +88,74 @@ namespace DataProvider
                 app.UseCors("ProdPolicy");
             }
 
-            AutoMapper.Mapper.Initialize(cfg =>
+            Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Institution, InstitutionDto>();
+                cfg.CreateMap<String, DateTime>().ConvertUsing(new DateTimeTypeConverter());
+
+                cfg.CreateMap<InstitutionDoc, InstitutionDto>();
                     
-                cfg.CreateMap<RawBankAccount, BankAccountCreatingDto>();
-                cfg.CreateMap<RawBankAccount, BankAccountDto>();
+                cfg.CreateMap<BankAccount, BankAccountCreatingDto>();
+                cfg.CreateMap<BankAccount, BankAccountDto>();
 
-                cfg.CreateMap<RawCreditAccount, CreditAccountCreatingDto>();
-                cfg.CreateMap<RawCreditAccount, CreditAccountDto>();
+                cfg.CreateMap<CreditCard, _CreditCardCreatingDto>();
+                cfg.CreateMap<_CreditCardCreatingDto, CreditCardDoc>()
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(o => Guid.NewGuid()));
 
-                cfg.CreateMap<BankAccountCreatingDto, BankAccount>()
+                cfg.CreateMap<CreditCard, CreditCardDto>();
+                cfg.CreateMap<CreditCard, CreditCardDoc>();
+                cfg.CreateMap<CreditCardDoc, CreditCardDto>();
+                cfg.CreateMap<CreditCardDoc, CreditCard>();
+                cfg.CreateMap<CreditCardDoc, CreditCardDescriptor>()
+                    .ForMember(dest => dest.CardId, opt => opt.MapFrom(o => o.Id));
+
+                cfg.CreateMap<BankAccountCreatingDto, BankAccountDoc>()
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(o => Guid.NewGuid()));
-                cfg.CreateMap<CreditAccountCreatingDto, CreditAccount>()
-                    .ForMember(dest => dest.Id, opt => opt.MapFrom(o => Guid.NewGuid()));
-                
-                cfg.CreateMap<BankAccount, BankAccountDto>()
+                cfg.CreateMap<BankAccountDoc, BankAccountDto>()
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToString()));
-                cfg.CreateMap<CreditAccount, CreditAccountDto>()
-                    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToString()));
                 
-                cfg.CreateMap<RawTransaction, TransactionDto>();
-                cfg.CreateMap<RawTransaction, Transaction>()
-                    .ForSourceMember(src => src.Id, opt => opt.Ignore())
+                cfg.CreateMap<BankTransaction, TransactionDto>();
+                cfg.CreateMap<BankTransaction, TransactionDoc>()
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(o => Guid.NewGuid()));
 
-                cfg.CreateMap<RawMortgage, MortgageDto>();
-                cfg.CreateMap<RawMortgage, Mortgage>()
-                    .ForMember(dest => dest.InterestAmount, opt => opt.MapFrom(src => CalculateInterest(src)));
+                cfg.CreateMap<Mortgage, MortgageDto>();
+                cfg.CreateMap<Mortgage, MortgageDoc>()
+                    .ForMember(dest => dest.InterestAmount, opt => opt.MapFrom(src => CalculateHelper.CalculateInterest(src)));
 
-                cfg.CreateMap<RawLoan, LoanDto>();
-                cfg.CreateMap<RawLoan, Loan>();
+                cfg.CreateMap<Loan, LoanDto>();
+                cfg.CreateMap<Loan, LoanDoc>();
 
-                cfg.CreateMap<Transaction, TransactionDto>();
+                cfg.CreateMap<TransactionDoc, TransactionDto>();
 
-                cfg.CreateMap<ProviderCreatingDto, Provider>();
+                cfg.CreateMap<ProviderCreatingDto, ProviderDoc>();
+                cfg.CreateMap<ProviderDoc, ProviderDto>();
 
-                cfg.CreateMap<Provider, ProviderDto>();
+                cfg.CreateMap<LeumiMortgageResponse, Mortgage>();
+                cfg.CreateMap<LeumiLoanResponse, Loan>();
 
-                cfg.CreateMap<LeumiMortgageResponse, RawMortgage>();
-                cfg.CreateMap<LeumiLoanResponse, RawLoan>();
+                CalMapping(cfg);
+                HapoalimMapping(cfg);
             });
             app.UseMvc();
         }
 
-        public static Decimal CalculateInterest(RawMortgage mortgage)
+        private static void CalMapping(IMapperConfigurationExpression cfg)
         {
-            var rEff = Math.Pow((double) (1 + mortgage.InterestRate / (100 * 12)), 12) - 1;
-            var rEffMonthly = Math.Pow(1 + rEff, (double)1/12) - 1;
-            var n = CalculateNumberOfPayments(mortgage);
-            var pMonthly = (mortgage.DeptAmount * (decimal) rEffMonthly) / (decimal) (1 - Math.Pow(1 / (1 + rEffMonthly), n));
+            cfg.CreateMap<CalAccountResponse, CreditCardBankAccount>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.AccountId));
 
-            var result = Decimal.Round(pMonthly * n - mortgage.DeptAmount, 2, MidpointRounding.AwayFromZero);
-            
-            //var monthes = ConvertDaysToMonthes((int)(mortgage.EndDate - mortgage.StartDate).TotalDays);
-            //var interest = mortgage.DeptAmount * mortgage.InterestRate / 100 * monthes / 12;
-            //return Decimal.Round(interest, 2, MidpointRounding.AwayFromZero);
-            return result;
+            cfg.CreateMap<CalBankDebit, CreditCardDebitPeriod>()
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount.Value))
+                .ForMember(dest => dest.CardLastDigits, opt => opt.MapFrom(src => src.CardLast4Digits));
+
+            cfg.CreateMap<CalTransactionResponse, CreditCardTransaction>()
+                .ForMember(dest => dest.DealAmount, opt => opt.MapFrom(src => src.Amount.Value))
+                .ForMember(dest => dest.PaymentAmount, opt => opt.MapFrom(src => src.DebitAmount.Value));
         }
 
-        private static int CalculateNumberOfPayments(RawMortgage mortgage)
+        private static void HapoalimMapping(IMapperConfigurationExpression cfg)
         {
-            var payoffYear = mortgage.EndDate.Year;
-            var payoffMonth = mortgage.EndDate.Month;
-
-            var now = DateTime.Now;
-            var months = (payoffYear - now.Year) * 12;
-            months -= now.Month + 1;
-            months += payoffMonth;
-
-            return months <= 0 ? 0 : months;
-        }
-
-        private static int ConvertDaysToMonthes(int days)
-        {
-            const double daysToMonths = 30.4368499;
-            int months = (int)(days / daysToMonths);
-            return months;
+            cfg.CreateMap<HapoalimAccountResponse, BankAccount>()
+                .ForMember(dest => dest.Label, opt => opt.MapFrom(src => src.ProductLabel));
         }
     }
 }

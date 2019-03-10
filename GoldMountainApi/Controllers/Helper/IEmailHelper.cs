@@ -5,6 +5,6 @@ namespace GoldMountainApi.Controllers.Helper
 {
     public interface IEmailHelper
     {
-        Task SendMessage(ContactMessage message);
+        Task SendMessage(ContactMessageDoc message);
     }
 }
